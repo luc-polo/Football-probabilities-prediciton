@@ -7,7 +7,7 @@ Welcome to the documentation for the Source module.
    :maxdepth: 3
    
    useful_functions
-   main
+   __main__
    data/index
    visualization/index
    features/index
