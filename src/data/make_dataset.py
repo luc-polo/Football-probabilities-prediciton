@@ -32,7 +32,7 @@ files = [adr1, adr2, adr3, adr4, adr5, adr6, adr7, adr8, adr9]
 
 
 # --------------------------------------------------------------
-# Turn into function
+# Convert CSV into DataFrame
 # --------------------------------------------------------------
 def read_data(files):
     """
@@ -70,7 +70,6 @@ def read_data(files):
 # Export dataset
 # --------------------------------------------------------------
 
-
 def save_dataframe_into_data_interim(dataset_0):
     """ 
         This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location
@@ -79,7 +78,7 @@ def save_dataframe_into_data_interim(dataset_0):
         dataset_0 (Dataframe): the dataframe we want to save
         
     Returns:
-        str : A message telling if the file was correctly saved or not.
+        None
     """
 
     # Define the absolute path of the dataset destination, which is also the path of the actual doc located there that we will delete
@@ -88,20 +87,19 @@ def save_dataframe_into_data_interim(dataset_0):
     # We delete the previous file
     try: 
         os.remove(dataset_destination_path)
+        print("The old 'data_interim.pkl' file was well deleted")
     except Exception as e:
         print(f"An error occurred while deleting the old datafram file: {e}")
         print("The old 'data_interim.pkl' file was not removed (probably because it does not exist in this location).")
-    else:
-        print("The old 'data_interim.pkl' file was well deleted")
+        
 
     # Export the dataset to the path constructed
     try: 
         dataset_0.to_pickle(dataset_destination_path)
+        print("The new 'data_interim.pkl' file was well saved")
     except Exception as e:
         print(f"An error occurred while saving the new dataframe: {e}")
         print("The 'data_interim.pkl' was not saved.")
-    else:
-        print("The new 'data_interim.pkl' file was well saved")
 
 # --------------------------------------------------------------
 # Define a function to import the dataframe in other modules
