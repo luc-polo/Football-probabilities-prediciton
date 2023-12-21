@@ -19,7 +19,7 @@ import os
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
 
 #Import my modules
-from data.constant_variables import *
+from data import constant_variables
 
 
 # --------------------------------------------------------------
@@ -242,7 +242,7 @@ def display_matchs_specific_feat_val(dataset, feature, value_to_identify ):
 
 #Displaying statistics about 0 values
 
-#seasons_end_dates = seasons
+#seasons_end_dates = constant_variables.seasons
 #count_0_values( dataset, 'Pre-Match PPG (Away)', 5,'AT', seasons_end_dates)
 
 #Displaying statistics about negative values for cards
