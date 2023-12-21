@@ -101,9 +101,9 @@ def save_dataframe_into_data_interim(dataset_0):
     #We compare if the old data_interim.pkl file that we are gonna delete and dataset_0¨are exactly the same
     old_dataframe = load_data(seasons_present_in_df_info = False)
     if old_dataframe.equals(dataset_0):
-        print("The old data_interim.pkl file, and the new one ARE the same /n")
+        print("The old data_interim.pkl file, and the new one ARE the same")
     else:
-        print("The old data_interim.pkl file, and the new one ARE NOT the same /n")
+        print("The old data_interim.pkl file, and the new one ARE NOT the same")
     
     
     # We delete the old file
@@ -118,8 +118,8 @@ def save_dataframe_into_data_interim(dataset_0):
     # Export the dataset to the path constructed
     try: 
         dataset_0.to_pickle(dataset_destination_path)
-        print("The new 'data_interim.pkl' file was well saved")
+        print("The new 'data_interim.pkl' file was well saved \n")
     except Exception as e:
         print(f"An error occurred while saving the new dataframe: {e}")
-        print("The 'data_interim.pkl' was not saved.")
+        print("The 'data_interim.pkl' was not saved. \n")
 
