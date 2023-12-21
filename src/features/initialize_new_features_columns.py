@@ -7,12 +7,12 @@ This module is made to create new columns in the dataframe, dedicated to the new
 import pandas as pd
 import sys
 
-# modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
+# modify the sys.path list to include the path to the data directory that contains the modules that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
 
 #Import my modules
 from data import constant_variables
-from data import make_dataset
+
 
 
 def add_columns_and_complete_col_ranks(dataset_0):
@@ -25,6 +25,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
         
     Returns:
         dico_col_ranks (Dictionnary): Dictionnarry containing the new columns ranks names as keys and their values as values.
+        
+        dataset_0 (DataFrame): Dataframe with columns added
         
     """
     #Initialize the dictionnary
@@ -352,6 +354,9 @@ def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
                 theoritical_df_col_nb (int): The theoretical columns number in dataset_0
                 
                 dataset_0 (DataFrame): Dataframe that contains our data, with the new features columns created by add_columns_and_complete_col_ranks().
+        
+        Returns:
+                Boolean : True if the test is passed, False otherwise
         """
         L,l = dataset_0.shape
         list_theoritical_col_rk = [i for i in range(constant_variables.raw_dataframe_col_nb,l)]
