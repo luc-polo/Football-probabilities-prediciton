@@ -7,6 +7,8 @@ from dateutil.parser import parse
 import sys
 import os
 
+
+
 # --------------------------------------------------------------
 # Define CSV files paths
 # --------------------------------------------------------------
@@ -68,19 +70,38 @@ def read_data(files):
 # Export dataset
 # --------------------------------------------------------------
 
-# Get the directory of the current script
 
-#current_dir = os.path.dirname(os.path.abspath(__file__))
+def save_dataframe_into_data_interim(dataset_0):
+    """ 
+        This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location
+    
+    Args:
+        dataset_0 (Dataframe): the dataframe we want to save
+        
+    Returns:
+        str : A message telling if the file was correctly saved or not.
+    """
 
+    # Define the absolute path of the dataset destination, which is also the path of the actual doc located there that we will delete
+    dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl"
+    
+    # We delete the previous file
+    try: 
+        os.remove(dataset_destination_path)
+    except Exception as e:
+        print(f"An error occurred while deleting the old datafram file: {e}")
+        print("The old 'data_interim.pkl' file was not removed (probably because it does not exist in this location).")
+    else:
+        print("The old 'data_interim.pkl' file was well deleted")
 
-# Construct the absolute path of the dataset destination
-
-#dataset_destination_path = os.path.join(current_dir, "..\\..\\data\\interim\\data_interim.pkl")
-
-
-# Export the dataset to the path constructed
-
-#dataset.to_pickle(dataset_destination_path)
+    # Export the dataset to the path constructed
+    try: 
+        dataset_0.to_pickle(dataset_destination_path)
+    except Exception as e:
+        print(f"An error occurred while saving the new dataframe: {e}")
+        print("The 'data_interim.pkl' was not saved.")
+    else:
+        print("The new 'data_interim.pkl' file was well saved")
 
 # --------------------------------------------------------------
 # Define a function to import the dataframe in other modules
