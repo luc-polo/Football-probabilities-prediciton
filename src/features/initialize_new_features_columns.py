@@ -5,15 +5,20 @@ This module is made to create new columns in the dataframe, dedicated to the new
 
 #Import classic python packages
 import pandas as pd
+import sys
+
+# modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
+sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
 
 #Import my modules
-from data.constant_variables import *
+from data import constant_variables
+from data import make_dataset
 
 
 def add_columns_and_complete_col_ranks(dataset_0):
     """  
-        Create new columns in the dataframe, dedicated to the new features created in make_new_features.py. We create the columns, name it and assign their values to the columns ranks variables. The columns ranks variables are returned in a dictionnary.
-        | The new columns are created following the existing ones, meaning on the right end of the dataframe.
+        Create new columns in the dataframe, dedicated to the new features created in make_new_features.py. We create the columns, name it and assign their values to columns ranks variables we create. The columns ranks variables are returned in a dictionnary.
+        The new columns are created following the existing ones, meaning on the right side of the dataframe.
         
     Args:
         dataset_0 (DataFrame): DataFrame containing our data.
@@ -38,7 +43,7 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0["RA"] = new_col
     rg_RA= dataset_0.shape[1]-1
     
-    dico_col_ranks.update({'rg_RA': rg_RA, 'rg_RH': rg_RH})
+    dico_col_ranks.update({'rg_RH': rg_RH, 'rg_RA': rg_RA})
                 
         
                 #Colonnes status Home or Away of teams
@@ -209,7 +214,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HT5lm_WR, rg_AT5lm_WR, rg_HT3lm_WR, rg_AT3lm_WR, rg_HT1lm_WR, rg_AT1lm_WR = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
-
+    
+    dico_col_ranks.update({'rg_HT5lm_WR':rg_HT5lm_WR, 'rg_AT5lm_WR':rg_AT5lm_WR, 'rg_HT3lm_WR':rg_HT3lm_WR, 'rg_AT3lm_WR':rg_AT3lm_WR, 'rg_HT1lm_WR':rg_HT1lm_WR, 'rg_AT1lm_WR':rg_AT1lm_WR })
 
 
                                         #STATISTIQUES DE JEU
@@ -224,6 +230,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTCN, rg_ATCN, rg_HTDACN, rg_ATDACN  = [ ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTCN':rg_HTCN, 'rg_ATCN':rg_ATCN, 'rg_HTDACN':rg_HTDACN, 'rg_ATDACN':rg_ATDACN })
 
 
 
@@ -238,6 +246,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTYCN, rg_ATYCN, rg_HTRCN, rg_ATRCN, rg_HTDAYCNB, rg_ATDAYCNB,  rg_HTDARCNB,  rg_ATDARCNB  = [ds_len - 8, ds_len -7, ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTYCN':rg_HTYCN, 'rg_ATYCN':rg_ATYCN, 'rg_HTRCN':rg_HTRCN, 'rg_ATRCN':rg_ATRCN, 'rg_HTDAYCNB':rg_HTDAYCNB, 'rg_ATDAYCNB':rg_ATDAYCNB, 'rg_HTDARCNB':rg_HTDARCNB, 'rg_ATDARCNB':rg_ATDARCNB })
 
 
 
@@ -250,6 +260,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTSN, rg_ATSN, rg_HTASN, rg_ATASN, rg_HTDASNB, rg_ATDASNB  = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTSN':rg_HTSN, 'rg_ATSN':rg_ATSN, 'rg_HTASN':rg_HTASN, 'rg_ATASN':rg_ATASN, 'rg_HTDASNB':rg_HTDASNB, 'rg_ATDASNB':rg_ATDASNB})
 
 
 
@@ -263,6 +275,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTSOTN, rg_ATSOTN, rg_HTASOTN, rg_ATASOTN, rg_HTDSOTN, rg_ATDSOTN = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTSOTN':rg_HTSOTN, 'rg_ATSOTN':rg_ATSOTN, 'rg_HTASOTN':rg_HTASOTN, 'rg_ATASOTN':rg_ATASOTN, 'rg_HTDSOTN':rg_HTDSOTN, 'rg_ATDSOTN':rg_ATDSOTN})
 
 
 
@@ -275,6 +289,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTFN, rg_ATFN, rg_HTAFN, rg_ATAFN, rg_HTDFN, rg_ATDFN = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTFN':rg_HTFN, 'rg_ATFN':rg_ATFN, 'rg_HTAFN':rg_HTAFN, 'rg_ATAFN':rg_ATAFN, 'rg_HTDFN':rg_HTDFN, 'rg_ATDFN':rg_ATDFN})
 
 
 
@@ -287,7 +303,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTP, rg_ATP, rg_HTAP, rg_ATAP, rg_HTDP, rg_ATDP = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
-
+    
+    dico_col_ranks.update({'rg_HTP':rg_HTP, 'rg_ATP':rg_ATP, 'rg_HTAP':rg_HTAP, 'rg_ATAP':rg_ATAP, 'rg_HTDP':rg_HTDP, 'rg_ATDP':rg_ATDP})
 
 
 
@@ -299,6 +316,8 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
     rg_HTXG, rg_ATXG, rg_HTAXG, rg_ATAXG, rg_HTDXG, rg_ATDXG = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTXG':rg_HTXG, 'rg_ATXG':rg_ATXG, 'rg_HTAXG':rg_HTAXG, 'rg_ATAXG':rg_ATAXG, 'rg_HTDXG':rg_HTDXG, 'rg_ATDXG':rg_ATDXG})
 
 
 
@@ -312,20 +331,30 @@ def add_columns_and_complete_col_ranks(dataset_0):
     ds_len = dataset_0.shape[1]
     rg_HTOVP, rg_ATOVP, rg_HTAOVP, rg_ATAOVP, rg_HTDOVP, rg_ATDOVP = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
     
-    return(dico_col_ranks)
+    dico_col_ranks.update({'rg_HTOVP':rg_HTOVP, 'rg_ATOVP':rg_ATOVP, 'rg_HTAOVP':rg_HTAOVP, 'rg_ATAOVP':rg_ATAOVP, 'rg_HTDOVP':rg_HTDOVP, 'rg_ATDOVP':rg_ATDOVP})
+    
+    
+    
+    return(dataset_0, dico_col_ranks)
 
 
-def test_columns_ranks(dico_col_ranks_0, dataset_0):
+def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
         """ 
-                This function executes a test to verify that the function add_columns_and_complete_col_ranks() has executed correctly. If the tests are successful is return True. It checks that: -there exists a variable in dico_col_ranks for each new column rank. -there is not twice the same rank for two different variables in dico_col_ranks -there is not twice the same name for two different col ranks.
+                This function executes a test to verify that the function add_columns_and_complete_col_ranks() has executed correctly on dataset_0. If the tests are successful, it returns True. It checks that:
+                - the dataset_0 columns number corresponds to the theoretical value inputted with 'theoritical_df_col_nb'
+                - there exists a variable in dico_col_ranks for each new column rank of dataset_0
+                - there is not twice the same rank for two different variables in dico_col_ranks
+                - there is not twice the same name for two different col ranks in dico_col_ranks
                 
         Args:
                 dico_col_ranks_0 (Dictionnary): The dictionnary returned by add_columns_and_complete_col_ranks(), that contains new columns ranks.
                 
+                theoritical_df_col_nb (int): The theoretical columns number in dataset_0
+                
                 dataset_0 (DataFrame): Dataframe that contains our data, with the new features columns created by add_columns_and_complete_col_ranks().
         """
         L,l = dataset_0.shape
-        list_theoritical_col_rk = [i for i in range(raw_dataframe_col_nb,l)]
+        list_theoritical_col_rk = [i for i in range(constant_variables.raw_dataframe_col_nb,l)]
 
         list_values_of_col_rk = []
         list_col_rank_names = []
@@ -333,6 +362,9 @@ def test_columns_ranks(dico_col_ranks_0, dataset_0):
         for key, value in dico_col_ranks_0.items():
                 list_values_of_col_rk.append(value)
                 list_col_rank_names.append(key)
+        
+        #Check that the dataframe columns name corresponds to the theoritical value
+        dataframe_size_is_good = (l==theoritical_df_col_nb)
         
         #Check that for each column created that there is a col_rank created in the dictionnary
         all_col_has_a_rk = all(valeur in list_values_of_col_rk for valeur in list_theoritical_col_rk)
@@ -349,5 +381,8 @@ def test_columns_ranks(dico_col_ranks_0, dataset_0):
         else:
                 not_twice_same_col_rk_name = False
         
-        if not_twice_same_col_rk_name and not_twice_same_col_rank and all_col_has_a_rk:
+        if not_twice_same_col_rk_name and not_twice_same_col_rank and all_col_has_a_rk and dataframe_size_is_good:
                 return True
+        else:
+                return False
+
