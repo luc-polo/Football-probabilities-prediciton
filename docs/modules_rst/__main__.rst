@@ -1,4 +1,4 @@
-src.main
+src.__main__
 =========================
 
 .. automodule:: src.main
