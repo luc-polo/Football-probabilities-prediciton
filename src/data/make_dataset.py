@@ -73,6 +73,9 @@ def load_data(seasons_present_in_df_info):
     if seasons_present_in_df_info == True:
         #Make out what are the seasons represented in this dataframe
         seasons_in_dataframe = dataset['date_GMT'].dt.year.unique()
+        # Remove the holdest year which is only the beginning of the first season
+        min_value = min(seasons_in_dataframe)
+        seasons_in_dataframe.remove(min_value)
         print("This dataframe contains matchs of the seasons: ", seasons_in_dataframe)
 
     return dataset
