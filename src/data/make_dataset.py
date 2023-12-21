@@ -23,14 +23,6 @@ adr8="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe
 adr9="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/france-ligue-1-matches-2022-to-2023-stats.csv"
 
 
-
-
-files = [adr1, adr2, adr3, adr4, adr5, adr6, adr7, adr8, adr9]
-
-
-
-
-
 # --------------------------------------------------------------
 # Convert CSV into DataFrame
 # --------------------------------------------------------------
@@ -80,9 +72,9 @@ def load_data(seasons_present_in_df_info):
     
     if seasons_present_in_df_info == True:
         #Make out what are the seasons represented in this dataframe
-        seasons_in_dataframe = []
-        print("This dataframe contains matchs of the seasons: ")
-    
+        seasons_in_dataframe = dataset['Date GMT'].dt.year.unique()
+        print("This dataframe contains matchs of the seasons: ", seasons_in_dataframe)
+
     return dataset
 
 # --------------------------------------------------------------
@@ -106,9 +98,9 @@ def save_dataframe_into_data_interim(dataset_0):
     #We compare if the old data_interim.pkl file that we are gonna delete and dataset_0¨are exactly the same
     old_dataframe = load_data(seasons_present_in_df_info = False)
     if old_dataframe.equals(dataset_0):
-        print("The the old data_interim.pkl file, and the new one ARE the same")
+        print("The old data_interim.pkl file, and the new one ARE the same /n")
     else:
-        print("The the old data_interim.pkl file, and the new one ARE NOT the same")
+        print("The old data_interim.pkl file, and the new one ARE NOT the same /n")
     
     
     # We delete the old file
