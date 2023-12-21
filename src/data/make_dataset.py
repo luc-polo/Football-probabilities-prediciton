@@ -64,7 +64,26 @@ def read_data(files):
 
 #dataset = read_data(files)
 
+# --------------------------------------------------------------
+# Define a function to load the dataframe saved at data/interim/data_interim.pkl
+# --------------------------------------------------------------
 
+def load_data(seasons_present_in_df_info):
+    """ 
+    This function imports/loads the DataFrame we will name dataset, from data/interim/data_interim.
+    It say what are the seasons represented in this dataframe if asked.
+    """
+    
+    daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl'
+    # Importation of dataset
+    dataset = pd.read_pickle(daframe_location_path)
+    
+    if seasons_present_in_df_info == True:
+        #Make out what are the seasons represented in this dataframe
+        seasons_in_dataframe = []
+        print("This dataframe contains matchs of the seasons: ")
+    
+    return dataset
 
 # --------------------------------------------------------------
 # Export dataset
@@ -72,7 +91,7 @@ def read_data(files):
 
 def save_dataframe_into_data_interim(dataset_0):
     """ 
-        This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location
+        This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location. It also displays wether the old and new dataframe saved into data/interim are the same.
     
     Args:
         dataset_0 (Dataframe): the dataframe we want to save
@@ -84,7 +103,15 @@ def save_dataframe_into_data_interim(dataset_0):
     # Define the absolute path of the dataset destination, which is also the path of the actual doc located there that we will delete
     dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl"
     
-    # We delete the previous file
+    #We compare if the old data_interim.pkl file that we are gonna delete and dataset_0¨are exactly the same
+    old_dataframe = load_data(seasons_present_in_df_info = False)
+    if old_dataframe.equals(dataset_0):
+        print("The the old data_interim.pkl file, and the new one ARE the same")
+    else:
+        print("The the old data_interim.pkl file, and the new one ARE NOT the same")
+    
+    
+    # We delete the old file
     try: 
         os.remove(dataset_destination_path)
         print("The old 'data_interim.pkl' file was well deleted")
@@ -101,18 +128,3 @@ def save_dataframe_into_data_interim(dataset_0):
         print(f"An error occurred while saving the new dataframe: {e}")
         print("The 'data_interim.pkl' was not saved.")
 
-# --------------------------------------------------------------
-# Define a function to import the dataframe in other modules
-# --------------------------------------------------------------
-
-def load_data():
-    """ 
-    This fucntion imports the DataFrame we will name dataset, from data/interim/data_interim.
-    It returns the dataset imported
-    """
-    
-    daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl'
-    # Importation of dataset
-    dataset = pd.read_pickle(daframe_location_path)
-    
-    return dataset
