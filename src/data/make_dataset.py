@@ -72,7 +72,7 @@ def load_data(seasons_present_in_df_info):
     
     if seasons_present_in_df_info == True:
         #Make out what are the seasons represented in this dataframe
-        seasons_in_dataframe = dataset['Date GMT'].dt.year.unique()
+        seasons_in_dataframe = dataset['Date_GMT'].dt.year.unique()
         print("This dataframe contains matchs of the seasons: ", seasons_in_dataframe)
 
     return dataset
