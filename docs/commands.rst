@@ -10,16 +10,19 @@ Updating the environment requirements
 Running the programm from the beginning
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here is the order I followed to write the code, respecting the parent/dependency relationships. That's the order to follow to run the all programm (action supposed to be done in 'main.py').
+Here is the order I followed to write the code, respecting the parent/dependency relationships. That's the order to follow to run the all programm. I've written in Italic (between '*'), the modules that are not executed in __main__.ipynb as they are imported and used inside other modules.
 
 Initialisation and data import
-| - data.constant_variables
-| - data.make_dataset
-| - useful_functions.py
+   - *data.constant_variables*
+   - data.make_dataset
+   - *useful_functions.py*
+
 Data cleaning
-| - visualization.visualize
+   - visualization.visualize
+
 Creation of new features
-| - 
+   - initialize_new_features_columns
+   - make_new_features
 
 
 Creating documentation with SPhinx
