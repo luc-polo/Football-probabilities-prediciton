@@ -40,19 +40,21 @@ def add_columns_and_complete_col_ranks(dataset_0):
 
 
                 #Colonnes RESULTAT HT et AT au terme du match de la ligne (after match)
-    dataset_0["RH"] = new_col
-    rg_RH= dataset_0.shape[1]-1
-    dataset_0["RA"] = new_col
-    rg_RA= dataset_0.shape[1]-1
+    columns = ["RH", "RA"]
+    temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
+    dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
+    ds_len = dataset_0.shape[1]
+    rg_RH, rg_RA= [ds_len - 2, ds_len - 1]
     
     dico_col_ranks.update({'rg_RH': rg_RH, 'rg_RA': rg_RA})
                 
         
-                #Colonnes status Home or Away of teams
-    dataset_0["HT_H_A_status"] = new_col
-    rg_H_HAS = dataset_0.shape[1]-1 
-    dataset_0["AT_H_A_status"] = new_col
-    rg_A_HAS = dataset_0.shape[1]-1
+                #Colonnes status Home or Away of teams    
+    columns = ["HT_H_A_status", "AT_H_A_status"]
+    temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
+    dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
+    ds_len = dataset_0.shape[1]
+    rg_H_HAS, rg_A_HAS= [ds_len - 2, ds_len - 1]
     
     dico_col_ranks.update({'rg_H_HAS': rg_H_HAS, 'rg_A_HAS': rg_A_HAS})
 
