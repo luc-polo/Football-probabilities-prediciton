@@ -29,7 +29,7 @@ adr9="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe
 def read_data(files):
     """
         Taking in entry the paths of the csv files, it outputs a DataFrame that is the concatenation of all our data.
-        During this process the function converts 'date_GMT' column do datetime dormat, delete the raws of matchs definitivly.
+        During this process the function converts 'date_GMT' column do datetime format, delete the raws of matchs definitivly.
 
     Args:
         files (list): The list of paths towards csv files that contain the data of one season for one championship. That's a list of str.
@@ -63,7 +63,7 @@ def read_data(files):
 def load_data(seasons_present_in_df_info):
     """ 
     This function imports/loads the DataFrame we will name dataset, from data/interim/data_interim.
-    It say what are the seasons represented in this dataframe if asked.
+    It says what are the seasons represented in this dataframe if asked.
     """
     
     daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl'
