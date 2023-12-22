@@ -24,9 +24,9 @@ def add_columns_and_complete_col_ranks(dataset_0):
         dataset_0 (DataFrame): DataFrame containing our data.
         
     Returns:
-        dico_col_ranks (Dictionnary): Dictionnarry containing the new columns ranks names as keys and their values as values.
-        
         dataset_0 (DataFrame): Dataframe with columns added
+    
+        dico_col_ranks (Dictionnary): Dictionnarry containing the new columns ranks names as keys and their values as values.
         
     """
     #Initialize the dictionnary
@@ -342,7 +342,7 @@ def add_columns_and_complete_col_ranks(dataset_0):
 
 def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
         """ 
-                This function executes a test to verify that the function add_columns_and_complete_col_ranks() has executed correctly on dataset_0. If the tests are successful, it returns True. It checks that:
+                This function executes a test to verify that the function add_columns_and_complete_col_ranks() was executed correctly on dataset_0. If the tests are successful, it returns True. It checks that:
                 - the dataset_0 columns number corresponds to the theoretical value inputted with 'theoritical_df_col_nb'
                 - there exists a variable in dico_col_ranks for each new column rank of dataset_0
                 - there is not twice the same rank for two different variables in dico_col_ranks
@@ -386,8 +386,18 @@ def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
         else:
                 not_twice_same_col_rk_name = False
         
+        
         if not_twice_same_col_rk_name and not_twice_same_col_rank and all_col_has_a_rk and dataframe_size_is_good:
                 return True
-        else:
+        elif not_twice_same_col_rk_name == False:
+                print('not_twice_same_col_rk_name = False')
                 return False
-
+        elif not_twice_same_col_rank == False:
+                print('not_twice_same_col_rank = False')
+                return False
+        elif all_col_has_a_rk == False:
+                print('all_col_has_a_rk = False')
+                return False
+        else :
+                print('dataframe_size_is_good')
+                return False
