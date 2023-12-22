@@ -399,5 +399,5 @@ def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
                 print('all_col_has_a_rk = False')
                 return False
         else :
-                print('dataframe_size_is_good')
+                print('dataframe_size_is_good = False')
                 return False
