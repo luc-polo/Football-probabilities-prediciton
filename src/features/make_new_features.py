@@ -9,8 +9,8 @@ import sys
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
 
 #Import my modules
-from src.data import constant_variables
-from src import useful_functions
+from data import constant_variables
+import useful_functions
 
 
 
@@ -29,7 +29,8 @@ def matchs_results(dataset_0):
 
 
 # Calculation of Home or Away status of the teams
-def hom_away_status(dataset_0):
+def home_away_status(dataset_0):
+    L,l = dataset_0.shape
     dataset_0["HT_H_A_status"] = [1 for i in range(L)]
     dataset_0["AT_H_A_status"] = [0 for i in range(L)]
     
@@ -40,7 +41,6 @@ def hom_away_status(dataset_0):
 
 #Calculation and manipulation of NB DE MATCHS et NB DE VICTOIRES (pm, sbos)
 #VARIABLES  V 
-
 
 def nb_matchs_nb_victories(dico_col_rk, dataset_0):
     nb_matchs_traites=0
