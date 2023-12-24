@@ -453,12 +453,12 @@ def HT_AT_col_merger(names_col_to_concat, names_col_concat, min_value_nb_matchs_
     
     return Df_HT_AT_features_col_concatenated
 
-def compare_2_df_excepted_1_col(col_not_to_compare,df1, df2):
+def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
     """  
     This function is used to compare two dataframes, saying if they are exactly the same, excluding one column from the comparaison. That's useful during the process of columns filling. For instance, when we've just filled a column with values, we want to make sure that other columns were not modified too. So we use this funct° to compare the dataframe before filling and the one after filling, excluding the column filled from the comparaison.
     
     Args:
-        col_not_to_compare (str): Name of the column not to include in the comparaison
+        col_not_to_compare (list): Name(s) of the column(s) not to include in the comparaison
         
         df1 (DataFrame): The first dataframe to compare
         
@@ -467,14 +467,18 @@ def compare_2_df_excepted_1_col(col_not_to_compare,df1, df2):
     Returns:
         boolean: Wether the both dataframe are the same at the exception of the col_not_to_compare.
     """
-    # Generate the list of columns to check by excluding the specified column
-    columns_to_check = [col for col in df1.columns if col != col_not_to_compare]
-
-    # Check if the DataFrames are equal except for the specified column
-    are_equal_except_column = df1[columns_to_check].equals(df2[columns_to_check])
-
+    df1_0 = df1.copy()
+    df2_0 = df2.copy()
+    
+    # Remove col_not_to_compare from our datasets
+    df1_0 = df1_0.drop(columns=col_not_to_compare)
+    df2_0 = df2_0.drop(columns=col_not_to_compare)
+    
+    # Check if the DataFrames are equal except for the specified columns
+    are_equal_except_column = df1_0.equals(df2_0)
+    
     if are_equal_except_column:
-        print(f"The DataFrames are equal except for column '{col_not_to_compare}'")
+        print(f"The DataFrames are equal except for columns {col_not_to_compare}")
         return True
     else:
         print("The DataFrames are not equal")
