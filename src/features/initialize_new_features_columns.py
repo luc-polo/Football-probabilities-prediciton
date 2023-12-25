@@ -361,6 +361,8 @@ def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
                 Boolean : True if the test is passed, False otherwise
         """
         L,l = dataset_0.shape
+        message_of_success = 'the function add_columns_and_complete_col_ranks() was executed correctly'
+
         list_theoritical_col_rk = [i for i in range(constant_variables.raw_dataframe_col_nb,l)]
 
         list_values_of_col_rk = []
@@ -390,6 +392,7 @@ def test_columns_ranks(dico_col_ranks_0, theoritical_df_col_nb, dataset_0):
         
         
         if not_twice_same_col_rk_name and not_twice_same_col_rank and all_col_has_a_rk and dataframe_size_is_good:
+                print(message_of_success)
                 return True
         elif not_twice_same_col_rk_name == False:
                 print('not_twice_same_col_rk_name = False')
