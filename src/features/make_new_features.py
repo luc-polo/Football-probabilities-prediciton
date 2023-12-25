@@ -39,7 +39,7 @@ def home_away_status(dataset_0):
 
 
 #Calculation and manipulation of NB DE MATCHS et NB DE VICTOIRES (pm, sbos)
-#VARIABLES  V 
+#VARIABLES                V 
 
 def nb_matchs_nb_victories(dico_col_rk, dataset_0):
     nb_matchs_traites=0
@@ -80,3 +80,21 @@ def nb_matchs_nb_victories(dico_col_rk, dataset_0):
     
     return dataset_0
 
+
+#Calculation and m
+#VICTORY (pm, sbos):
+#VARIABLE                  X
+#PER MATCH AVG             V 
+#PER MATCH AVG HT/AT DIFF  V
+
+def victories_per_match_AVG_and_DIFF(dataset_0):
+    #PER MATCH AVG VICTORY
+    dataset_0["HT_avg_victory_pm"]=dataset_0["HT_victories_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_victory_pm"]=dataset_0["AT_victories_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    #Vérifié Vite fait
+
+    #PER MATCH AVG HT/AT DIFF VICTORY
+    dataset_0["Diff_HT_avg_victory_pm"] = dataset_0["HT_avg_victory_pm"] - dataset_0["AT_avg_victory_pm"]
+    dataset_0["Diff_AT_avg_victory_pm"] = -dataset_0["Diff_HT_avg_victory_pm"]
+    
+    return dataset_0
