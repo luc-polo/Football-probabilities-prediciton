@@ -108,6 +108,7 @@ def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
     
     #on change le type des colonnes car cela a posé problème
     dataset_0["HT_points_ponderated_by_adversary_perf"] = dataset_0["HT_points_ponderated_by_adversary_perf"].astype('float64')
+    dataset_0["AT_points_ponderated_by_adversary_perf"] = dataset_0["AT_points_ponderated_by_adversary_perf"].astype('float64')
 
     for i in (constant_variables.seasons):
         
