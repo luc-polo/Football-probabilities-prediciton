@@ -215,3 +215,20 @@ def goal_difference(dataset_0):
     dataset_0["Diff_AT_goal_diff_pm"] = - dataset_0["Diff_HT_goal_diff_pm"]
     
     return dataset_0
+
+#SCORED GOALS / CONCEEDED GOALS (pm, sbos):
+#VARIABLE                    V
+#PER MATCH AVG               X 
+#HT/AT DIFF                  V
+def scored_conceeded_goals_ratio(dataset_0):
+    #(SCORED GOALS / CONCEEDED GOALS)
+    dataset_0["HT_avg_scored_g_conceedded_g_ratio"] = dataset_0["scored_goals_HT_PM"]/(dataset_0["conceeded_goals_HT_PM"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["scored_goals_AT_PM"]/(dataset_0["conceeded_goals_AT_PM"].apply(useful_functions.un_ou_x))
+    #OK
+    #Vérifié vitfait sur la saison 2016-2017
+
+    #(SCORED GOALS / CONCEEDED GOALS) HT/AT DIFF
+    dataset_0["Diff_HT_avg_scored_g_conceedded_g_ratio"] = dataset_0["HT_avg_scored_g_conceedded_g_ratio"] - dataset_0["AT_avg_scored_g_conceedded_g_ratio"] 
+    dataset_0["Diff_AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["AT_avg_scored_g_conceedded_g_ratio"] - dataset_0["HT_avg_scored_g_conceedded_g_ratio"]
+    
+    return dataset_0
