@@ -154,3 +154,43 @@ def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
     dataset_0["AT_Diff_points_ponderated_by_adversary_perf"] = -dataset_0["HT_Diff_points_ponderated_by_adversary_perf"]
     
     return dataset_0
+
+
+
+#Calculation and manipulation of NB OF SCORED GOALS and NB CONCEEDED GOALS (pm, sbos)
+#VARRIABLE                    V
+def scored_and_conceeded_goals(dico_col_rk, dataset_0):
+    #sert pour la boucle qui va permettre de remplir les dictionnaires "dico_goals_scored" et "dico_goals_conceeded"
+    nb_matchs_traites=0
+    rownb_last_season_match=0
+
+
+    for i in (constant_variables.seasons):
+    #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+    #On initialise les deux dico avec les noms des équipes
+        dico_goals_scored = useful_functions.init_dico_with_names_teams(equipes)
+        dico_goals_conceeded = useful_functions.init_dico_with_names_teams(equipes)
+        rownb_last_season_match+=df.shape[0]
+    #On remplit les deux dicos qui contiendront le nom des 20 (ou 18) equipes et le nombre de buts marqués et encaissés.
+    #On remplit également 4 colonnes buts marqués/encaissés par la Home et Away team (pre match).
+
+        for j in range(nb_matchs_traites,rownb_last_season_match):
+    #On remplit la colonne "buts marqués pre-match par la HT" et on met a jour le dictionnaire de buts marqués pour la HT avec le résultat du match
+            dataset_0.iloc[j,dico_col_rk['rg_SGHTPM']]=dico_goals_scored[dataset_0.iloc[j,4]]
+            dico_goals_scored[dataset_0.iloc[j,4]]+=dataset_0.iloc[j,12]
+            
+    #On remplit la colonne "buts encaissés pre-match par la HT" et on met a jour le dictionnaire de buts encaissés pour la HT avec le résultat du match
+            dataset_0.iloc[j,dico_col_rk['rg_CGHTPM']] = dico_goals_conceeded[dataset_0.iloc[j,4]]
+            dico_goals_conceeded[dataset_0.iloc[j,4]]+=dataset_0.iloc[j,13]
+            
+    #On remplit la colonne "buts marqués pre-match par la AT" et on met a jour le dictionnaire de buts marqués pour la AT avec le résultat du match
+            dataset_0.iloc[j,dico_col_rk['rg_SGATPM']] = dico_goals_scored[dataset_0.iloc[j,5]]
+            dico_goals_scored[dataset_0.iloc[j,5]]+=dataset_0.iloc[j,13]
+            
+    #On remplit la colonne "buts encaissés pre-match par la AT" et on met a jour le dictionnaire de buts encaissés pour la AT avec le résultat du match
+            dataset_0.iloc[j,dico_col_rk['rg_CGATPM']] = dico_goals_conceeded[dataset_0.iloc[j,5]]
+            dico_goals_conceeded[dataset_0.iloc[j,5]]+=dataset_0.iloc[j,12]
+            nb_matchs_traites+=df.shape[0]
+            
+    return dataset_0
