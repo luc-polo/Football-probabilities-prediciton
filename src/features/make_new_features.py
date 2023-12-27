@@ -114,6 +114,12 @@ def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
         dico_points = useful_functions.init_dico_with_names_teams(equipes)
         
         rownb_last_season_match+=df.shape[0]
+        
+        #On change le dtype des colonnes qu'on va remplir car j'ai eu des erreurs à cause de ca
+        df['HT_avg_pm_points_ponderated_by_adversary_perf'] = df['HT_avg_pm_points_ponderated_by_adversary_perf'].astype('float64')
+        df['AT_avg_pm_points_ponderated_by_adversary_perf'] = df['AT_avg_pm_points_ponderated_by_adversary_perf'].astype('float64')
+        
+
 
         for j in range(nb_matchs_traites, rownb_last_season_match):
             
