@@ -216,6 +216,7 @@ def goal_difference(dataset_0):
     
     return dataset_0
 
+
 #SCORED GOALS / CONCEEDED GOALS (pm, sbos):
 #VARIABLE                    V
 #PER MATCH AVG               X 
@@ -230,5 +231,60 @@ def scored_conceeded_goals_ratio(dataset_0):
     #(SCORED GOALS / CONCEEDED GOALS) HT/AT DIFF
     dataset_0["Diff_HT_avg_scored_g_conceedded_g_ratio"] = dataset_0["HT_avg_scored_g_conceedded_g_ratio"] - dataset_0["AT_avg_scored_g_conceedded_g_ratio"] 
     dataset_0["Diff_AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["AT_avg_scored_g_conceedded_g_ratio"] - dataset_0["HT_avg_scored_g_conceedded_g_ratio"]
+    
+    return dataset_0
+
+
+#POINTS NB (pm, sbos):
+#VARIABLE                    V
+#PER MATCH AVG               V
+#PER MATCH AVG HT/AT DIFF    V
+def points_nb( dico_col_rk,dataset_0):
+    #sert pour la boucle qui va permettre de remplir le dictionnaire "points_nb_dico"
+    nb_matchs_trates=0
+    rownb_last_season_match=0
+    
+    for i in (constant_variables.seasons):
+        points_nb_dico={}
+
+        #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison 
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+
+        #On initialise le dico avec les noms des équipes
+        points_nb_dico = useful_functions.init_dico_with_names_teams(equipes)
+            
+        rownb_last_season_match+=df.shape[0]
+        
+    #On remplit le dico qui contient le nom des 20 (ou 18) equipes et le nombre de points prematch des équipes.
+    #On remplit également les 2 colonnes nb points pre-match de la Home et Away team (pre match).
+        
+        for j in range(nb_matchs_trates,rownb_last_season_match):
+            
+    #On remplit les colonnes "Prematch_HT_PN", "Prematch_AT_PN" et on met a jour le dictionnaire
+            dataset_0.iloc[j,dico_col_rk['rg_PHTPN']]=points_nb_dico[dataset_0.iloc[j,4]]
+            dataset_0.iloc[j,dico_col_rk['rg_PATPN']] = points_nb_dico[dataset_0.iloc[j,5]]
+            if dataset_0.iloc[j, dico_col_rk['rg_RH']] == 0 and dataset_0.iloc[j,dico_col_rk['rg_RA']] == 0:
+                points_nb_dico[dataset_0.iloc[j,4]]+=1
+                points_nb_dico[dataset_0.iloc[j,5]]+=1
+            else:
+                points_nb_dico[dataset_0.iloc[j,4]]+= 3*dataset_0.iloc[j,dico_col_rk['rg_RH']]
+                points_nb_dico[dataset_0.iloc[j,5]]+= 3*dataset_0.iloc[j,dico_col_rk['rg_RA']]
+
+        
+        nb_matchs_trates+=df.shape[0]
+
+    #Le programme ci-dessus a été vérifié pour la saison 2016-2017. Les points pre-match sont correctement calculés jusqu'à la dèrnière journée de championnat. La seule anomalie relevée est avec un match (Bastia-Lyon) qui a été suspendu et gagné sur tapis vert par Lyon. Or dans le fichier Excel il est marqué "complete" avec comme resultat: 0-0. L'algo a donc rajouté un point a chaque team. Il faut donc etre vigilant avec les matchs annulés et perdus sur tapis vert
+
+    #OK (SIMPLEMENT DISCUSSION POSSIBLE SUR LE CALCUL DES POINTS ISSUS DES MATCHS PERDUS SUR TAPIS VERT)
+
+    #PER MATCH AVG POINTS NB
+    dataset_0["HT_avg_collected_points_pm"]=dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_collected_points_pm"]=dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    #OK
+    #Vérifié vitfait
+
+    #HT/AT DIFF PER MATCH AVG POINTS NB
+    dataset_0["Diff_pnt_HT_AT_ratio"] = (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["Diff_pnt_AT_HT_ratio"] = (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
