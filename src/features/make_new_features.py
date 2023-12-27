@@ -213,3 +213,5 @@ def goal_difference(dataset_0):
     #PER MATCH AVG HT/AT DIFF GOAL DIFF:
     dataset_0["Diff_HT_goal_diff_pm"] = dataset_0["HT_avg_goal_diff_pm"] - dataset_0["AT_avg_goal_diff_pm"]
     dataset_0["Diff_AT_goal_diff_pm"] = - dataset_0["Diff_HT_goal_diff_pm"]
+    
+    return dataset_0
