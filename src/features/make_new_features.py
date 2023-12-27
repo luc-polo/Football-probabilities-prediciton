@@ -115,6 +115,7 @@ def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
         
         rownb_last_season_match+=df.shape[0]
         
+        print(dataset_0['HT_points_ponderated_by_adversary_perf'])
         #On change le dtype des colonnes qu'on va remplir car j'ai eu des erreurs à cause de ca
         dataset_0['HT_points_ponderated_by_adversary_perf'] = dataset_0['HT_points_ponderated_by_adversary_perf'].astype('float64')
         dataset_0['AT_points_ponderated_by_adversary_perf'] = dataset_0['AT_points_ponderated_by_adversary_perf'].astype('float64')
