@@ -194,3 +194,22 @@ def scored_and_conceeded_goals(dico_col_rk, dataset_0):
             nb_matchs_traites+=df.shape[0]
             
     return dataset_0
+
+
+#GOAL DIFFERENCE (pm, sbos): 
+#VARIABLE                     V
+#PER MATCH AVG                V
+#PER MATCH AVG HT/AT DIFF     V
+def goal_difference(dataset_0):
+    #GOAL DIFFERENCE
+    dataset_0["goal_diff_HT_PM"] = dataset_0["scored_goals_HT_PM"] - dataset_0["conceeded_goals_HT_PM"]
+    dataset_0["goal_diff_AT_PM"] = dataset_0["scored_goals_AT_PM"] - dataset_0["conceeded_goals_AT_PM"]
+    #OK (12/09/23)
+
+    #PER MATCH AVG GOAL DIFF
+    dataset_0["HT_avg_goal_diff_pm"] = dataset_0["goal_diff_HT_PM"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_goal_diff_pm"] = dataset_0["goal_diff_AT_PM"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+
+    #PER MATCH AVG HT/AT DIFF GOAL DIFF:
+    dataset_0["Diff_HT_goal_diff_pm"] = dataset_0["HT_avg_goal_diff_pm"] - dataset_0["AT_avg_goal_diff_pm"]
+    dataset_0["Diff_AT_goal_diff_pm"] = - dataset_0["Diff_HT_goal_diff_pm"]
