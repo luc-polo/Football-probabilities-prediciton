@@ -105,6 +105,9 @@ def victories_per_match_AVG_and_DIFF(dataset_0):
 def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
     nb_matchs_traites=0
     rownb_last_season_match=0
+    
+    #on change le type des colonnes car cela a posé problème
+    dataset_0["HT_points_ponderated_by_adversary_perf"] = dataset_0["HT_points_ponderated_by_adversary_perf"].astype('float64')
 
     for i in (constant_variables.seasons):
         
