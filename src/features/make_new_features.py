@@ -4,6 +4,8 @@ This module is made to create the new features we want to use for our model, or 
 
 import numpy as np
 import sys
+from dateutil.relativedelta import relativedelta
+
 
 # modify the sys.path list to include the path to the data directory that contains the modules that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
@@ -286,5 +288,97 @@ def points_nb( dico_col_rk,dataset_0):
     #HT/AT DIFF PER MATCH AVG POINTS NB
     dataset_0["Diff_pnt_HT_AT_ratio"] = (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     dataset_0["Diff_pnt_AT_HT_ratio"] = (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0
+
+
+
+
+#RANKING (pm, sbos) :
+#VARIABLE                    V
+#PER MATCH AVG               X
+#HT/AT DIFF                  V
+def ranking(dico_col_rk, dataset_0):
+    #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prend pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
+    L,largeur = dataset_0.shape
+
+
+    for i in (constant_variables.seasons):
+
+        start_date = i - relativedelta(years=1)
+        end_date = i
+        
+        name_teams_season, d = useful_functions.noms_teams_season_and_df(i, dataset_0)
+        
+        for w in range(1,constant_variables.nb_championship_weeks + 1):
+            pnt_list=[]
+            ranking=[]
+            goal_diff_list=[]
+            #On sélectionne les indices des lignes qui ont Game Week = w et qui ont une date qui est compris entre start_date and end_date.
+            Indices=np.where((dataset_0["Game Week"]==w) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date))[0]
+            
+            if Indices.any():
+                #On supprime les matchs qui ont été reportés:
+                Indices = [y for y in Indices if y <= (Indices[0] + ((constant_variables.nb_teams / 2) - 1))]
+
+                #On fait une première boucle qui va permettre de classer les équipes avant le début de la w ème journée:
+                for y in Indices:
+
+                    #On classe les equipes dans les 3 listes (ranking, pnt_list , goal_diff_list) qui vont constituer le classement de la w ème journée:
+                    #HOME TEAM
+                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "home", dataset_0)
+
+                    #AWAY TEAM
+                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "away", dataset_0)
+                    
+                    
+                #Si il manque une ou plusieurs équipes au classement on va chercher leur prochain match pour avoir leurs stats pre-match et les incorporer au classement
+                useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dataset_0)
+                
+                #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
+                useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dataset_0)            
+                
+                
+                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,
+                #sont des matchs reportés, alors on va classer ces equipes dans le classement réalisé précedemment pour la journée w, en ayant 
+                #préalablement retiré les equipes en question du classement
+                nb_line_last_match_of_week = min(Indices)
+
+                if nb_line_last_match_of_week != 0 :
+                    l= nb_line_last_match_of_week - 1
+
+                    while dataset_0.at[l, "Game Week"] < (w-1) and (start_date < dataset_0.at[l,"date_GMT"]) and (dataset_0.at[l,"date_GMT"] <= end_date) and (dataset_0.iloc[l,dico_col_rk['rg_HTWR']] == 0):
+                        
+                        """print(l, "On ratrappe la journée:",dataset.at[l, "Game Week"], dataset.iloc[l, 4],"-",dataset.iloc[l, 5])"""
+                        
+                        #On supprime les equipes du match reporté en question, des classements de la w eme journee
+                        useful_functions.delete_postponned_match_teams_from_ranking(ranking, pnt_list, goal_diff_list, l, dataset_0)
+
+                        #On classe les equipes du match dans les classements de la w eme journee
+                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "home", dataset_0)
+                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "away", dataset_0)
+                        
+                        #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
+                        dataset_0.iloc[l, dico_col_rk['rg_HTWR']]= ranking.index(dataset_0.iloc[l,4]) + 1
+                        dataset_0.iloc[l, dico_col_rk['rg_ATWR']]= ranking.index(dataset_0.iloc[l,5]) + 1
+                        
+                        #Pour Tester:
+                        """print("le ranking avant le match rattrapé est:")
+                        for b in range(len(ranking)):
+                            print(ranking[b],":", pnt_list[b])
+                        print("rank ht:",dataset.iloc[l, rg_HTWR])
+                        print("rank at:",dataset.iloc[l, rg_ATWR])
+                        print("\n")"""   
+                        
+                        l-=1
+            
+        
+        nb_matchs_trates+=dataset_0.shape[0]
+        
+    #Le classement est OK et verifié  (25/09/23)
+
+    #On calcule la  différence HT/AT pour le ranking et on la place dans dataset
+    dataset_0["Diff_HT_ranking"]  = -(dataset_0["HT_week_ranking"] - dataset_0["AT_week_ranking"])
+    dataset_0["Diff_AT_ranking"]  = -(dataset_0["AT_week_ranking"] - dataset_0["HT_week_ranking"])
     
     return dataset_0
