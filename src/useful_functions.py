@@ -8,7 +8,7 @@ import pandas as pd
 
 #Import our modules
 if __name__ == '__main__':
-    from data.constant_variables import *
+    from data import constant_variables
 
 def un_ou_x(x):
     """ 
@@ -214,7 +214,7 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, da
     Returns:
         None
     """
-    while len(ranking_0)< nb_teams:
+    while len(ranking_0)< constant_variables.nb_teams:
         while dataset_0.iloc[y_0,4] in ranking_0 and dataset_0.iloc[y_0,5] in ranking_0:
             y_0+=1
         if dataset_0.iloc[y_0,4] not in ranking_0:
