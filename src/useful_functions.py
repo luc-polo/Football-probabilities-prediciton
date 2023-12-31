@@ -134,9 +134,9 @@ def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, dico
         rg_gdPM =  dico_col_rk['rg_gdATPM']
         name_team = dataset_0.iloc[y_0,5]
                        
-    k=dataset_0.iloc[y_0, dico_col_rk['rg_PPN']]
+    k=dataset_0.iloc[y_0, rg_PPN]
     #gd= goal diff de la team qu'on classe
-    gd=dataset_0.iloc[y_0, dico_col_rk['rg_gdPM']]
+    gd=dataset_0.iloc[y_0, rg_gdPM]
     #On classe la team de la y_0 ème ligne pour la w ème journée:
     rank = find_rank(ranking_0, pnt_list_0, goal_diff_list_0, k, gd)
     
