@@ -336,7 +336,7 @@ def ranking(dico_col_rk, dataset_0):
                 useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dataset_0)
                 
                 #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
-                useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dataset_0)            
+                useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dico_col_rk, dataset_0)            
                 
                 
                 #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,

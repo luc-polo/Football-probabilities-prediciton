@@ -255,7 +255,7 @@ def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goa
             classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "away", x_last_matches)
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT:
-def fill_dataset_with_teams_rank(Indices_0, ranking_0, dataset_0):
+def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
     """ 
         Fill, for each match of the w th Game Week, the dataset with the prematch ranks of teams (input with ranking_0). The prematch ranks are input into the function through a ranking list (containing teams names oredered following their rank).
     
@@ -271,8 +271,8 @@ def fill_dataset_with_teams_rank(Indices_0, ranking_0, dataset_0):
     """
     
     for y in Indices_0:  
-                dataset_0.iloc[y, rg_HTWR]= ranking_0.index(dataset_0.iloc[y,4]) + 1
-                dataset_0.iloc[y, rg_ATWR]= ranking_0.index(dataset_0.iloc[y,5]) + 1 
+                dataset_0.iloc[y, dico_col_rk['rg_HTWR']]= ranking_0.index(dataset_0.iloc[y,4]) + 1
+                dataset_0.iloc[y, dico_col_rk['rg_ATWR']]= ranking_0.index(dataset_0.iloc[y,5]) + 1 
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch sur les X last matchs des HT et AT:   
 def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_matches, dataset_0):
