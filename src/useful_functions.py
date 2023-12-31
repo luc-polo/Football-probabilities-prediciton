@@ -480,5 +480,10 @@ def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
         print(f"The DataFrames are equal except for columns {col_not_to_compare}")
         return True
     else:
+        differing_columns = [col for col in df1_0.columns if not df1_0[col].equals(df2_0[col])]
+        print("The DataFrames are not equal")
+        print(f"Differing columns: {differing_columns}")
+        return False
+        
         print("The DataFrames are not equal")
         return False
