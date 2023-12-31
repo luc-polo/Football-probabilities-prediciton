@@ -326,10 +326,10 @@ def ranking(dico_col_rk, dataset_0):
 
                     #On classe les equipes dans les 3 listes (ranking, pnt_list , goal_diff_list) qui vont constituer le classement de la w ème journée:
                     #HOME TEAM
-                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "home", dataset_0)
+                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "home", dico_col_rk, dataset_0)
 
                     #AWAY TEAM
-                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "away", dataset_0)
+                    useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "away", dico_col_rk, dataset_0)
                     
                     
                 #Si il manque une ou plusieurs équipes au classement on va chercher leur prochain match pour avoir leurs stats pre-match et les incorporer au classement
@@ -355,8 +355,8 @@ def ranking(dico_col_rk, dataset_0):
                         useful_functions.delete_postponned_match_teams_from_ranking(ranking, pnt_list, goal_diff_list, l, dataset_0)
 
                         #On classe les equipes du match dans les classements de la w eme journee
-                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "home", dataset_0)
-                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "away", dataset_0)
+                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "home", dico_col_rk, dataset_0)
+                        useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "away", dico_col_rk, dataset_0)
                         
                         #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
                         dataset_0.iloc[l, dico_col_rk['rg_HTWR']]= ranking.index(dataset_0.iloc[l,4]) + 1

@@ -103,7 +103,7 @@ def insert_func(team_0, ranking_list_0, pnt_list_0, gd_list_0, team_points_0, te
     pnt_list_0.insert(team_rank_0, team_points_0)
     gd_list_0.insert(team_rank_0, team_gd_0)
 
-def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, dataset_0):
+def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, dico_col_rk, dataset_0):
     """ 
             Given a line number and a Home or Away status, this function ranks a team (among the other teams, prematch) based on its statistics. Then it positions the team stats and its name at the appropriate rank in ranking, pnt_list , goal_diff_list. 
         
@@ -126,17 +126,17 @@ def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, data
     
     #On définit les numéros des colonnes qu'on va utiliser en fonction de si on traite la team qui joue à dom ou à l'ext
     if H_A_T_0 == "home":
-        rg_PPN=rg_PHTPN
-        rg_gdPM =  rg_gdHTPM
+        rg_PPN=dico_col_rk['rg_PHTPN']
+        rg_gdPM =  dico_col_rk['rg_gdHTPM']
         name_team = dataset_0.iloc[y_0,4]
     else:
-        rg_PPN=rg_PATPN
-        rg_gdPM =  rg_gdATPM
+        rg_PPN= dico_col_rk['rg_PATPN']
+        rg_gdPM =  dico_col_rk['rg_gdATPM']
         name_team = dataset_0.iloc[y_0,5]
                        
-    k=dataset_0.iloc[y_0,rg_PPN]
+    k=dataset_0.iloc[y_0, dico_col_rk['rg_PPN']]
     #gd= goal diff de la team qu'on classe
-    gd=dataset_0.iloc[y_0, rg_gdPM]
+    gd=dataset_0.iloc[y_0, dico_col_rk['rg_gdPM']]
     #On classe la team de la y_0 ème ligne pour la w ème journée:
     rank = find_rank(ranking_0, pnt_list_0, goal_diff_list_0, k, gd)
     
