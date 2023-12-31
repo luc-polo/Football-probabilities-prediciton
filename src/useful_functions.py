@@ -195,7 +195,7 @@ def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list
     #On place l'équipe considérée à son rang précédemment calculé dans nos trois listes     
     insert_func(name_team, ranking_0, pnt_list_0, goal_diff_list_0, k, gd, rank)
 
-def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, dataset_0):
+def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, dico_col_rk, dataset_0):
     """ 
         Add the teams missing in a Game Week ranking (because of postponed matches). The function, starting from one line of the Game Week concerned, iterates through the dataset by descending line numbers, to find the last matchs of teams missing, to add the teams in the ranking.
     
@@ -217,10 +217,10 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, da
         while dataset_0.iloc[y_0,4] in ranking_0 and dataset_0.iloc[y_0,5] in ranking_0:
             y_0+=1
         if dataset_0.iloc[y_0,4] not in ranking_0:
-            classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "home")
+            classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "home", dico_col_rk, dataset_0)
 
         if dataset_0.iloc[y_0,5] not in ranking_0:
-            classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "away")
+            classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "away", dico_col_rk, dataset_0)
 
 #Fonction qui permet de rajouter les equipes manquantes (pour cause de match reporté) aux classements sur les X derniers matchs:
 def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches, dataset_0):
