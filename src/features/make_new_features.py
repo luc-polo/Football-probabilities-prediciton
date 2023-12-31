@@ -371,9 +371,6 @@ def ranking(dico_col_rk, dataset_0):
                         print("\n")"""   
                         
                         l-=1
-            
-        
-        nb_matchs_trates+=dataset_0.shape[0]
         
     #Le classement est OK et verifié  (25/09/23)
 
