@@ -413,8 +413,8 @@ def annnual_budget(dataset_0):
         
         #Pour chaque equipe on remplit sur chaque ligne ou elle apparait son budget (ce pour les match à dom et à l'ext)
         for e in budgets:
-            dataset_0.loc[(dataset_0["home_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of HT"]] = budgets[e]
-            dataset_0.loc[(dataset_0["away_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of AT"]] = budgets[e]
+            dataset_0.loc[(dataset_0["home_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of HT"]] = float(budgets[e])
+            dataset_0.loc[(dataset_0["away_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of AT"]] = float(budgets[e])
                 
 
     #TOUT EST OK (12/09/23)
@@ -422,6 +422,6 @@ def annnual_budget(dataset_0):
     #HT/AT DIFF 
     #On la place dans dataset
     dataset_0["Diff_HT_annual_budget"] = dataset_0["annual budget of HT"] - dataset_0["annual budget of AT"]
-    dataset_0["Diff_AT_annual_budget"] = dataset_0["annual budget of AT"]-  dataset_0["annual budget of HT"]
+    dataset_0["Diff_AT_annual_budget"] = dataset_0["annual budget of AT"] - dataset_0["annual budget of HT"]
     
     return dataset_0
