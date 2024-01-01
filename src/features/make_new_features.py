@@ -379,3 +379,49 @@ def ranking(dico_col_rk, dataset_0):
     dataset_0["Diff_AT_ranking"]  = -(dataset_0["AT_week_ranking"] - dataset_0["HT_week_ranking"])
     
     return dataset_0
+
+#ANNUAL BUDGET:
+#VARIABLE                    V
+#PER MATCH AVG               X
+#HT/AT DIFF                  V
+def annnual_budget(dataset_0):
+    
+    #Dicos qui contiennent les équipes à chaque saison et leurs budgets
+    budgets_2015={"PSG": 480, 'Toulouse' : 32, 'Olympique Marseille': 105, 'Rennes': 40, 'Nice': 40, 'Olympique Lyonnais':115, 'Bastia':22, 'Lille':65, 'Reims': 30, 'Lorient': 36, 'Caen':26, 'Nantes':32, 'Troyes':23, 'Thonon Evian FC':28, 'Montpellier':40, 'Saint-Étienne':50, 'Bordeaux':55, 'Guingamp':25, 'Monaco':160, 'Lens':38 }
+    budgets_2016={"PSG": 490, 'Toulouse' : 30, 'Olympique Marseille': 120, 'Rennes': 43, 'Nice': 40, 'Olympique Lyonnais':170, 'Bastia':25, 'Lille':75, 'Reims': 31, 'Lorient': 30, 'Caen':26, 'Nantes':38, 'Troyes':23, 'Angers SCO':24, 'Montpellier':42, 'Saint-Étienne':68, 'Bordeaux':55, 'Guingamp':25, 'Monaco':140, 'Gazélec Ajaccio':25 }
+    budgets_2017={"PSG": 503, 'Toulouse' : 37, 'Olympique Marseille': 100, 'Rennes': 50, 'Nice': 45, 'Olympique Lyonnais':235, 'Nancy':30, 'Lille':75, 'Metz': 30, 'Lorient': 36, 'Caen':29, 'Nantes':40, 'Dijon':26, 'Angers SCO':29, 'Montpellier':42, 'Saint-Étienne':70, 'Bordeaux':60, 'Guingamp':26, 'Monaco':145, 'Bastia':28 }
+    budgets_2018={"PSG": 540, 'Toulouse' : 34, 'Olympique Marseille': 120, 'Rennes': 50, 'Nice': 45, 'Olympique Lyonnais':240, 'Amiens SC':25, 'Lille':90, 'Metz': 33, 'Strasbourg': 30, 'Caen':32, 'Nantes':45, 'Dijon':32, 'Angers SCO':28, 'Montpellier':43.5, 'Saint-Étienne':68, 'Bordeaux':65, 'Guingamp':26, 'Monaco':170, 'Troyes': 26 }
+    budgets_2019={"PSG": 500, "Olympique Lyonnais": 285, "Monaco": 215, "Olympique Marseille": 150, "Lille": 90, "Saint-Étienne": 74, "Bordeaux": 70, "Rennes": 68, "Nantes": 60, "Nice": 50, "Montpellier": 41.4, "Reims": 40, "Strasbourg": 37.5, "Amiens SC": 36, "Dijon": 35, "Toulouse": 35, "Caen": 34, "Angers SCO": 30, "Guingamp": 30, "Nîmes": 20} 
+    budgets_2020={"PSG": 637, "Olympique Lyonnais": 310, "Monaco": 220, "Olympique Marseille": 110, "Lille": 120, "Saint-Étienne": 100, "Bordeaux": 70, "Rennes": 65, "Nantes": 70, "Nice": 50, "Montpellier": 40, "Reims": 45, "Strasbourg": 43, "Amiens SC": 30, "Dijon": 38, "Toulouse": 35, "Nîmes": 27, "Angers SCO": 32, "Brest": 30, "Metz": 40} 
+    budgets_2021={"PSG": 640, "Olympique Lyonnais": 285, "Monaco": 215, "Olympique Marseille": 140, "Lille": 147, "Saint-Étienne": 95, "Bordeaux": 65, "Rennes": 105, "Nantes": 75, "Nice": 75, "Montpellier": 54.5, "Reims": 70, "Strasbourg": 50, "Lens": 46, "Dijon": 50, "Lorient": 45, "Nîmes": 40, "Angers SCO": 45, "Brest": 35, "Metz": 50} 
+    budgets_2022={"PSG": 500, "Olympique Lyonnais": 250, "Monaco": 215, "Olympique Marseille": 250, "Lille": 147, "Saint-Étienne": 70, "Bordeaux": 112, "Rennes": 110, "Nantes": 65, "Nice": 90, "Montpellier": 44, "Reims": 60, "Strasbourg": 45, "Lens": 43, "Troyes": 30, "Lorient": 50, "Clermont": 20, "Angers SCO": 41, "Brest": 32, "Metz": 50}
+    budgets_2023={"PSG": 700, "Olympique Lyonnais": 250, "Monaco": 240, "Olympique Marseille": 250, "Lille": 100, "Auxerre": 32, "Ajaccio": 22, "Rennes": 90, "Nantes": 75, "Nice": 100, "Montpellier": 52, "Reims": 70, "Strasbourg": 45, "Lens": 62, "Troyes": 45, "Lorient": 50, "Clermont": 25, "Angers SCO": 40, "Brest": 48, "Toulouse": 40}
+
+    dicos_budgets=[budgets_2015, budgets_2016, budgets_2017, budgets_2018, budgets_2019, budgets_2020, budgets_2021, budgets_2022, budgets_2023]
+
+    j=0
+    
+    for i in (constant_variables.seasons):
+        
+        #Permet de traiter uniquement les lignes correspondant à une saison:
+        start_date = i - relativedelta(years=1)
+        end_date = i
+        
+        #On sélectionne le dictionnaire budget associé à la saison traitée
+        budgets=dicos_budgets[j]
+        j+=1
+        
+        #Pour chaque equipe on remplit sur chaque ligne ou elle apparait son budget (ce pour les match à dom et à l'ext)
+        for e in budgets:
+            dataset_0.loc[(dataset_0["home_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of HT"]] = budgets[e]
+            dataset_0.loc[(dataset_0["away_team_name"]== e) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date),["annual budget of AT"]] = budgets[e]
+                
+
+    #TOUT EST OK (12/09/23)
+
+    #HT/AT DIFF 
+    #On la place dans dataset
+    dataset_0["Diff_HT_annual_budget"] = dataset_0["annual budget of HT"] - dataset_0["annual budget of AT"]
+    dataset_0["Diff_AT_annual_budget"] = dataset_0["annual budget of AT"]-  dataset_0["annual budget of HT"]
+    
+    return dataset_0
