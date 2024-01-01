@@ -387,7 +387,7 @@ def ranking(dico_col_rk, dataset_0):
 def annnual_budget(dataset_0):
     
     #Dicos qui contiennent les équipes à chaque saison et leurs budgets
-    budgets_2015={"PSG": 480, 'Toulouse' : 32, 'Olympique Marseille': 105, 'Rennes': 40, 'Nice': 40, 'Olympique Lyonnais':115, 'Bastia':22, 'Lille':65, 'Reims': 30, 'Lorient': 36, 'Caen':26, 'Nantes':32, 'Troyes':23, 'Thonon Evian FC':28, 'Montpellier':40, 'Saint-Étienne':50, 'Bordeaux':55, 'Guingamp':25, 'Monaco':160, 'Lens':38 }
+    budgets_2015={"PSG": 480, 'Toulouse' : 32, 'Olympique Marseille': 105, 'Rennes': 40, 'Nice': 40, 'Olympique Lyonnais':115, 'Bastia':22, 'Lille':65, 'Reims': 30, 'Lorient': 36, 'Caen':26, 'Nantes':32, 'Metz':28, 'Thonon Evian FC':28, 'Montpellier':40, 'Saint-Étienne':50, 'Bordeaux':55, 'Guingamp':25, 'Monaco':160, 'Lens':38 }
     budgets_2016={"PSG": 490, 'Toulouse' : 30, 'Olympique Marseille': 120, 'Rennes': 43, 'Nice': 40, 'Olympique Lyonnais':170, 'Bastia':25, 'Lille':75, 'Reims': 31, 'Lorient': 30, 'Caen':26, 'Nantes':38, 'Troyes':23, 'Angers SCO':24, 'Montpellier':42, 'Saint-Étienne':68, 'Bordeaux':55, 'Guingamp':25, 'Monaco':140, 'Gazélec Ajaccio':25 }
     budgets_2017={"PSG": 503, 'Toulouse' : 37, 'Olympique Marseille': 100, 'Rennes': 50, 'Nice': 45, 'Olympique Lyonnais':235, 'Nancy':30, 'Lille':75, 'Metz': 30, 'Lorient': 36, 'Caen':29, 'Nantes':40, 'Dijon':26, 'Angers SCO':29, 'Montpellier':42, 'Saint-Étienne':70, 'Bordeaux':60, 'Guingamp':26, 'Monaco':145, 'Bastia':28 }
     budgets_2018={"PSG": 540, 'Toulouse' : 34, 'Olympique Marseille': 120, 'Rennes': 50, 'Nice': 45, 'Olympique Lyonnais':240, 'Amiens SC':25, 'Lille':90, 'Metz': 33, 'Strasbourg': 30, 'Caen':32, 'Nantes':45, 'Dijon':32, 'Angers SCO':28, 'Montpellier':43.5, 'Saint-Étienne':68, 'Bordeaux':65, 'Guingamp':26, 'Monaco':170, 'Troyes': 26 }
@@ -400,6 +400,10 @@ def annnual_budget(dataset_0):
     dicos_budgets=[budgets_2015, budgets_2016, budgets_2017, budgets_2018, budgets_2019, budgets_2020, budgets_2021, budgets_2022, budgets_2023]
 
     j=0
+    
+    # Convertir les colonnes en float64 avant d'assigner des valeurs, car j'ai eu des prblms
+    dataset_0["annual budget of HT"] = dataset_0["annual budget of HT"].astype('float64')
+    dataset_0["annual budget of AT"] = dataset_0["annual budget of AT"].astype('float64')
     
     for i in (constant_variables.seasons):
         
