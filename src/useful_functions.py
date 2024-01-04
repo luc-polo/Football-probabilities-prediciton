@@ -452,6 +452,7 @@ def HT_AT_col_merger(names_col_to_concat, names_col_concat, min_value_nb_matchs_
     
     return Df_HT_AT_features_col_concatenated
 
+#To know if we haven't altered the rest of the dataframe when filling some specific columns
 def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
     """  
     This function is used to compare two dataframes, saying if they are exactly the same, excluding one column from the comparaison. That's useful during the process of columns filling. For instance, when we've just filled a column with values, we want to make sure that other columns were not modified too. So we use this funct° to compare the dataframe before filling and the one after filling, excluding the column filled from the comparaison.
@@ -484,6 +485,11 @@ def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
         print("The DataFrames are not equal")
         print(f"Differing columns: {differing_columns}")
         return False
+
+
+#To know if a column is fully filled (if there is no values of '0' or 'NaN')
+def is_there_0_values(value_to_identify, col_list, dataset_0):
+    for col in col_list:
+        if (dataset_0[col] == value_to_identify).sum() != 0:
+            return False
         
-        print("The DataFrames are not equal")
-        return False
