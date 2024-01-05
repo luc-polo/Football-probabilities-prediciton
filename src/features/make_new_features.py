@@ -508,3 +508,76 @@ def points_nb_on_x_last_matchs(dico_col_rk, dataset_0):
     dataset_0["AT_Diff_Points_1lm"] = -dataset_0["HT_Diff_Points_1lm"]
     
     return dataset_0
+
+#GOAL DIFF ON 1,3,5 LAST MATCHS
+#VARIABLE                    V
+#PER MATCH AVG               X
+#HT/AT DIFF                  V
+def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
+    nb_matchs_trates=0
+    rownb_last_match_of_season=0
+
+    for i in (constant_variables.seasons):
+        
+        #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+        
+        rownb_last_match_of_season+=df.shape[0]
+        
+        
+        #On initialise les dataframes ("DF_gd_5lm", "DF_gd_3lm", "DF_gd_1lm") avec les noms des équipes. IL contiendra la goal diff sur 
+        #les 1,3,5 derniers matchs par chaque équipe du championnat. Chaque colonne porte le nom d'une équipe.
+        #La première ligne contient la goall diff sur le dernier match joué par les équipes, la deuxième ligne le
+        #nb de points pris lors de l'avant derniern match joué...
+        
+        DF_gd_5lm = pd.DataFrame({x:[0 for i in range(5)] for x in equipes})
+        DF_gd_3lm = pd.DataFrame({x:[0 for i in range(3)] for x in equipes})
+        DF_gd_1lm = pd.DataFrame({x:[0] for x in equipes})
+
+        #On met a jour DF_gd_xlm a chaque match de la saison et on remplit les colonnes GoalDiff_HT_xlm_PM et GoalDiff_AT_xlm_PM
+        for j in range(nb_matchs_trates,rownb_last_match_of_season):
+
+            nom_HT=dataset_0.iloc[j,4]
+            nom_AT=dataset_0.iloc[j,5]
+            
+            #On remplit les colonnes GoalDiff_HT_xlm_PM et GoalDiff_AT_xlm_PM :
+            dataset_0.iloc[j,dico_col_rk['rg_GDHT5LMPM']] = DF_gd_5lm[nom_HT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_GDAT5LMPM']] = DF_gd_5lm[nom_AT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_GDHT3LMPM']] = DF_gd_3lm[nom_HT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_GDAT3LMPM']] = DF_gd_3lm[nom_AT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_GDHT1LMPM']] = DF_gd_1lm[nom_HT]
+            dataset_0.iloc[j,dico_col_rk['rg_GDAT1LMPM']] = DF_gd_1lm[nom_AT]
+            
+            
+            #On met à jour DF_gd_xlm
+            #On commence par faire descendre d'une ligne les colonnes correspondantes à la HT et AT
+            for k in range(4,0,-1):
+                DF_gd_5lm.at[k,nom_HT] = DF_gd_5lm.at[k-1,nom_HT]
+                DF_gd_5lm.at[k,nom_AT] = DF_gd_5lm.at[k-1,nom_AT]
+            for k in range(2,0,-1):
+                DF_gd_3lm.at[k,nom_HT] = DF_gd_3lm.at[k-1,nom_HT]
+                DF_gd_3lm.at[k,nom_AT] = DF_gd_3lm.at[k-1,nom_AT]
+                
+            #Puis on remplit la première ligne du dataframe (ligne qui correspond à la Goal Diff du dernier match joué, c-a-d celui de la ligne j considérée) pour la HT et AT
+            DF_gd_5lm.at[0,nom_HT] = dataset_0.iloc[j,12] - dataset_0.iloc[j,13]
+            DF_gd_5lm.at[0,nom_AT] = dataset_0.iloc[j,13] - dataset_0.iloc[j,12]
+            DF_gd_3lm.at[0,nom_HT] = dataset_0.iloc[j,12] - dataset_0.iloc[j,13]
+            DF_gd_3lm.at[0,nom_AT] = dataset_0.iloc[j,13] - dataset_0.iloc[j,12]
+            DF_gd_1lm.at[0,nom_HT] = dataset_0.iloc[j,12] - dataset_0.iloc[j,13]
+            DF_gd_1lm.at[0,nom_AT] = dataset_0.iloc[j,13] - dataset_0.iloc[j,12]
+        
+        nb_matchs_trates+=df.shape[0]
+
+
+    #Fini, vérifié
+
+
+    #HT/AT DIFF
+    dataset_0["HT_Diff_Goal_Diff_5lm"] = dataset_0["GoalDiff_HT_5lm_PM"] - dataset_0["GoalDiff_AT_5lm_PM"]
+    dataset_0["AT_Diff_Goal_Diff_5lm"] = -dataset_0["HT_Diff_Goal_Diff_5lm"]
+    dataset_0["HT_Diff_Goal_Diff_3lm"] = dataset_0["GoalDiff_HT_3lm_PM"] - dataset_0["GoalDiff_AT_3lm_PM"]
+    dataset_0["AT_Diff_Goal_Diff_3lm"] = -dataset_0["HT_Diff_Goal_Diff_3lm"]
+    dataset_0["HT_Diff_Goal_Diff_1lm"] = dataset_0["GoalDiff_HT_1lm_PM"] - dataset_0["GoalDiff_AT_1lm_PM"]
+    dataset_0["AT_Diff_Goal_Diff_1lm"] = -dataset_0["HT_Diff_Goal_Diff_1lm"]
+    
+    return dataset_0
