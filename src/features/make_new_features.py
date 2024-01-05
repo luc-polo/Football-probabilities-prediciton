@@ -5,6 +5,7 @@ This module is made to create the new features we want to use for our model, or 
 import numpy as np
 import sys
 from dateutil.relativedelta import relativedelta
+import pandas as pd
 
 
 # modify the sys.path list to include the path to the data directory that contains the modules that we need to import
@@ -308,8 +309,6 @@ def ranking(dico_col_rk, dataset_0):
         start_date = i - relativedelta(years=1)
         end_date = i
         
-        name_teams_season, d = useful_functions.noms_teams_season_and_df(i, dataset_0)
-        
         for w in range(1,constant_variables.nb_championship_weeks + 1):
             pnt_list=[]
             ranking=[]
@@ -371,7 +370,7 @@ def ranking(dico_col_rk, dataset_0):
                         print("\n")"""   
                         
                         l-=1
-        
+
     #Le classement est OK et verifié  (25/09/23)
 
     #On calcule la  différence HT/AT pour le ranking et on la place dans dataset
@@ -427,5 +426,85 @@ def annnual_budget(dataset_0):
     #On la place dans dataset
     dataset_0["Diff_HT_annual_budget"] = dataset_0["annual budget of HT"] - dataset_0["annual budget of AT"]
     dataset_0["Diff_AT_annual_budget"] = dataset_0["annual budget of AT"] - dataset_0["annual budget of HT"]
+    
+    return dataset_0
+
+#POINTS NB ON 1,3,5 LAST MATCHS
+#VARIABLE                    V
+#PER MATCH AVG               X
+#HT/AT DIFF                  V
+def points_nb_on_x_last_matchs(dico_col_rk, dataset_0):
+    nb_matchs_trates=0
+    rownb_last_match_of_season=0
+
+    for i in (constant_variables.seasons):
+        
+        #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+        
+        rownb_last_match_of_season+=df.shape[0]
+        
+        #On initialise les dataframes ("DF_pn_5lm", "DF_pn_3lm", "DF_pn_1lm") avec les noms des équipes. IL contiendra le nombre de points pris lors 
+        #des 1,3,5 derniers matchs par chaque équipe du championnat. Chaque colonne porte le nom d'une équipe.
+        #La première ligne contient le nb de points pris lors du dernier match joué par les équipes, la deuxième ligne le
+        #nb de points pris lors de l'avant derniern match joué...
+        
+        DF_pn_5lm = pd.DataFrame({x:[0 for i in range(5)] for x in equipes})
+        DF_pn_3lm = pd.DataFrame({x:[0 for i in range(3)] for x in equipes})
+        DF_pn_1lm = pd.DataFrame({x:[0] for x in equipes})
+        
+        #On met a jour DF_pn_5lm a chaque match de la saison et on remplit les colonnes Points_HT_5lm_PM et Points_AT_5lm_PM
+        for j in range(nb_matchs_trates,rownb_last_match_of_season):
+
+            nom_HT=dataset_0.iloc[j,4]
+            nom_AT=dataset_0.iloc[j,5]
+            
+            #On remplit les colonnes "Points_HT_1lm_PM", "Points_AT_1lm_PM", "Points_HT_3lm_PM" ... :
+            dataset_0.iloc[j,dico_col_rk['rg_PHT5LMPM']] = DF_pn_5lm[nom_HT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_PAT5LMPM']] = DF_pn_5lm[nom_AT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_PAT3LMPM']] = DF_pn_3lm[nom_AT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_PHT1LMPM']] = DF_pn_1lm[nom_HT]
+            dataset_0.iloc[j,dico_col_rk['rg_PHT3LMPM']] = DF_pn_3lm[nom_HT].sum()
+            dataset_0.iloc[j,dico_col_rk['rg_PAT1LMPM']] = DF_pn_1lm[nom_AT]
+            
+            #On met à jour DF_pn_5lm
+            #On commence par faire descendre d'une ligne les colonnes correspondantes à la HT et AT
+            for k in range(4,0,-1):
+                DF_pn_5lm.at[k,nom_HT] = DF_pn_5lm.at[k-1,nom_HT]
+                DF_pn_5lm.at[k,nom_AT] = DF_pn_5lm.at[k-1,nom_AT]
+            for k in range(2,0,-1):
+                DF_pn_3lm.at[k,nom_HT] = DF_pn_3lm.at[k-1,nom_HT]
+                DF_pn_3lm.at[k,nom_AT] = DF_pn_3lm.at[k-1,nom_AT]
+                
+            #Puis on remplit la première ligne du dataframe (ligne qui correspond au nb de points pris lors du dernier match joué) pour la HT et AT
+            if dataset_0.iloc[j,dico_col_rk['rg_RH']] == dataset_0.iloc[j,dico_col_rk['rg_RA']] == 0:
+                DF_pn_5lm.at[0,nom_HT]=1
+                DF_pn_5lm.at[0,nom_AT]=1
+                DF_pn_3lm.at[0,nom_HT]=1
+                DF_pn_3lm.at[0,nom_AT]=1
+                DF_pn_1lm.at[0,nom_HT]=1
+                DF_pn_1lm.at[0,nom_AT]=1
+            else:
+                DF_pn_5lm.at[0,nom_HT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RH']]
+                DF_pn_5lm.at[0,nom_AT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RA']]
+                DF_pn_3lm.at[0,nom_HT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RH']]
+                DF_pn_3lm.at[0,nom_AT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RA']]
+                DF_pn_1lm.at[0,nom_HT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RH']]
+                DF_pn_1lm.at[0,nom_AT]= 3*dataset_0.iloc[j,dico_col_rk['rg_RA']]
+            
+        nb_matchs_trates+=df.shape[0]
+
+
+    #OK
+    #(Vérifié rapidement en checkant DF_pn_5lm à la dèrnière journée de champ des saison 2021, 2017, 2016 et DF_pn_3lm, DF_pn_1lm pour la dernière journée de 2021)
+
+
+    #HT/AT DIFF
+    dataset_0["HT_Diff_Points_5lm"] = dataset_0["Points_HT_5lm_PM"] - dataset_0["Points_AT_5lm_PM"]
+    dataset_0["AT_Diff_Points_5lm"] = -dataset_0["HT_Diff_Points_5lm"]
+    dataset_0["HT_Diff_Points_3lm"] = dataset_0["Points_HT_3lm_PM"] - dataset_0["Points_AT_3lm_PM"]
+    dataset_0["AT_Diff_Points_3lm"] = -dataset_0["HT_Diff_Points_3lm"]
+    dataset_0["HT_Diff_Points_1lm"] = dataset_0["Points_HT_1lm_PM"] - dataset_0["Points_AT_1lm_PM"]
+    dataset_0["AT_Diff_Points_1lm"] = -dataset_0["HT_Diff_Points_1lm"]
     
     return dataset_0
