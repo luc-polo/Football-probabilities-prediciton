@@ -250,3 +250,13 @@ texinfo_documents = [
 
 # How to display URL addresses: 'footnote', 'no', or 'inline'.
 # texinfo_show_urls = 'footnote'
+
+#Function added myself, to avoid the raising of errors that are 'normal' or i don't care about:
+
+def autodoc_skip_member(app, what, name, obj, skip, options):
+    exclusions = ['build_features']  # Add other names if needed
+    return skip or (name in exclusions)
+
+# Add the skip function to the setup
+def setup(app):
+    app.connect('autodoc-skip-member', autodoc_skip_member)
