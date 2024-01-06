@@ -488,12 +488,11 @@ def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
 
 
 #To know if a column is fully filled (if there is no values of '0' or 'NaN')
-def is_there_0_values(value_to_identify, col_list, dataset_0):
+def is_there_x_values(value_to_identify, col_list, dataset_0):
     for col in col_list:
         if (dataset_0[col] == value_to_identify).sum() != 0:
-            print("There is a problem, there are ", value_to_identify ," in the columns", col_list)
+            print("There is a problem, there are ", value_to_identify, " in the column", col)
             return False
-        else:
-            print('OK, there is no ', value_to_identify ," in the columns", col_list)
-            return True
+    print('OK, there is no ', value_to_identify, " in any of the columns", col_list)
+    return True
         
