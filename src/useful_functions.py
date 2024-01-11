@@ -493,7 +493,7 @@ def is_there_x_values(value_to_identify, col_list, dataset_0):
 
     for col in col_list:
         if (dataset_0[col] == value_to_identify).sum() != 0:
-            print(f"There is a problem, there are {value_to_identify} in the column {col}.")
+            print(f"There is a problem, there are {value_to_identify} in the column {col}. There are {(dataset_0[col] == value_to_identify).sum()} {value_to_identify}")
             problematic_columns.append(col)
     
     if problematic_columns:
