@@ -117,6 +117,8 @@ def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, dico
             
             H_A_T_0 (str): 'HT' or 'AT' to inform wether the team we want to compute the ranking is the HT or AT on this match.
             
+            dico_col_rk (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
+            
             dataset_0 (DataFrame): DataFrame containing our data.
         
         Returns:
@@ -142,7 +144,7 @@ def classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, dico
     #On place l'équipe considérée à son rang précédemment calculé dans nos trois listes     
     insert_func(name_team, ranking_0, pnt_list_0, goal_diff_list_0, k, gd, rank)
 
-def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, x_last_matches, dataset_0):
+def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, H_A_T_0, x_last_matches, dico_col_rk_0 , dataset_0):
     """ 
         Given a line number and a Home or Away status, this function computes the rank of a team based on its performances/stats on the x_last_matches. Then it positions the team stats and its name at the appropriate rank in ranking_0, pnt_list_0, goal_diff_list_0.
         It makes the same thing as classement_team(), but with one difference: It uses the statistics on the X last matches (which are not located in the same dataset columns), to compute the rank. 
@@ -160,6 +162,8 @@ def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list
         
         x_last_matches (int): The number of most recent matches considered to compute teams statistics and set the rankings. x_last_matches is included in [1, 3, 5].
         
+        dico_col_rk_0 (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
+               
         dataset_0 (DataFrame): DataFrame containing our data.
     
     Returns:
@@ -177,16 +181,16 @@ def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list
     
     #On définit les numéros des colonnes qu'on va utiliser en fonction de si on traite la team qui joue à dom ou à l'ext
     if H_A_T_0 == "home":
-        rg_PPN = rg_PHT5LMPM + decalage
-        rg_gdPM =  rg_GDHT5LMPM + decalage
+        rg_PPN = dico_col_rk_0['rg_PHT5LMPM'] + decalage
+        rg_gdPM =  dico_col_rk_0['rg_GDHT5LMPM'] + decalage
         name_team = dataset_0.iloc[y_0,4]
     else:
-        rg_PPN = rg_PAT5LMPM  + decalage
-        rg_gdPM =  rg_GDAT5LMPM + decalage
+        rg_PPN = dico_col_rk_0['rg_PAT5LMPM']  + decalage
+        rg_gdPM =  dico_col_rk_0['rg_GDAT5LMPM'] + decalage
         name_team = dataset_0.iloc[y_0,5]  
     
     #k = points number of the team we rank
-    k=dataset_0.iloc[y_0,rg_PPN]
+    k=dataset_0.iloc[y_0, rg_PPN]
     #gd= goal diff of the team we rank
     gd=dataset_0.iloc[y_0, rg_gdPM]
     #On classe la team de la y_0 ème ligne pour la w ème journée:
@@ -194,6 +198,7 @@ def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list
     
     #On place l'équipe considérée à son rang précédemment calculé dans nos trois listes     
     insert_func(name_team, ranking_0, pnt_list_0, goal_diff_list_0, k, gd, rank)
+    
 
 def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, dico_col_rk, dataset_0):
     """ 
@@ -207,6 +212,8 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, di
         pnt_list_0 (list): Points list we want to complete with missing teams values.
         
         goal_diff_list_0 (list): Goal diff list we want to complete with missing teams values.
+        
+        dico_col_rk (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
         
         dataset_0 (DataFrame): DataFrame containing our data.
         
@@ -223,9 +230,9 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, di
             classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "away", dico_col_rk, dataset_0)
 
 #Fonction qui permet de rajouter les equipes manquantes (pour cause de match reporté) aux classements sur les X derniers matchs:
-def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches, dataset_0):
+def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches, dico_col_rk_0, dataset_0):
     """ 
-        Add the teams missing in a Game Week ranking on the X last matches (because of postponed matches). The function, starting from one line of the Game Week concerned, iterates through the dataset by descending line numbers, to find the last matchs of teams missing, to add the them in the ranking on the X last matches.
+        Add the teams missing in a Game Week ranking on the X last matches (because of postponed matches). The function, starting from one line of the Game Week concerned, iterates through the dataset by descending line numbers, to find the last matchs of teams missing, to add them in the ranking on the X last matches.
         It makes the same thing as ajout_missing_teams_ranking(), but with one difference: It uses the statistics on the X last matches (which are not located in the same dataset columns), to compute the rank. 
     
     Args:
@@ -238,6 +245,8 @@ def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goa
         goal_diff_list_0 (list): Goal diff list on x_last_matches, we want to complete with missing teams values.
         
         x_last_matches (int): The number of most recent matches considered to compute teams statistics and set the rankings. x_last_matches is included in [1, 3, 5].
+        
+        dico_col_rk_0 (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
                 
         dataset_0 (DataFrame): DataFrame containing our data.
         
@@ -245,14 +254,14 @@ def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goa
         None
     """
     y_local = y_0
-    while len(ranking_0)< nb_teams:
+    while len(ranking_0)< constant_variables.nb_teams:
         while dataset_0.iloc[y_local,4] in ranking_0 and dataset_0.iloc[y_local,5] in ranking_0:
             y_local+=1
         if dataset_0.iloc[y_local,4] not in ranking_0:
-            classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "home", x_last_matches)
+            classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "home", x_last_matches, dico_col_rk_0 , dataset_0)
 
         if dataset_0.iloc[y_local,5] not in ranking_0:
-            classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "away", x_last_matches)
+            classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "away", x_last_matches, dico_col_rk_0 , dataset_0)
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT:
 def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
@@ -275,7 +284,7 @@ def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
                 dataset_0.iloc[y, dico_col_rk['rg_ATWR']]= ranking_0.index(dataset_0.iloc[y,5]) + 1 
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch sur les X last matchs des HT et AT:   
-def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_matches, dataset_0):
+def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_matches, dico_col_rk_0, dataset_0):
     """ 
         Exactly the same as fill_dataset_with_team_rank() but for the rankings in x last matchs
     
@@ -285,6 +294,8 @@ def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_m
         ranking_0 (list): Ranking list that contains teams names oredered following their rank on the x_last_matches. This list is utilized to stock the prematch ranks of teams on x last matches, which are then filled into the dataset.
         
         x_last_matches (int): The number of most recent matches considered to compute teams statistics and set the rankings. x_last_matches is included in [1, 3, 5].
+        
+        dico_col_rk_0 (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
         
         dataset_0 (DataFrame): DataFrame containing our data.
     
@@ -298,8 +309,8 @@ def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_m
         decalage = 4
     
     for y in Indices_0:  
-                dataset_0.iloc[y, rg_HT5lm_WR + decalage]= ranking_0.index(dataset_0.iloc[y,4]) + 1
-                dataset_0.iloc[y, rg_AT5lm_WR + decalage]= ranking_0.index(dataset_0.iloc[y,5]) + 1
+                dataset_0.iloc[y, dico_col_rk_0['rg_HT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[y,4]) + 1
+                dataset_0.iloc[y, dico_col_rk_0['rg_AT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[y,5]) + 1
 
 #Permet de supprimer les equipes du match reporté en question, des classements de la w eme journee
 def delete_postponned_match_teams_from_ranking(ranking_0, pnt_list_0, goal_diff_list_0, l_0, dataset_0):
@@ -322,7 +333,7 @@ def delete_postponned_match_teams_from_ranking(ranking_0, pnt_list_0, goal_diff_
         goal_diff_list_0.pop(rk1)
 
 #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w, sont des matchs reportés, alors on va classer ces equipes dans le classement réalisé précedemment pour la journée w, en ayant préalablement retiré les equipes en question du classement
-def classage_teams_playing_postponned_macth_on_X_last_matchs(Indices_0, w_0, start_date_0, end_date_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches_0, dataset_0):
+def classage_teams_playing_postponned_macth_on_X_last_matchs(Indices_0, w_0, start_date_0, end_date_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches_0, dico_col_rk_0, dataset_0):
     """ 
         When the match(s) that precede (chronologically and therfore in the order of dataset lines) the first match of the Game Week w_0, are matches postponned, we rank, on the x last matches, the teams of these postponed matchs in the ranking previously made for the Game Week w. Before ranking the teams in this ranking, we firstly remove these teams from the ranking on x last matchs with delete_postponned_match_teams_from_ranking().
         That's what this function makes.
@@ -343,6 +354,8 @@ def classage_teams_playing_postponned_macth_on_X_last_matchs(Indices_0, w_0, sta
         goal_diff_list_0 (list): Goal diff list on the x_last_matches of the w_0 Game Week established so far and which we will use to rank the teams which played postponned match before w_0 (if there are some).
         
         x_last_matches (int): The number of most recent matches considered to compute teams statistics and set the rankings. x_last_matches is included in [1, 3, 5].
+        
+        dico_col_rk_0 (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
         
         dataset_0 (DataFrame): DataFrame containing our data.
         
@@ -365,17 +378,17 @@ def classage_teams_playing_postponned_macth_on_X_last_matchs(Indices_0, w_0, sta
         #La condition qui suit le while permet de vérifier que la ligne l correspond à un match repporté
         #La seconde évite de considérer des matchs des saisons d'avant ou d'après
         #La troisième vérifie que le match reporté n'ait pas déja un classement rempli dans la case en question.
-        while dataset_0.at[l, "Game Week"] < (w_0-1) and (start_date_0 < dataset_0.at[l,"date_GMT"]) and (dataset_0.at[l,"date_GMT"] <= end_date_0) and (dataset_0.iloc[l,rg_HT5lm_WR + decalage] == 0):            
+        while dataset_0.at[l, "Game Week"] < (w_0-1) and (start_date_0 < dataset_0.at[l,"date_GMT"]) and (dataset_0.at[l,"date_GMT"] <= end_date_0) and (dataset_0.iloc[l,dico_col_rk_0['rg_HT5lm_WR'] + decalage] == 0):            
             #On supprime les equipes du match reporté en question, des classements de la w eme journee
-            delete_postponned_match_teams_from_ranking(ranking_0, pnt_list_0, goal_diff_list_0, l)
+            delete_postponned_match_teams_from_ranking(ranking_0, pnt_list_0, goal_diff_list_0, l, dataset_0)
 
             #On classe les equipes du match reporté dans les classements de la w eme journee
-            classement_team_on_X_last_matchs(l, ranking_0, pnt_list_0, goal_diff_list_0, "home", x_last_matchs_0)
-            classement_team_on_X_last_matchs(l, ranking_0, pnt_list_0, goal_diff_list_0, "away", x_last_matchs_0)
+            classement_team_on_X_last_matchs(l, ranking_0, pnt_list_0, goal_diff_list_0, "home", x_last_matches_0, dico_col_rk_0, dataset_0)
+            classement_team_on_X_last_matchs(l, ranking_0, pnt_list_0, goal_diff_list_0, "away", x_last_matches_0, dico_col_rk_0, dataset_0)
             
             #On remplit les colonnes du dataset avec les classements des 2 equipes:            
-            dataset_0.iloc[l, rg_HT5lm_WR + decalage]= ranking_0.index(dataset_0.iloc[l,4]) + 1
-            dataset_0.iloc[l, rg_AT5lm_WR + decalage]= ranking_0.index(dataset_0.iloc[l,5]) + 1
+            dataset_0.iloc[l, dico_col_rk_0['rg_HT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[l,4]) + 1
+            dataset_0.iloc[l, dico_col_rk_0['rg_AT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[l,5]) + 1
             l-=1
 
 #Calculate Variable sum since the beginning of the season. It's then used for Per Match Avg, Per Match Avg HT/AT Diff computing.
@@ -453,7 +466,7 @@ def HT_AT_col_merger(names_col_to_concat, names_col_concat, min_value_nb_matchs_
     return Df_HT_AT_features_col_concatenated
 
 #To know if we haven't altered the rest of the dataframe when filling some specific columns
-def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
+def compare_2_df_excepted_col(col_not_to_compare,df1, df2, df1_name, df2_name):
     """  
     This function is used to compare two dataframes, saying if they are exactly the same, excluding one column from the comparaison. That's useful during the process of columns filling. For instance, when we've just filled a column with values, we want to make sure that other columns were not modified too. So we use this funct° to compare the dataframe before filling and the one after filling, excluding the column filled from the comparaison.
     
@@ -478,7 +491,7 @@ def compare_2_df_excepted_col(col_not_to_compare,df1, df2):
     are_equal_except_column = df1_0.equals(df2_0)
     
     if are_equal_except_column:
-        print(f"The DataFrames are equal except for columns {col_not_to_compare}")
+        print(f"The DataFrames {df1_name} and {df2_name} are equal except for columns {col_not_to_compare}")
         return True
     else:
         differing_columns = [col for col in df1_0.columns if not df1_0[col].equals(df2_0[col])]
@@ -500,6 +513,6 @@ def is_there_x_values(value_to_identify, col_list, dataset_0):
         print("Columns with occurrences:", problematic_columns)
         return False
     else:
-        print(f'OK, there is no {value_to_identify} in any of the columns in col_list.')
+        print(f'OK, there is no {value_to_identify} in any of the columns in {col_list}')
         return True
-        
+

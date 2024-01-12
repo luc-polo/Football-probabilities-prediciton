@@ -581,3 +581,78 @@ def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
     dataset_0["AT_Diff_Goal_Diff_1lm"] = -dataset_0["HT_Diff_Goal_Diff_1lm"]
     
     return dataset_0
+
+
+#RANKING ON 1,3,5 LAST MATCHS (pm)
+#VARIABLE                    V
+#PER MATCH AVG               X
+#HT/AT DIFF                  X
+def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
+    #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prends pas en compte le nb de buts marqués 
+    #en cas d'égalité de goal average et de points
+
+
+    for i in (constant_variables.seasons):
+
+        start_date = i - relativedelta(years=1)
+        end_date = i
+        
+        for w in range(1,constant_variables.nb_championship_weeks + 1):
+            
+            
+            #On sélectionne les indices des lignes qui ont Game Week = w et qui ont une date qui est comprise entre start_date and end_date.
+            Indices=np.where((dataset_0["Game Week"]==w) & (start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date))[0]
+            
+            if Indices.any():
+                #On supprime les matchs qui ont été reportés:
+                Indices = [y for y in Indices if y <= (Indices[0] + ((constant_variables.nb_teams / 2) - 1))]
+                
+                #On calcule et on ajoute dans les colonnes du dataset, le rang avant le debut de la w eme journée de chaque team dans les 3 classements et on classe les potentielles equipes qui jouaient un match reporté juste avant le premier match de la journée w
+                
+                pnt_5lm_list=[]
+                pnt_1lm_list=[]
+                pnt_3lm_list=[]
+                goal_diff_5lm_list=[]
+                goal_diff_3lm_list=[]
+                goal_diff_1lm_list=[]
+                ranking_5lm_list=[]
+                ranking_3lm_list=[]
+                ranking_1lm_list=[]
+
+                #On classe les équipes avant le début de la w ème journée:
+                for y in Indices:
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, "home", 5, dico_col_rk_0, dataset_0)
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, "away", 5, dico_col_rk_0, dataset_0)
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, "home", 3, dico_col_rk_0, dataset_0)
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, "away", 3, dico_col_rk_0, dataset_0)
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, "home", 1, dico_col_rk_0, dataset_0)
+                    useful_functions.classement_team_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, "away", 1, dico_col_rk_0, dataset_0)
+
+                
+                #On rajoute au classement les équipes manquantes (en cas de matchs reportés):
+
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, dataset_0)
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, dataset_0)
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, dataset_0)
+
+                
+                #On remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT (uniquement si il s'agit d'une journée de championnat superieure au nombre de journées sur les quelles sont calculé le classement):
+                if dataset_0.at[Indices[0],"Game Week"]>5:
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 5, dico_col_rk_0, dataset_0)
+                if dataset_0.at[Indices[0],"Game Week"]>3:
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 3, dico_col_rk_0, dataset_0)
+                if dataset_0.at[Indices[0],"Game Week"]>1:
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 1, dico_col_rk_0, dataset_0)
+                
+                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,
+                #sont des matchs reportés, alors on va classer ces equipes dans les classements réalisés précedemment pour la journée w, en ayant 
+                #préalablement retiré les equipes en question des classements
+                
+                useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, dataset_0)
+                useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, dataset_0)
+                useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, dataset_0) 
+        
+    return dataset_0
+    #OK
+    # Vérifié à tous niveaux mais compliqué car bcp de choses à check!
+    
