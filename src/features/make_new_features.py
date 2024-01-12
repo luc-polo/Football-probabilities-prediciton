@@ -198,7 +198,6 @@ def scored_and_conceeded_goals(dico_col_rk, dataset_0):
             
     return dataset_0
 
-
 #GOAL DIFFERENCE (pm, sbos): 
 #VARIABLE                     V
 #PER MATCH AVG                V
@@ -219,7 +218,6 @@ def goal_difference(dataset_0):
     
     return dataset_0
 
-
 #SCORED GOALS / CONCEEDED GOALS (pm, sbos):
 #VARIABLE                    V
 #PER MATCH AVG               X 
@@ -236,7 +234,6 @@ def scored_conceeded_goals_ratio(dataset_0):
     dataset_0["Diff_AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["AT_avg_scored_g_conceedded_g_ratio"] - dataset_0["HT_avg_scored_g_conceedded_g_ratio"]
     
     return dataset_0
-
 
 #POINTS NB (pm, sbos):
 #VARIABLE                    V
@@ -291,9 +288,6 @@ def points_nb( dico_col_rk,dataset_0):
     dataset_0["Diff_pnt_AT_HT_ratio"] = (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
-
-
-
 
 #RANKING (pm, sbos) :
 #VARIABLE                    V
@@ -582,7 +576,6 @@ def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
     
     return dataset_0
 
-
 #RANKING ON 1,3,5 LAST MATCHS (pm)
 #VARIABLE                    V
 #PER MATCH AVG               X
@@ -655,4 +648,69 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
     return dataset_0
     #OK
     # Vérifié à tous niveaux mais compliqué car bcp de choses à check!
+
+#CORNERS NB (pm, sbos)
+#VARIABLE                    V
+#PER MATCH AVG               X
+#PER MATCH AVG HT/AT DIFF    V
+def corners_nb(dico_col_rk_0, dataset_0):
+    #On remplit les colonnes "HT_corners_nb", "AT_corners_nb" 
+    useful_functions.variable_sum_computing(dico_col_rk_0['rg_HTCN'], 20, 1, dataset_0)
+          
+    #PER MATCH AVG HT/AT DIFF
+    dataset_0["HT_Diff_avg_corners_nb"] = (dataset_0["HT_corners_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_corners_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_corners_nb"] = (dataset_0["AT_corners_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_corners_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
+    return dataset_0
+
+#YELLOW, RED CARDS NB (pm, sbos)
+#VARIABLE                    V
+#PER MATCH AVG               X
+#PER MATCH AVG HT/AT DIFF    V
+def yellow_red_cards(dico_col_rk_0, dataset_0):
+    #On est obligés de garder l'ensemble du code pour ces deux variables car les colonnes ht_yeellow_cards, at_yellow_cards ne sont pas 
+    #l'une à coté de l'autre. La fonction crée ne fonctionne pas dans ce cas la.
+
+    #sert pour la boucle qui va permettre de remplir les dictionnaires "yellow_cards_nb_dico", "red_cards_nb_dico"
+    nb_matches_trates=0
+    rownb_last_season_match=0
+
+    for i in (constant_variables.seasons):
+        yellow_cards_nb_dico={}
+        red_cards_nb_dico={}
+
+        #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison 
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+
+        #On initialise le dico avec les noms des équipes
+        yellow_cards_nb_dico = useful_functions.init_dico_with_names_teams(equipes)
+        red_cards_nb_dico = useful_functions.init_dico_with_names_teams(equipes)
+        
+        rownb_last_season_match+=df.shape[0]
+        
+    #On remplit le dico qui contient le nom des 20 (ou 18) equipes et le nombre de yellow/red cards prematch des équipes.
+    #On remplit également les 2 colonnes nb yellow/red cards pre-match de la Home et Away team.
+        
+        for j in range(nb_matches_trates, rownb_last_season_match):
+            
+    #On remplit les colonnes "HT_yellow_cards_nb", "AT_yellow_cards_nb", "HT_red_cards_nb", "AT_red_cards_nb" et on met à jour les dictionnaires
+            dataset_0.iloc[j,dico_col_rk_0['rg_HTYCN']] = yellow_cards_nb_dico[dataset_0.iloc[j,4]]
+            dataset_0.iloc[j,dico_col_rk_0['rg_ATYCN']] = yellow_cards_nb_dico[dataset_0.iloc[j,5]]
+            dataset_0.iloc[j,dico_col_rk_0['rg_HTRCN']] = red_cards_nb_dico[dataset_0.iloc[j,4]]
+            dataset_0.iloc[j,dico_col_rk_0['rg_ATRCN']] = red_cards_nb_dico[dataset_0.iloc[j,5]]
+            
+            yellow_cards_nb_dico[dataset_0.iloc[j,4]]+=dataset_0.iloc[j,22]
+            yellow_cards_nb_dico[dataset_0.iloc[j,5]]+=dataset_0.iloc[j,24]
+            red_cards_nb_dico[dataset_0.iloc[j,4]]+=dataset_0.iloc[j,23]
+            red_cards_nb_dico[dataset_0.iloc[j,5]]+=dataset_0.iloc[j,25]
+
+        nb_matches_trates+=df.shape[0]
+        
+    #PER MATCH AVG HT/AT DIFF
+    dataset_0["HT_Diff_avg_red_cards_nb"] = (dataset_0["HT_red_cards_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_red_cards_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_red_cards_nb"] = (dataset_0["AT_red_cards_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_red_cards_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+
+    dataset_0["HT_Diff_avg_yellow_cards_nb"] = (dataset_0["HT_yellow_cards_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_yellow_cards_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_yellow_cards_nb"] = (dataset_0["AT_yellow_cards_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_yellow_cards_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0

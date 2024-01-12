@@ -392,8 +392,7 @@ def classage_teams_playing_postponned_macth_on_X_last_matchs(Indices_0, w_0, sta
             l-=1
 
 #Calculate Variable sum since the beginning of the season. It's then used for Per Match Avg, Per Match Avg HT/AT Diff computing.
-#We should change the name by 'variable_sum_computing' or 'calculation_variable_sum'
-def calculation_variable_avg_diff(rg_ht_variable_nb, rg_ht_variable_ds_fichier_csv, space_between_ht_at_variables, dataset_0):
+def variable_sum_computing(rg_ht_variable_nb, rg_ht_variable_ds_fichier_csv, space_between_ht_at_variables, dataset_0):
     """ 
         For one season and all the teams, the function calculates, for each match, the prematch sum of a given variable since the beginning of the season. The function also fills the column reserved for this purpose with the sum of this particular variable. The sums of variables are then used to compute the 'per match avg' and 'per match avg HT/AT Diff' (but that's not included in this function).
     
@@ -412,7 +411,7 @@ def calculation_variable_avg_diff(rg_ht_variable_nb, rg_ht_variable_ds_fichier_c
     nb_matchs_trates=0
     rownb_last_season_match=0
 
-    for i in (saisons):
+    for i in (constant_variables.seasons):
         variable_nb_dico={}
 
         #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison 
@@ -423,7 +422,7 @@ def calculation_variable_avg_diff(rg_ht_variable_nb, rg_ht_variable_ds_fichier_c
 
         rownb_last_season_match+=df.shape[0]
 
-    #On remplit le dico qui contient le nom des 20 (ou 18) equipes et le nombre de xxx prematch des équipes.
+    #On remplit 'variable_nb_dico' avec le nombre de xxx prematch des équipes.
     #On remplit également les colonnes nb xxx prematch de la Home et Away team.
 
         for j in range(nb_matchs_trates,rownb_last_season_match):
@@ -498,7 +497,6 @@ def compare_2_df_excepted_col(col_not_to_compare,df1, df2, df1_name, df2_name):
         print("The DataFrames are not equal")
         print(f"Differing columns: {differing_columns}")
         return False
-
 
 #To know if a column is fully filled (if there is no values of '0' or 'NaN')
 def is_there_x_values(value_to_identify, col_list, dataset_0):
