@@ -714,3 +714,21 @@ def yellow_red_cards(dico_col_rk_0, dataset_0):
     dataset_0["AT_Diff_avg_yellow_cards_nb"] = (dataset_0["AT_yellow_cards_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_yellow_cards_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
+
+#SHOTS NB (pm, sbos)
+#VARIABLE                    V
+#PER MATCH AVG               V
+#PER MATCH AVG HT/AT DIFF    V
+def shots_nb(dico_col_rk_0, dataset_0):
+    #On remplit les colonnes "HT_shots_nb", "AT_shots_nb" 
+    useful_functions.variable_sum_computing(dico_col_rk_0['rg_HTSN'], 30, 1, dataset_0)
+
+    #PER MATCH AVG
+    dataset_0['HT_avg_shots_nb'] = dataset_0["HT_shots_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0['AT_avg_shots_nb'] = dataset_0["AT_shots_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+        
+    #PER MATCH AVG HT/AT DIFF
+    dataset_0["HT_Diff_avg_shots_nb"] = (dataset_0["HT_shots_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_shots_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_shots_nb"] = (dataset_0["AT_shots_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_shots_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0
