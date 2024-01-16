@@ -769,3 +769,22 @@ def fouls_nb(dico_col_rk_0, dataset_0):
     dataset_0["AT_Diff_avg_fouls_nb"] = (dataset_0["AT_fouls_nb"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_fouls_nb"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
+
+#POSSESSION (pm, sbos)
+#VARIABLE                    V
+#PER MATCH AVG               V
+#PER MATCH AVG HT/AT DIFF    V
+def possession(dico_col_rk_0, dataset_0):
+    #On remplit les colonnes "HT_posession", "AT_possession" 
+    useful_functions.variable_sum_computing(dico_col_rk_0['rg_HTP'], 38, 1, dataset_0)
+        
+        
+    #PER MATCH AVG
+    dataset_0["HT_avg_possession"] = dataset_0["HT_possession"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_possession"] = dataset_0["AT_possession"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+        
+    #PER MATCH AVG HT/AT DIFF
+    dataset_0["HT_Diff_avg_possession"] = (dataset_0["HT_possession"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_possession"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_possession"] = (dataset_0["AT_possession"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_possession"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0
