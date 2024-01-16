@@ -796,7 +796,7 @@ def possession(dico_col_rk_0, dataset_0):
 #PER MATCH AVG HT/AT DIFF    V
 def expected_goals(dico_col_rk_0, dataset_0):
     
-    #We ensure that the columns are defined as float columns (because i had an error that raised saying that in was a int64 col)
+    #We ensure that the columns are defined as float columns (because i had an error that raised saying that they are int64 col)
     dataset_0["HT_xg"] = dataset_0["HT_xg"].astype(float)
     dataset_0["AT_xg"] = dataset_0["AT_xg"].astype(float)
     
@@ -811,5 +811,57 @@ def expected_goals(dico_col_rk_0, dataset_0):
     #PER MATCH AVG HT/AT DIFF
     dataset_0["HT_Diff_avg_xg"] = (dataset_0["HT_xg"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_xg"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     dataset_0["AT_Diff_avg_xg"] = (dataset_0["AT_xg"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_xg"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0
+
+
+
+# 1/VICTORY ODDS  (pm, sbos)
+#VARIABLE                    V
+#PER MATCH AVG               V
+#PER MATCH AVG HT/AT DIFF    V
+def odds_victory_proba(dico_col_rk_0, dataset_0):
+    
+    #We ensure that the columns are defined as float columns (because i had an error that raised saying that they are int64 col)
+    dataset_0["HT_odds_victory_proba"] = dataset_0["HT_odds_victory_proba"].astype(float)
+    dataset_0["AT_odds_victory_proba"] = dataset_0["AT_odds_victory_proba"].astype(float)
+    
+    #On remplit les colonnes "HT_odds_victory_proba", "AT_odds_victory_proba" 
+    #On est obligés de faire cette étape à la main car on calcule la SOMME DES INVERSES des odds de chaque match, ce qui n'est pas faisable avec la fonction variable_sum_computing
+    nb_matchs_trates=0
+    rownb_last_season_match=0
+
+    for i in (constant_variables.seasons):
+
+        #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison 
+        equipes, df = useful_functions.noms_teams_season_and_df(i, dataset_0)
+
+        #On initialise le dico avec les noms des équipes
+        odds_vic_proba_nb_dico = useful_functions.init_dico_with_names_teams(equipes)
+
+        rownb_last_season_match+=df.shape[0]
+
+        #On remplit le dico qui contient le nom des 20 (ou 18) equipes et le nombre de xxx prematch des équipes.
+        #On remplit également les colonnes HT_odds_victory_proba, AT_odds_victory_proba prematch
+
+        for j in range(nb_matchs_trates,rownb_last_season_match):
+
+            #On remplit les colonnes "HT_xxx_nb", "AT_xxx_nb" et on met a jour le dictionnaire
+            dataset_0.iloc[j,dico_col_rk_0['rg_HTOVP']] = odds_vic_proba_nb_dico[dataset_0.iloc[j,4]]
+            dataset_0.iloc[j,dico_col_rk_0['rg_HTOVP'] + 1] = odds_vic_proba_nb_dico[dataset_0.iloc[j,5]]
+
+            odds_vic_proba_nb_dico[dataset_0.iloc[j,4]]+=(1/useful_functions.un_ou_x(dataset_0.iloc[j,56]))
+            odds_vic_proba_nb_dico[dataset_0.iloc[j,5]]+=(1/useful_functions.un_ou_x(dataset_0.iloc[j,58]))
+
+
+        nb_matchs_trates+=df.shape[0]
+
+    #PER MATCH AVG
+    dataset_0["HT_avg_odds_victory_proba"] = dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_odds_victory_proba"] = dataset_0["AT_odds_victory_proba"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))
+        
+    #PER MATCH AVG HT/AT DIFF
+    dataset_0["HT_Diff_avg_odds_victory_proba"] = (dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_odds_victory_proba"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["AT_Diff_avg_odds_victory_proba"] = (dataset_0["AT_odds_victory_proba"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
