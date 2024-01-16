@@ -450,6 +450,8 @@ def HT_AT_col_merger(names_col_to_concat, names_col_concat, min_value_nb_matchs_
         
         min_value_nb_matchs_played (int): Minimimum value (excluded) of played matchs number we will apply to select the matchs we include in the concatenations.
         
+        dataset_0 (DataFrame): DataFrame containing all the column and from which we will extract a few ones.
+                
     Returns:
         DataFrame: The dataframe containing the concatenation of the HT and AT columns of the variables, selecting only matches where Game Week > min_value_nb_matchs_played.
     """

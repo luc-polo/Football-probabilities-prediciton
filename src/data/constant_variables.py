@@ -4,12 +4,7 @@ This module is made to define variables that keep constant value from the beginn
 #Import classic Python modules
 from sklearn.model_selection import  StratifiedKFold
 import sys
-
-#modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
-sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
-
-#Import my modules
-from data.make_dataset import *
+import pandas as pd
 
 
 #Nb of teams in championship
@@ -17,6 +12,9 @@ nb_teams = 20
 
 #Nb of game weeks in the championship
 nb_championship_weeks = 38
+
+#On définit un nb de matchs min joués pour selectionner les lignes du dataset surlesquelles le model tournera
+min_played_matchs_nb=5
 
 # Define the stratified k-fold cross-validation strategy that  we will use in several functions
 CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
