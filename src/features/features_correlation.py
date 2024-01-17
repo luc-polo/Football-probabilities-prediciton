@@ -6,6 +6,8 @@ import matplotlib.pyplot as plt
 from scipy.stats import pointbiserialr
 import seaborn as sns
 
+import useful_functions
+
 
 #Ploting the mean of a feature at every championship day
 def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_column_name, dataset_0):
@@ -158,14 +160,33 @@ def feature_correlation_with_results_analysis( home_feature_column_name, away_fe
     
   
     
-def ranking_features_correlation_with_result(dataset_0, liste_features_names_HT, liste_features_names_AT, k, min_week_game, date_min):
+def ranking_features_correlation_with_result( liste_features_names_HT, liste_features_names_AT, k, min_week_game, date_min, dataset_0):
+    """  
+    This function ranks different features on their biseral point correlation. It displays a table with the resul of this ranking.
+    
+    Args:
+        liste_features_names_HT (list): Name of the home features we want to compute the correlation of biserial point and to rank.
+
+        liste_features_names_AT (list): Name of the away features we want to compute the correlation of biserial point and to rank.
+        
+        k (float): Value used to compute the limits of outliers in correlation computing. We will multiply the IQR by k to compute lower and upper bound for outliers. If we don't want outliers elimination we just need to put a big value for k (like 999).
+        
+        min_week_game (int): The min Game Week of the match we will select to compte the correlation.
+        
+        date_min (datetime): If we want to select only the matchs that played out after a certain date, refer the date with this parameter.
+        
+        dataset_0 (DataFrame): Dataframe containing the base data
+    
+    Returns:
+        Line2D : A graph that we will display in the __main__ file using the 'display()' function.
+    """
     # On créé un DataFrame vide pour stocker les résultats
     correlation_ranking_DF = pd.DataFrame(columns=['Feature', 'Correlation', 'Feature mean for R = 1', 'Feature mean for R = 0', 'p value'])
 
     for (home_feature_column_name, away_feature_column_name) in zip(liste_features_names_HT, liste_features_names_AT):
         
         #On calcule la corrélation et les autres statistiques ici
-        correlation, p_value, mean_ra1, mean_ra0, variable_inutile = calculcate_feature_correlation(dataset_0, home_feature_column_name, away_feature_column_name, k, min_week_game, date_min)
+        correlation, p_value, mean_ra1, mean_ra0, variable_inutile = calculcate_feature_correlation( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0)
     
         # Ajoutez les résultats à la DataFrame
         # Créez un DataFrame temporaire pour stocker les résultats de cette itération
@@ -178,7 +199,13 @@ def ranking_features_correlation_with_result(dataset_0, liste_features_names_HT,
             'Ecart relatif entre les feature mean for R = 0 ou 1': [abs(mean_ra1-mean_ra0)/mean_ra1]
         })
         # Utilisez pd.concat pour concaténer le DataFrame temporaire avec correlation_ranking_DF
-        correlation_ranking_DF = pd.concat([correlation_ranking_DF, temp_df], ignore_index=True)
+        #Vérifier si le DataFrame est vide avant la concaténation
+        if not correlation_ranking_DF.empty:
+            # Utilisez pd.concat pour concaténer le DataFrame temporaire avec correlation_ranking_DF
+            correlation_ranking_DF = pd.concat([correlation_ranking_DF, temp_df], ignore_index=True)
+        else:
+            # Si le DataFrame est vide, affectez simplement temp_df à correlation_ranking_DF
+            correlation_ranking_DF = temp_df
         
 
     # Triez le DataFrame par ordre croissant de la valeur de corrélation
@@ -192,6 +219,7 @@ def ranking_features_correlation_with_result(dataset_0, liste_features_names_HT,
                                                                                                'Feature mean for R = 0': '{:.6f}',
                                                                                                'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
                                                                                                'p value': '{:.1e}'})
-    # Affichez le DataFrame trié
-    display(styled_correlation_ranking_DF)
+    # Affichez le DataFrame trié et formaté
+    return styled_correlation_ranking_DF
+
 

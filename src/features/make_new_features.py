@@ -166,7 +166,7 @@ def scored_and_conceeded_goals(dico_col_rk, dataset_0):
     #sert pour la boucle qui va permettre de remplir les dictionnaires "dico_goals_scored" et "dico_goals_conceeded"
     nb_matchs_traites=0
     rownb_last_season_match=0
-
+    
 
     for i in (constant_variables.seasons):
     #On créé "equipes" qui contient les noms de toutes les équipes du championnat durant une saison
@@ -194,7 +194,8 @@ def scored_and_conceeded_goals(dico_col_rk, dataset_0):
     #On remplit la colonne "buts encaissés pre-match par la AT" et on met a jour le dictionnaire de buts encaissés pour la AT avec le résultat du match
             dataset_0.iloc[j,dico_col_rk['rg_CGATPM']] = dico_goals_conceeded[dataset_0.iloc[j,5]]
             dico_goals_conceeded[dataset_0.iloc[j,5]]+=dataset_0.iloc[j,12]
-            nb_matchs_traites+=df.shape[0]
+        
+        nb_matchs_traites+=df.shape[0]
             
     return dataset_0
 
