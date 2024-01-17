@@ -19,7 +19,6 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
         
         away_feature_column_name (str): Name of the column of the away feature we want to compute the avg over Game Weeks
         
-        are_HT_and_AT_feature_symetric (Boolean): If True, the function assumes that home and away features are symmetric. I can't remember why but the method of computing is different in the case of symetric features.
         
         dataset_0 (DataFrame): The dataset containing the data.
     
@@ -73,7 +72,7 @@ def calculcate_feature_correlation( home_feature_column_name, away_feature_colum
         
         k (float): Value used to compute the limits of outliers. We will multiply the IQR by k to compute lower and upper bound for outliers. If we don't want outliers elimination we just need to put a big value for k (like 999).
         
-        min_week_game (int): The min Game Week of the match we will select to compte the correlation.
+        min_week_game (int): The min Game Week of the match we will select to compt the correlation.
         
         date_min (datetime): If we want to select only the matchs that played out after a certain date, refer the date with this parameter.
         
@@ -162,7 +161,7 @@ def feature_correlation_with_results_analysis( home_feature_column_name, away_fe
     
 def ranking_features_correlation_with_result( liste_features_names_HT, liste_features_names_AT, k, min_week_game, date_min, dataset_0):
     """  
-    This function ranks different features on their biseral point correlation. It displays a table with the resul of this ranking.
+    This function ranks different features on their biseral point correlation. It displays a table with the result of this ranking.
     
     Args:
         liste_features_names_HT (list): Name of the home features we want to compute the correlation of biserial point and to rank.
@@ -178,7 +177,7 @@ def ranking_features_correlation_with_result( liste_features_names_HT, liste_fea
         dataset_0 (DataFrame): Dataframe containing the base data
     
     Returns:
-        Line2D : A graph that we will display in the __main__ file using the 'display()' function.
+        Table : A table that we will display in the __main__ file using the 'display()' function.
     """
     # On créé un DataFrame vide pour stocker les résultats
     correlation_ranking_DF = pd.DataFrame(columns=['Feature', 'Correlation', 'Feature mean for R = 1', 'Feature mean for R = 0', 'p value'])
