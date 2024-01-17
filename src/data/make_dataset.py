@@ -145,7 +145,7 @@ def restricted_datasets(dataset_0):
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: 
             - names_col_concat_rest_ds_2: DataFrame with relevant subsets of 18 features.
-            - names_col_concat_rest_ds_3: DataFrame with relevant subsets of 22 features.
+            - names_col_concat_rest_ds_3: DataFrame with relevant subsets of 23 features.
         
     """
     #On définit un nb de matchs min joués pour selectionner les lignes du dataset qui seront ajoutées a ces nouveau df
