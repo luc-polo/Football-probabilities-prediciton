@@ -1,7 +1,7 @@
-src.features.initialize_new_features_columns
+src.features.features_correlation
 ============================================
 
-.. automodule:: src.features.initialize_new_features_columns
+.. automodule:: src.features.features_correlation
    :members:
    :undoc-members:
    :show-inheritance:

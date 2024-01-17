@@ -8,3 +8,4 @@ Welcome to the documentation for the features module.
 
    make_new_features
    initialize_new_features_columns
+   features_correlation
