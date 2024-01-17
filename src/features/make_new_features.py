@@ -802,7 +802,7 @@ def expected_goals(dico_col_rk_0, dataset_0):
     dataset_0["AT_xg"] = dataset_0["AT_xg"].astype(float)
     
     #On remplit les colonnes "HT_xg", "AT_xg" 
-    useful_functions.variable_sum_computing(dico_col_rk_0['rg_HTXG'], 42, 1,dataset_0)
+    useful_functions.variable_sum_computing(dico_col_rk_0['rg_HTXG'], 42, 1, dataset_0)
         
         
     #PER MATCH AVG

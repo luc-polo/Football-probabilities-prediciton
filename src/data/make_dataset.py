@@ -137,7 +137,7 @@ def save_dataframe_into_data_interim(dataset_0):
 def restricted_datasets(dataset_0):
     """ 
         This function returns restricted dataframes that contain subsets of features considered as relevant. We will use these DataFrames to explore their data and to test our model with. The function also eliminate the matchs where Game Week < min_played_matchs_nb (defined in constant_variables).
-        The function still need to be completed. We must make a shorter subset of features and add some in the subset 3 which is, so far, exactly the same as the second.
+        The function still need to be completed. We must make a shorter subset of features.
     
     Args:
         dataset_0 (Dataframe): The dataframe we want to extract the columns from
@@ -145,7 +145,7 @@ def restricted_datasets(dataset_0):
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: 
             - names_col_concat_rest_ds_2: DataFrame with relevant subsets of 18 features.
-            - names_col_concat_rest_ds_3: DataFrame with relevant subsets of 18 features.
+            - names_col_concat_rest_ds_3: DataFrame with relevant subsets of 22 features.
         
     """
     #On définit un nb de matchs min joués pour selectionner les lignes du dataset qui seront ajoutées a ces nouveau df
@@ -155,8 +155,8 @@ def restricted_datasets(dataset_0):
     #Restricted dataset 1
 
 
-    #Restricted dataset 2
-    names_col_rest_ds_2 =    ["HT_avg_victory_pm", "AT_avg_victory_pm", 
+    #Restricted dataset 3
+    names_col_rest_ds_3 =  ["HT_avg_victory_pm", "AT_avg_victory_pm", 
                             "HT_avg_pm_points_ponderated_by_adversary_perf", "AT_avg_pm_points_ponderated_by_adversary_perf",
                             "HT_avg_goal_diff_pm","AT_avg_goal_diff_pm",
                             "HT_avg_scored_g_conceedded_g_ratio","AT_avg_scored_g_conceedded_g_ratio",
@@ -173,19 +173,41 @@ def restricted_datasets(dataset_0):
                             "HT_avg_possession","AT_avg_possession",
                             "HT_avg_xg","AT_avg_xg",
                             "HT_avg_odds_victory_proba","AT_avg_odds_victory_proba",
-                            "HT_H_A_status", "AT_H_A_status"
-                            ]
-    names_col_concat_rest_ds_2=["Avg_victory","Avg_points_pm_ponderated_by_adversary_perf","Avg_goal_diff", 
-                                'Avg_scored_g_conceeded_g_ratio','Avg_collected_points', 'Week_ranking',
-                                "Annual_budget", "Points_5lm", "Goal_Diff_5lm", 'Week_ranking_5lm', 'Diff_avg_corners_nb',
-                                'Avg_shots_nb', 'Avg_shots_on_target_nb', 'Avg_fouls_nb', 'Avg_possession', 'Avg_xg', 'Avg_odds_victory_proba',
-                                'H_A_status']
+                            "HT_H_A_status", "AT_H_A_status",
+                            "HT_Diff_Points_3lm", "AT_Diff_Points_3lm",
+                            "HT_Diff_Goal_Diff_3lm", "AT_Diff_Goal_Diff_3lm",
+                            "HT_Diff_Points_1lm", "AT_Diff_Points_1lm",
+                            "HT_Diff_Goal_Diff_1lm", "AT_Diff_Goal_Diff_1lm",
+                            "HT_Diff_avg_fouls_nb", "AT_Diff_avg_fouls_nb"]
+    names_col_concat_rest_ds_3=["Avg_victory",
+                                "Avg_points_pm_ponderated_by_adversary_perf",
+                                "Avg_goal_diff", 
+                                'Avg_scored_g_conceeded_g_ratio',
+                                'Avg_collected_points', 
+                                'Week_ranking',
+                                "Annual_budget", 
+                                "Points_5lm", 
+                                "Goal_Diff_5lm", 
+                                'Week_ranking_5lm', 
+                                'Diff_avg_corners_nb',
+                                'Avg_shots_nb', 
+                                'Avg_shots_on_target_nb', 
+                                'Avg_fouls_nb', 
+                                'Avg_possession', 
+                                'Avg_xg', 
+                                'Avg_odds_victory_proba', 
+                                'H_A_status', 
+                                "Diff_Points_3lm", 
+                                "Diff_Goal_Diff_3lm", 
+                                "Diff_Points_1lm", 
+                                "Diff_Goal_Diff_1lm",
+                                "Diff_avg_fouls_nb"]
     #concaténation des colonnes HT et AT dans un meme dataframe
-    concat_restricted_ds_2 = useful_functions.HT_AT_col_merger(names_col_rest_ds_2, names_col_concat_rest_ds_2, min_played_matchs_nb_0, dataset_0)  
+    concat_restricted_ds_3 = useful_functions.HT_AT_col_merger(names_col_rest_ds_3, names_col_concat_rest_ds_3, min_played_matchs_nb_0, dataset_0)  
                 
                           
-    #Restricted dataset 3
-    names_col_rest_ds_3 = ["HT_avg_victory_pm", "AT_avg_victory_pm", 
+    #Restricted dataset 2
+    names_col_rest_ds_2 = ["HT_avg_victory_pm", "AT_avg_victory_pm", 
                             "HT_avg_pm_points_ponderated_by_adversary_perf", "AT_avg_pm_points_ponderated_by_adversary_perf",
                             "HT_avg_goal_diff_pm","AT_avg_goal_diff_pm",
                             "HT_avg_scored_g_conceedded_g_ratio","AT_avg_scored_g_conceedded_g_ratio",
@@ -204,12 +226,12 @@ def restricted_datasets(dataset_0):
                             "HT_avg_odds_victory_proba","AT_avg_odds_victory_proba",
                             "HT_H_A_status", "AT_H_A_status"
                             ]
-    names_col_concat_rest_ds_3 =["Avg_victory","Avg_points_pm_ponderated_by_adversary_perf","Avg_goal_diff", 
+    names_col_concat_rest_ds_2 =["Avg_victory","Avg_points_pm_ponderated_by_adversary_perf","Avg_goal_diff", 
                                 'Avg_scored_g_conceeded_g_ratio','Avg_collected_points', 'Week_ranking',
                                 "Annual_budget", "Points_5lm", "Goal_Diff_5lm", 'Week_ranking_5lm', 'Diff_avg_corners_nb',
                                 'Avg_shots_nb', 'Avg_shots_on_target_nb', 'Avg_fouls_nb', 'Avg_possession', 'Avg_xg', 'Avg_odds_victory_proba',
                                 'H_A_status']
     #concaténation des colonnes HT et AT dans un meme dataframe
-    concat_restricted_ds_3 = useful_functions.HT_AT_col_merger(names_col_rest_ds_3, names_col_concat_rest_ds_3, min_played_matchs_nb_0, dataset_0)
+    concat_restricted_ds_2 = useful_functions.HT_AT_col_merger(names_col_rest_ds_2, names_col_concat_rest_ds_2, min_played_matchs_nb_0, dataset_0)
         
     return concat_restricted_ds_2, concat_restricted_ds_3
