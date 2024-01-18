@@ -1,5 +1,5 @@
 """
-This module aims at generating graphs and statistics to describe data (raw one as well as the new features created). It also contains function that identify potential outliers.
+This module aims at generating graphs and statistics to describe data (raw one as well as the new features created).
 Its principal goal is to verify that the data is accurate and that we can use it to feed our model or to create new features.
 We use the functions below in:
 I)1) and II)4)5)
@@ -156,8 +156,6 @@ def heat_map(restricted_dataset_0):
 # --------------------------------------------------------------
 # Getting more info on specific features potential outliers
 # --------------------------------------------------------------
-
-
 def count_0_values(dataset, feature, min_game_week, HT_or_AT, seasons_end_date):
     """
         Displays statistics per season, on the 0 values of a specific feature. There is the possibility to apply filters on the 0 values we want to identify statistics. (Like if we want to display only statistics on the lines with 0 values for the specific feature, where game week > 5)

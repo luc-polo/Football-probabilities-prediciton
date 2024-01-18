@@ -25,10 +25,10 @@ Creation of new features
    - features.make_new_features
 
 Evaluating features relevancy computing their corrrelation with result
-    - features.features_correlation
+    - features.features_selection
 
 Definition of restricted datasets with a selection of revelevant features
-    - data.make_dataset
+    - features.features_selection
 
 Commun statistics
     No module used
