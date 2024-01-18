@@ -1,4 +1,5 @@
-"This module is made to contain anything necessary to evaluate features correlation with the matchs results. The function tracer_feature_mean_depending_on_game_week() is not directly made for this but allows to know from what Game Week we can compute correlation of features to have reliable results"
+"""This module is made to contain anything necessary to make features selection. 
+For instance, the function tracer_feature_mean_depending_on_game_week() is not directly made for this but allows to know from what Game Week we can compute features correlation with matchs' results to have reliable results"""
 
 
 import pandas as pd
@@ -8,6 +9,9 @@ import seaborn as sns
 
 import useful_functions
 
+# --------------------------------------------------------------
+# Features Correlation with matchs' results computing (used in 'II)1)')
+# --------------------------------------------------------------
 
 #Ploting the mean of a feature at every championship day
 def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_column_name, dataset_0):
@@ -57,8 +61,6 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
     plt.legend()
     # Show the standard deviation plot
     plt.show()
-    
-    
     
 #Assessing the CORRELATION between two features
 def calculcate_feature_correlation( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0):
@@ -114,7 +116,6 @@ def calculcate_feature_correlation( home_feature_column_name, away_feature_colum
     
     return correlation, p_value, mean_ra1, mean_ra0, df_without_outliers
 
-
 def feature_correlation_with_results_analysis( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0):    
     """  
     This function computes the correlation of biserial point between a specific feature and the matchs' results, applying some filters to select matchs used to compute our result. Other statistics are also displayed: Avg of the feature when Result = 1 and 0. As well as p value.
@@ -156,8 +157,6 @@ def feature_correlation_with_results_analysis( home_feature_column_name, away_fe
     plt.title('RH_RA en fonction de home_feature_column_name')
     # Affichez le graphique
     plt.show()
-    
-  
     
 def ranking_features_correlation_with_result( liste_features_names_HT, liste_features_names_AT, k, min_week_game, date_min, dataset_0):
     """  
@@ -221,4 +220,14 @@ def ranking_features_correlation_with_result( liste_features_names_HT, liste_fea
     # Affichez le DataFrame trié et formaté
     return styled_correlation_ranking_DF
 
+# --------------------------------------------------------------
+# Removing outliers (not used but kept in case of...)
+# --------------------------------------------------------------
 
+# --------------------------------------------------------------
+# Treatment of highly correlated features (not used but kept in case of...)
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+# Wrapper and Filter features selection (not used but kept in case of...)
+# --------------------------------------------------------------
