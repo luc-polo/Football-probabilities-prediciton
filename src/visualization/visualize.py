@@ -289,9 +289,6 @@ def display_matchs_specific_feat_val(dataset, feature, value_to_identify ):
 
 
 
-
-
-
 # --------------------------------------------------------------
 # Status of the study of each feature
 # --------------------------------------------------------------

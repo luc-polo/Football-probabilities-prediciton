@@ -1,5 +1,5 @@
 """This module is made to contain anything necessary to make features selection. 
-For instance, the function tracer_feature_mean_depending_on_game_week() is not directly made for this but allows to know from what Game Week we can compute features correlation with matchs' results to have reliable results"""
+"""
 
 
 import pandas as pd
@@ -13,11 +13,10 @@ from data import constant_variables
 # --------------------------------------------------------------
 # Features Correlation with matchs' results computing (used in 'II)1)')
 # --------------------------------------------------------------
-
-#Ploting the mean of a feature at every championship day
+#Ploting the mean of a feature over Game Weeks
 def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_column_name, dataset_0):
     """  
-    This function creates a line plot to visualize the mean values of a particular feature across different game weeks. This function is (in my memories), made to know starting what Game Week we should calculate the correlation between features and match results. Indeed, at the beginning of the year the features avg are too weak and unrepresentative.
+    This function creates a line plot to visualize the mean values of a particular feature across different game weeks. This function is (in my memories), made to know starting which Game Week the features have a moderated variance. Indeed, at the beginning of the year the features avg are too weak and unrepresentative.
     
     Args:
         home_feature_column_name (str): Name of the column of the home feature we want to compute the avg over Game Weeks
@@ -62,7 +61,7 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
     plt.legend()
     # Show the standard deviation plot
     plt.show()
-    
+
 #Assessing the CORRELATION between two features
 def calculcate_feature_correlation( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0):
     """  
