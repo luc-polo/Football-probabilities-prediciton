@@ -11,12 +11,6 @@ from data import constant_variables
 
 
 
-# --------------------------------------------------------------
-# Minimum value of played matches (used in '))')
-# --------------------------------------------------------------
-def remove rows_below_min_played_matches_value(min_played_matches_value, dataset_0):
-    dataset_0 = dataset_0[dataset_0['HT_played_matchs_nb']>min_played_matches_value]['RH']
-
 
 def formatting_splitting(dtaset_0):
     #Definition of Y
