@@ -8,3 +8,4 @@ Welcome to the documentation for the Data module.
 
    make_dataset
    constant_variables
+   preprocessing

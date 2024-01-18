@@ -98,62 +98,6 @@ def plot_all_num_features(dataset, save, density_estimate):
 
 
 # --------------------------------------------------------------
-# Plot boxplot used in 'II)4)')
-# --------------------------------------------------------------
-
-def boxplot(restricted_dataset_0):
-    """
-        This function plots the boxplots of all the columns in the dataset inputed in parameter. We use it to identify outliers.
-
-    Args:
-        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features.
-
-    Returns:
-        None
-    """
-    #On récupère la liste des colonnes de restricted_dataset_0
-    col_to_plot_list_0 = restricted_dataset_0.columns
-    
-    #Boxplot plotting settings and def 
-    red_circle = dict(markerfacecolor = 'red', marker = 'o', markeredgecolor = 'white', alpha = 0.1)    
-    if len(col_to_plot_list_0) >20 and len(col_to_plot_list_0) <=24:
-        fig, axs = plt.subplots(6, 4, figsize =(20,60))
-    if len(col_to_plot_list_0) >16 and len(col_to_plot_list_0) <=20:
-        fig, axs = plt.subplots(5, 4, figsize =(20,60))
-
-    #Filling the figure with the boxplots of the concat_restricted_ds_2 dataframe
-    for i, ax in enumerate(axs.flat):
-        if i >= (len(col_to_plot_list_0)):
-            break
-        
-        # Create the boxplot with a specific displaying of outliers points (red_circle) and the mean displayed as a line
-        box=ax.boxplot(restricted_dataset_0[col_to_plot_list_0[i]], whis=1.5, flierprops = red_circle, showmeans=True, meanline=True)
-        # Add a legend specifying the median and mean lines
-        ax.legend([box["medians"][0], box["means"][0]], ['Median', 'Mean'])
-        # Set the title for the boxplot
-        ax.set_title(col_to_plot_list_0[i])
-
-
-# --------------------------------------------------------------
-# Plot heatmap of features correlation
-# --------------------------------------------------------------
-
-def heat_map(restricted_dataset_0):
-    """
-        This function plots the heatmap of correlation between features in the dataset inputed in parameter. We use it to identify features too much correlated.
-
-    Args:
-        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features. If too big the execution will be extremly long.
-
-    Returns:
-        None
-    """
-    #On trace la heatmap entre les features:
-    plt.figure(figsize=(10, 8), dpi=500)
-    sns.heatmap(restricted_dataset_0.corr(), annot = True, fmt= '.2f')
-    plt.show()
-
-# --------------------------------------------------------------
 # Getting more info on specific features potential outliers
 # --------------------------------------------------------------
 def count_0_values(dataset, feature, min_game_week, HT_or_AT, seasons_end_date):
@@ -284,6 +228,62 @@ def display_matchs_specific_feat_val(dataset, feature, value_to_identify ):
      print('Here is the list of the matchs concerned:', list_matchs_concerned)
 
 
+
+# --------------------------------------------------------------
+# Plot boxplot used in 'II)4)')
+# --------------------------------------------------------------
+
+def boxplot(restricted_dataset_0):
+    """
+        This function plots the boxplots of all the columns in the dataset inputed in parameter. We use it to identify outliers.
+
+    Args:
+        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features.
+
+    Returns:
+        None
+    """
+    #On récupère la liste des colonnes de restricted_dataset_0
+    col_to_plot_list_0 = restricted_dataset_0.columns
+    
+    #Boxplot plotting settings and def 
+    red_circle = dict(markerfacecolor = 'red', marker = 'o', markeredgecolor = 'white', alpha = 0.1)    
+    if len(col_to_plot_list_0) >20 and len(col_to_plot_list_0) <=24:
+        fig, axs = plt.subplots(6, 4, figsize =(20,60))
+    if len(col_to_plot_list_0) >16 and len(col_to_plot_list_0) <=20:
+        fig, axs = plt.subplots(5, 4, figsize =(20,60))
+
+    #Filling the figure with the boxplots of the concat_restricted_ds_2 dataframe
+    for i, ax in enumerate(axs.flat):
+        if i >= (len(col_to_plot_list_0)):
+            break
+        
+        # Create the boxplot with a specific displaying of outliers points (red_circle) and the mean displayed as a line
+        box=ax.boxplot(restricted_dataset_0[col_to_plot_list_0[i]], whis=1.5, flierprops = red_circle, showmeans=True, meanline=True)
+        # Add a legend specifying the median and mean lines
+        ax.legend([box["medians"][0], box["means"][0]], ['Median', 'Mean'])
+        # Set the title for the boxplot
+        ax.set_title(col_to_plot_list_0[i])
+
+
+# --------------------------------------------------------------
+# Plot heatmap of features correlation
+# --------------------------------------------------------------
+
+def heat_map(restricted_dataset_0):
+    """
+        This function plots the heatmap of correlation between features in the dataset inputed in parameter. We use it to identify features too much correlated.
+
+    Args:
+        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features. If too big the execution will be extremly long.
+
+    Returns:
+        None
+    """
+    #On trace la heatmap entre les features:
+    plt.figure(figsize=(10, 8), dpi=500)
+    sns.heatmap(restricted_dataset_0.corr(), annot = True, fmt= '.2f')
+    plt.show()
 
 
 
