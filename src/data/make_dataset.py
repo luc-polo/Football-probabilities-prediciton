@@ -136,7 +136,7 @@ def save_dataframe_into_data_interim(dataset_0):
 
 def restricted_datasets(dataset_0):
     """ 
-        This function returns restricted dataframes that contain subsets of features considered as relevant. We will use these DataFrames to explore their data and to test our model with. The function also eliminate the matchs where Game Week < min_played_matchs_nb (defined in constant_variables).
+        This function returns restricted dataframes that contain subsets of features considered as relevant. We also gather HT and AT features in one column. We will use these DataFrames to explore their data and to test our model with. The function also eliminate the matchs where Game Week < min_played_matchs_nb (defined in constant_variables).
         The function still need to be completed. We must make a shorter subset of features.
     
     Args:

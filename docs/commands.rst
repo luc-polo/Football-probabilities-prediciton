@@ -10,7 +10,7 @@ Updating the environment requirements
 Running the programm from the beginning
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Here is the order I followed to write the code, respecting the parent/dependency relationships. That's the order to follow to run the all programm. I've written in Italic (between '*'), the modules that are not executed in __main__.ipynb as they are imported and used inside other modules.
+Here is the order I followed to write the code, respecting the parent/dependency relationships. Most of modules have been written for one task but some have been written for several. That's why we can see some of them appearing several times.  I've written in Italic (between '*'), the modules that are not executed in __main__.ipynb as they are imported and used inside other modules.
 
 Initialisation and data import
    - *data.constant_variables*
@@ -21,9 +21,23 @@ Data cleaning
    - visualization.visualize
 
 Creation of new features
-   - initialize_new_features_columns
-   - make_new_features
+   - features.initialize_new_features_columns
+   - features.make_new_features
 
+Evaluating features relevancy computing their corrrelation with result
+    - features.features_correlation
+
+Definition of restricted datasets with a selection of revelevant features
+    - data.make_dataset
+
+Commun statistics
+    No module used
+
+Box Plot
+    - visualization.visualize
+
+Feature correlation heatmap
+    - visualization.visualize
 
 Creating documentation with SPhinx
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

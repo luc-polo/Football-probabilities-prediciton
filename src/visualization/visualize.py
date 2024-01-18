@@ -1,8 +1,8 @@
 """
-This module aims at generating graphs and statistics to describe raw data. It also contains
-function that identify potential outliers.
-Its principal goal is to verify that the raw data is accurate and that we can use it
-to feed our model or to create new features.
+This module aims at generating graphs and statistics to describe data (raw one as well as the new features created). It also contains function that identify potential outliers.
+Its principal goal is to verify that the data is accurate and that we can use it to feed our model or to create new features.
+We use the functions below in:
+I)1) and II)4)5)
 """
 
 
@@ -23,7 +23,7 @@ from data import constant_variables
 
 
 # --------------------------------------------------------------
-# Plot single columns
+# Plot single feature histogram (used in 'I)1)')
 # --------------------------------------------------------------
 
 def plot_single_col_histo(col_name, dataset):  
@@ -45,7 +45,7 @@ def plot_single_col_histo(col_name, dataset):
     plt.hist(dataset[col_name].reset_index(drop=True))
 
 # --------------------------------------------------------------
-# Plot all features
+# Plot all numerical features histograms (used in 'I)1)' )
 # --------------------------------------------------------------
 
 def plot_all_num_features(dataset, save, density_estimate):
@@ -96,6 +96,62 @@ def plot_all_num_features(dataset, save, density_estimate):
     if save == True and density_estimate == False:
         plt.savefig('../../reports/figures/all_features_histo.png')
 
+
+# --------------------------------------------------------------
+# Plot boxplot used in 'II)4)')
+# --------------------------------------------------------------
+
+def boxplot(restricted_dataset_0):
+    """
+        This function plots the boxplots of all the columns in the dataset inputed in parameter. We use it to identify outliers.
+
+    Args:
+        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features.
+
+    Returns:
+        None
+    """
+    #On récupère la liste des colonnes de restricted_dataset_0
+    col_to_plot_list_0 = restricted_dataset_0.columns
+    
+    #Boxplot plotting settings and def 
+    red_circle = dict(markerfacecolor = 'red', marker = 'o', markeredgecolor = 'white', alpha = 0.1)    
+    if len(col_to_plot_list_0) >20 and len(col_to_plot_list_0) <=24:
+        fig, axs = plt.subplots(6, 4, figsize =(20,60))
+    if len(col_to_plot_list_0) >16 and len(col_to_plot_list_0) <=20:
+        fig, axs = plt.subplots(5, 4, figsize =(20,60))
+
+    #Filling the figure with the boxplots of the concat_restricted_ds_2 dataframe
+    for i, ax in enumerate(axs.flat):
+        if i >= (len(col_to_plot_list_0)):
+            break
+        
+        # Create the boxplot with a specific displaying of outliers points (red_circle) and the mean displayed as a line
+        box=ax.boxplot(restricted_dataset_0[col_to_plot_list_0[i]], whis=1.5, flierprops = red_circle, showmeans=True, meanline=True)
+        # Add a legend specifying the median and mean lines
+        ax.legend([box["medians"][0], box["means"][0]], ['Median', 'Mean'])
+        # Set the title for the boxplot
+        ax.set_title(col_to_plot_list_0[i])
+
+
+# --------------------------------------------------------------
+# Plot heatmap of features correlation
+# --------------------------------------------------------------
+
+def heat_map(restricted_dataset_0):
+    """
+        This function plots the heatmap of correlation between features in the dataset inputed in parameter. We use it to identify features too much correlated.
+
+    Args:
+        restricted_dataset_0 (DataFrame): dataset with HT and AT columns merged, containing a restricted subset of features. If too big the execution will be extremly long.
+
+    Returns:
+        None
+    """
+    #On trace la heatmap entre les features:
+    plt.figure(figsize=(10, 8), dpi=500)
+    sns.heatmap(restricted_dataset_0.corr(), annot = True, fmt= '.2f')
+    plt.show()
 
 # --------------------------------------------------------------
 # Getting more info on specific features potential outliers
@@ -196,6 +252,7 @@ def count_0_values(dataset, feature, min_game_week, HT_or_AT, seasons_end_date):
             print('it concerns game weeks:', game_weeks_team)
         print('\n')
 
+
 # Display matchs where feature has a certain value
 def display_matchs_specific_feat_val(dataset, feature, value_to_identify ):
      """
@@ -230,38 +287,11 @@ def display_matchs_specific_feat_val(dataset, feature, value_to_identify ):
 
 
 
-# --------------------------------------------------------------
-# Execution of function
-# --------------------------------------------------------------
-
-# Import the dataset
-#dataset = load_data()
-
-#Plotting histograms for all features
-#plot_all_num_features(dataset, save =False, density_estimate= True)
-
-#Displaying statistics about 0 values
-
-#seasons_end_dates = constant_variables.seasons
-#count_0_values( dataset, 'Pre-Match PPG (Away)', 5,'AT', seasons_end_dates)
-
-#Displaying statistics about negative values for cards
-#display_matchs_specific_feat_val(dataset, 'home_team_yellow_cards', -1 )
-
-#Displaying statistics about 0 values for shots: 
-#display_matchs_specific_feat_val(dataset, 'away_team_shots', 0 )
 
 
 
-# --------------------------------------------------------------
-# Export graphs
-# --------------------------------------------------------------
 
-#histogram
-#plot_all_num_features(dataset, save =True, density_estimate=False)
 
-#density estimate graph
-#plot_all_num_features(dataset, save =True, density_estimate=True)
 
 
 # --------------------------------------------------------------
