@@ -7,6 +7,7 @@
 import sys
 import pandas as pd
 from sklearn.model_selection import train_test_split
+import numpy as np
 
 # modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
@@ -76,4 +77,65 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
 
 
     
+# --------------------------------------------------------------
+#  Removing outliers (not used but kept in case... placed in 'V))')
+# --------------------------------------------------------------
 
+#Info from features boxplot analysis that aims at identifying outliers:
+
+#HT_avg_victory_pm: seems OK
+#HT_avg_pm_points_ponderated_by_adversary_perf: OK
+#HT_avg_goal_diff_pm: OK
+#HT_avg_scored_g_conceedded_g_ratio: OK
+#HT_avg_collected_points_pm: OK
+#HT_ranking: OK
+#HT_annual_budget: OK
+#Points_HT_5lm_PM: OK
+#GoalDiff_HT_5lm_PM: OK
+#HT_5lm_week_ranking: OK
+#HT_Diff_avg_corners: OK
+#HT_avg_shots_nb: OK
+#HT_avg_shots_on_target_nb: OK
+#HT_avg_fouls_nb: OK
+#HT_avg_possession: OK but: when i plot the mean on the boxplot it is equal to 50%, so normal. But when i do it manually i get 48%...
+#HT_avg_xg
+#HT_avg_odds_victory_proba: OK
+
+
+#Delete the outliers of every features in dataset.
+def outliers_removal(X_0, Y_0, iqr_multiplier):
+    """  
+    This function removes outliers from the provided DataFrames for all features (identifying outliers for each column).
+    This function is not currently used, as I believe that all our data is informative for our model. In our context, outliers are not inaccurate data; all values represent realistic scenarios. This step was made to test if it could improve our model perf. I have tested, I don't remember of the results but i guess it was not soo incredible as i chosed not to used it.
+    
+    Args:
+        X_0 (DataFrame): DataFrame containing the features for which outliers should be removed.
+        
+        Y_0 (DataFrame): Dataframe of the labels/targets corresponding to the X_0 Dataframe
+        
+        iqr_multiplier (float):  A multiplier used to determine the outlier boundaries. Outlier bounds are calculated as follows:lower_bound =   q1 - (iqr_multiplier * iqr)    upper_bound = q3 + (iqr_multiplier * iqr)
+    
+    Returns:
+        Tuple: (clean_data, clean_target) X_0 and Y_0 without the rows where we identified outliers.
+    """
+    clean_data = X_0
+    clean_target = Y_0
+    rows_to_remove = []
+    X_col_names = X_0.columns
+    for i in range(X_0.shape[1]):
+        #identifying outliers
+        q1, q3 = np.percentile(X_0[X_col_names[i]], [25,75])
+        iqr = q3-q1
+        lower_bound = q1 - (iqr_multiplier * iqr)
+        upper_bound = q3 + (iqr_multiplier * iqr)
+        # Find the rows that contain outliers
+        outliers_rows = (clean_data[X_col_names[i]] < lower_bound) | (clean_data[X_col_names[i]] > upper_bound)
+        rows_to_remove.extend(clean_data[outliers_rows].index)
+    # Remove duplicates and sort indices to delete
+    rows_to_remove = sorted(list(set(rows_to_remove)))
+    # Drop outliers from clean_data
+    clean_data = clean_data.drop(rows_to_remove)
+    # Drop corresponding rows from clean_target
+    clean_target = clean_target.drop(rows_to_remove)
+
+    return(clean_data, clean_target)
