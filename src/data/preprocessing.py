@@ -18,7 +18,7 @@ from data import constant_variables
 
 
 # --------------------------------------------------------------
-#  Getting formatted X, Y and splitting it into train, valid, test sets (used in 'V)4)')
+#  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
 def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proportion, test_proportion, dataset_0):
     """  
@@ -78,7 +78,7 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
 
     
 # --------------------------------------------------------------
-#  Removing outliers (not used but kept in case... placed in 'V))')
+#  Removing outliers (not used but kept in case... placed in 'V)3)')
 # --------------------------------------------------------------
 
 #Info from features boxplot analysis that aims at identifying outliers:

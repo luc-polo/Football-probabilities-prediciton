@@ -3,9 +3,14 @@
 
 
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 from scipy.stats import pointbiserialr
 import seaborn as sns
+from sklearn.feature_selection import f_classif, SelectKBest
+from mlxtend.plotting import plot_sequential_feature_selection as plot_sfs
+from mlxtend.feature_selection import SequentialFeatureSelector as SFS
+from sklearn.base import BaseEstimator, TransformerMixin
 
 import useful_functions
 from data import constant_variables
@@ -324,18 +329,165 @@ def restricted_datasets(dataset_0):
     concat_restricted_ds_2 = useful_functions.HT_AT_col_merger(names_col_rest_ds_2, names_col_concat_rest_ds_2, min_played_matchs_nb_0, dataset_0)
         
     return concat_restricted_ds_2, concat_restricted_ds_3
-# --------------------------------------------------------------
-# Removing outliers (not used but kept in case of...)
-# --------------------------------------------------------------
-# --------------------------------------------------------------
-# Definition of restricted datasets with a selection of revelevant features
-# --------------------------------------------------------------
 
 
 # --------------------------------------------------------------
-# Treatment of highly correlated features (not used but kept in case of...)
+#  Removing highly correlated features (not used but kept in case... placed in 'VI))')
 # --------------------------------------------------------------
+#Transformer à utiliser dans la pipeline elle même
+class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
+    """  
+    This transformer removes highly correlated features from a dataset. It does this by first calculating the correlation matrix for the dataset and then identifying pairs of features that have a correlation coefficient above a specified threshold. For each pair of highly correlated features, it then removes the feature that has the lowest correlation with the target variable.
+    We use it in  the pipeline
+    
+    Args:
+        corr_threshold (float): The corr_threshold parameter determines the threshold at which two features are considered to be highly correlated. Features with a correlation coefficient above this threshold will be removed from the dataset.
+    
+    Returns:
+        dataset without the highly correlated features
+        
+    """
+    def __init__(self, corr_threshold):
+        self.corr_threshold = corr_threshold
+        
+    def fit(self, X_0, Y_0):
+        
+        #The first step in fit is to find the correlated features in the X_0 dataset 
+        #We calculate  the correlation matrix
+        cor_matrix = X_0.corr().abs()
+        # Create an empty list to store the pairs of highly correlated features
+        highly_correlated_pairs = []
+        #list of features removed from dataframe
+        features_to_remove=[]
 
+        # Iterate through the correlation matrix to find highly correlated features
+        for i in range(len(cor_matrix.columns)):
+            for j in range(i + 1, len(cor_matrix.columns)):
+                if cor_matrix.iloc[i, j] > self.corr_threshold:
+                    # If the correlation coefficient is above the threshold, add the feature names to the list
+                    feature1 = cor_matrix.columns[i]
+                    feature2 = cor_matrix.columns[j]
+                    highly_correlated_pairs.append((feature1, feature2))
+
+                    #On vérifie qu'on a pas déja placé l'une ou les deux features du dataframe dans la liste des features à retirer
+                    if (feature1 not in features_to_remove) and (feature2 not in features_to_remove):
+                        #Remove the feature that has the lowest correlation with the target (Y)
+                        f_scores1, p_values1 = f_classif(X_0[feature1].to_frame(), Y_0)
+                        f_scores2, p_values2 = f_classif(X_0[feature2].to_frame(), Y_0)
+                        #On selectionne la feature with the lowest correlation score avec la target
+                        if f_scores1 > f_scores2:
+                            feature_to_delete = feature2
+                        else:
+                            feature_to_delete = feature1
+                            
+                        #On ajoute à "features_to_remove" le nom de la feature à retirer
+                        features_to_remove.append(feature_to_delete)
+                        
+        # Print the highly correlated features pairs
+        """for pair in highly_correlated_pairs:
+            print(f"Highly correlated features: {pair[0]} and {pair[1]}")"""
+        # Print the features removed
+        """print("\n Les features choisies pour être retirées du df sont:", features_to_remove)"""
+        
+        #Second step: register the correlated features names in the features_to_remove variable of the transformer
+        #On défini la liste des features que devra retirer le transformer lorsqu'il sera appliqué à un dataset:
+        self.features_to_remove = features_to_remove
+        
+        #On retourne l'objet transformer pour lequel on aura juste défini la liste features_to_remove
+        return self
+    
+    
+    def transform(self, X_0):
+        clean_data = X_0
+        #On supprime du clean dataset les features à supprimer
+        clean_data.drop(self.features_to_remove, axis=1, inplace=True)
+        return clean_data
+    
+    
 # --------------------------------------------------------------
-# Wrapper and Filter features selection (not used but kept in case of...)
+# Wrapper and Filter features selection (used in 'V)2)')
 # --------------------------------------------------------------
+def wrapper_data_selection(X_0,Y_0, model_0):
+    """  
+    Function designed for testing Wrapper feature selection performance and conducting feature selection. It is not included in the pipeline because it significantly slows down its execution. The function displays the performance of model_0, obtained by cross-validation on the training set, using several subsets of features.
+    
+    Args:
+        X_0 (DataFrame):  A DataFrame representing the features of the dataset. Features selection we conduct must be performed on the training set, so X_train should be provided.
+        
+        Y_0 (DataFrame): A DataFrame representing the target variable of the dataset. (Y_train in our case)
+        
+        model_0 (model): A machine learning model used to evaluate the importance of the features
+    
+    Returns:
+        Dataframe: X_0 after applying the wrapper feature selection process on it.
+        
+    """
+    sfs = SFS(estimator = model_0, k_features = 'best', forward = True, verbose = 3, cv=4, scoring = 'neg_log_loss')
+    sfs.fit(X_0,  np.ravel(Y_0))
+
+    
+    #Displaying the detailed results and stats of Sequential Features Selection
+    print('Best accuracy score: %.4f' % sfs.k_score_)
+    print('Best subset (indices):', sfs.k_feature_idx_)
+    print('Best subset (corresponding names):', sfs.k_feature_names_)
+    metric_dict = sfs.get_metric_dict(confidence_interval=0.95)
+    fig_perf_nb_of_feat = plot_sfs(metric_dict, kind= 'std_dev')
+    plt.title('Sequential Selection (w. StdDev)')
+    plt.grid()
+    plt.show()
+
+    #Adapting X to the features selection made 
+    X_wrapped = sfs.transform(X_0)
+    #On retrensforme X_wrapped en DataFrame
+    X_wrapped = pd.DataFrame(X_wrapped, columns=sfs.k_feature_names_)
+    
+    return(X_wrapped)
+
+
+def filter_data_selection(X_0, Y_0, nb_features_to_select, score_func, report):
+    """  
+    Funciton made to make tests on Filter features selection performances. It displays the performances of 
+    
+    Args:
+        X_0 (DataFrame):  A DataFrame representing the features of the dataset. The test we make must be done on train set so here we must input X_train
+        
+        Y_0 (DataFrame): A DataFrame representing the target variable of the dataset (Y_train in our case)
+        
+        nb_features_to_select (int or str): Number of features to select using the filtering method. It can be an integer specifying the exact number of features or a string such as 'all' to select all features.
+        
+        score_func (func): A scoring function used to evaluate the importance of features, for instance 'f_classif'. This funct° is supposed to computes the correlation (or somthing like that) between a feature col and a label col.
+        
+        report(Boolean): Wether we want to get a report of se data selection we have just made
+    
+    Returns:
+        DataFrame: X_0 after applying the filter feature selection process on it.
+        
+    """
+    selector = SelectKBest(score_func, k= nb_features_to_select)
+    
+    #On définit X_filtered pour ne pas perdre le nom des colonnes de X_0
+    X_filtered = X_0
+    X_filtered = selector.fit_transform(X_filtered, np.ravel(Y_0))
+    
+    #On obtient les noms des features selectionnées
+    selected_features=selector.get_support()
+    features_names = X_0.columns
+    selected_features_names = features_names[selected_features]
+    
+    if report == True:
+        print('\n \n Filter features Selection Results')
+        # Obtenez les scores de toutes les features testées
+        feature_scores = selector.scores_
+        # Créez un DataFrame pour afficher les résultats
+        features_with_scores = pd.DataFrame({'Feature': features_names, 'Score': feature_scores})
+        features_with_scores = features_with_scores.sort_values(by='Score', ascending=False, ignore_index = True)
+        # Afficher les features sélectionnées et leurs scores
+        print(features_with_scores.head(nb_features_to_select))
+        
+    #On retrensforme X_RobustScaled en DataFrame
+    X_filtered = pd.DataFrame(X_filtered, columns=selected_features_names)
+        
+        
+    return X_filtered
+   
+
