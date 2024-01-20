@@ -407,7 +407,7 @@ class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
 # --------------------------------------------------------------
 # Wrapper and Filter features selection (used in 'V)2)')
 # --------------------------------------------------------------
-def wrapper_data_selection(X_0,Y_0, model_0):
+def wrapper_features_selection(X_0,Y_0, model_0):
     """  
     Function designed for testing Wrapper feature selection performance and conducting feature selection. It is not included in the pipeline because it significantly slows down its execution. The function displays the performance of model_0, obtained by cross-validation on the training set, using several subsets of features.
     
@@ -444,7 +444,7 @@ def wrapper_data_selection(X_0,Y_0, model_0):
     return(X_wrapped)
 
 
-def filter_data_selection(X_0, Y_0, nb_features_to_select, score_func, report):
+def filter_features_selection(X_0, Y_0, nb_features_to_select, score_func, report):
     """  
     Funciton made to make tests on Filter features selection performances. It displays the performances of 
     
@@ -482,6 +482,7 @@ def filter_data_selection(X_0, Y_0, nb_features_to_select, score_func, report):
         features_with_scores = pd.DataFrame({'Feature': features_names, 'Score': feature_scores})
         features_with_scores = features_with_scores.sort_values(by='Score', ascending=False, ignore_index = True)
         # Afficher les features sélectionnées et leurs scores
+        print(f'Here are the {nb_features_to_select} selected features and their scores')
         print(features_with_scores.head(nb_features_to_select))
         
     #On retrensforme X_RobustScaled en DataFrame
