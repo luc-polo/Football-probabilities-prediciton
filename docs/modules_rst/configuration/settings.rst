@@ -1,5 +1,5 @@
 src.configuration.settings
-=====================
+==========================
 
 .. automodule:: src.configuration.settings
    :members:

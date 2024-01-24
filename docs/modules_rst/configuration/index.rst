@@ -1,5 +1,5 @@
 src.configuration
-========
+=================
 
 Welcome to the documentation for the configuration module.
 

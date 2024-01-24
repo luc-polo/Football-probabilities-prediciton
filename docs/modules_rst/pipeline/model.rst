@@ -1,5 +1,5 @@
 src.pipeline.model
-=====================
+==================
 
 .. automodule:: src.pipeline.model
    :members:

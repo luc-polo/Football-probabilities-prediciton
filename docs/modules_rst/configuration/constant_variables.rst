@@ -1,5 +1,5 @@
 src.configuration.constant_variables
-=====================
+====================================
 
 .. automodule:: src.configuration.constant_variables
    :members:
