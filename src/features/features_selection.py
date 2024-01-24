@@ -13,7 +13,7 @@ from mlxtend.feature_selection import SequentialFeatureSelector as SFS
 from sklearn.base import BaseEstimator, TransformerMixin
 
 import useful_functions
-from data import constant_variables
+from configuration import constant_variables
 
 # --------------------------------------------------------------
 # Features Correlation with matchs' results computing (used in 'II)1)')

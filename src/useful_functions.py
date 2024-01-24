@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 import pandas as pd
 
 #Import our modules
-from data import constant_variables
+from configuration import constant_variables
 
 def un_ou_x(x):
     """ 

@@ -13,7 +13,7 @@ import numpy as np
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
 
 #Import my modules
-from data import constant_variables
+from configuration import constant_variables
 
 
 
