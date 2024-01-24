@@ -11,3 +11,5 @@ Welcome to the documentation for the Source module.
    data/index
    visualization/index
    features/index
+   configuration/index
+   pipeline/index

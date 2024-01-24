@@ -7,5 +7,4 @@ Welcome to the documentation for the Data module.
    :maxdepth: 2
 
    make_dataset
-   constant_variables
    preprocessing
