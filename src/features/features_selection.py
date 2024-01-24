@@ -225,6 +225,110 @@ def ranking_features_correlation_with_result( liste_features_names_HT, liste_fea
     # Affichez le DataFrame trié et formaté
     return styled_correlation_ranking_DF
 
+
+
+def calculcate_feature_f_classif_correlation(home_feature_column_name, away_feature_column_name, min_week_game, date_min, dataset_0):
+    """  
+    This function computes the f_classif correlation, applying some filters to select matchs used to compute our result.
+    
+    Args:
+        home_feature_column_name (str): Name of the column of the home feature we want to compute the f_classif correlation of
+
+        away_feature_column_name (str): Name of the column of the away feature we want to compute the f_classif correlation of
+        
+        min_week_game (int): The min Game Week of the match we will select to compt the correlation.
+        
+        date_min (datetime): If we want to select only the matchs that played out after a certain date, refer the date with this parameter.
+        
+        dataset_0 (DataFrame): The dataset containing the data.
+    
+    Returns:
+        Tuple: f_classif correlation value, p-value, Mean of the feature when Result = 1, Mean of the feature when Result = 0, df_without_outliers
+    """
+    
+    #Si on a décidé d'enlever les lignes avant une certaine date:
+    
+    dataset_01 = dataset_0[dataset_0["date_GMT"]>date_min]
+    
+    #On supprime les lignes qui correspondent à des matchs de journée de championnat < min_week_game:
+    dataset_01 = dataset_01[dataset_01["Game Week"]>= min_week_game]
+    
+    # Concaténer les colonnes
+    Home_Away_Features = pd.concat([dataset_01[home_feature_column_name], dataset_01[away_feature_column_name]], axis=0, ignore_index=True)
+    RH_RA = pd.concat([dataset_01['RH'], dataset_01['RA']], axis=0, ignore_index=True) 
+    concatenated_df = pd.DataFrame({'Home_Away_Features': Home_Away_Features,'RH_RA': RH_RA})
+    
+    # Calcul de la corrélation entre RH_RA et Home_Away_Feature
+    # Calcul de la corrélation de point bisérial spécialement adaptée au cas: variable binaire (1/0) et une variable continue
+    correlation, p_value = pointbiserialr(concatenated_df["RH_RA"], concatenated_df["Home_Away_Features"])
+    
+    # Calculer les moyennes de Home_Away_Features pour RH_RA = 1 et RH_RA = 0
+    mean_ra1 = concatenated_df[concatenated_df['RH_RA'] == 1]['Home_Away_Features'].mean()
+    mean_ra0 = concatenated_df[concatenated_df['RH_RA'] == 0]['Home_Away_Features'].mean()
+    
+    return correlation, p_value, mean_ra1, mean_ra0, concatenated_df
+
+def ranking_features_f_classif( liste_features_names_HT, liste_features_names_AT, min_week_game, date_min, dataset_0):
+    """  
+    This function ranks different features on their f_classif correlation. It displays a table with the result of this ranking.
+    
+    Args:
+        liste_features_names_HT (list): Name of the home features we want to compute the f_classif correlation and to rank.
+
+        liste_features_names_AT (list): Name of the away features we want to compute the f_classif correlation and to rank.
+        
+        k (float): Value used to compute the limits of outliers in correlation computing. We will multiply the IQR by k to compute lower and upper bound for outliers. If we don't want outliers elimination we just need to put a big value for k (like 999).
+        
+        min_week_game (int): The min Game Week of the match we will select to count the f_classif.
+        
+        date_min (datetime): If we want to select only the matchs that played out after a certain date, refer the date with this parameter.
+        
+        dataset_0 (DataFrame): Dataframe containing the base data
+    
+    Returns:
+        Table : A table that we will display in the __main__ file using the 'display()' function.
+    """
+    # On créé un DataFrame vide pour stocker les résultats
+    correlation_ranking_DF = pd.DataFrame(columns=['Feature', 'f_classif correlation', 'Feature mean for R = 1', 'Feature mean for R = 0', 'p value'])
+
+    for (home_feature_column_name, away_feature_column_name) in zip(liste_features_names_HT, liste_features_names_AT):
+        
+        #On calcule la corrélation et les autres statistiques ici
+        correlation, p_value, mean_ra1, mean_ra0, variable_inutile = calculcate_feature_f_classif_correlation( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0)
+    
+        # Ajoutez les résultats à la DataFrame
+        # Créez un DataFrame temporaire pour stocker les résultats de cette itération
+        temp_df = pd.DataFrame({
+            'Feature': [f'{home_feature_column_name}'],
+            'f_classif correlation': [abs(correlation)],
+            'Feature mean for R = 1': [mean_ra1],
+            'Feature mean for R = 0': [mean_ra0],
+            'p value': [p_value],
+            'Ecart relatif entre les feature mean for R = 0 ou 1': [abs(mean_ra1-mean_ra0)/mean_ra1]
+        })
+        # Utilisez pd.concat pour concaténer le DataFrame temporaire avec correlation_ranking_DF
+        #Vérifier si le DataFrame est vide avant la concaténation
+        if not correlation_ranking_DF.empty:
+            # Utilisez pd.concat pour concaténer le DataFrame temporaire avec correlation_ranking_DF
+            correlation_ranking_DF = pd.concat([correlation_ranking_DF, temp_df], ignore_index=True)
+        else:
+            # Si le DataFrame est vide, affectez simplement temp_df à correlation_ranking_DF
+            correlation_ranking_DF = temp_df
+        
+         # Triez le DataFrame par ordre croissant de la valeur de f_classif
+        correlation_ranking_DF = correlation_ranking_DF.sort_values(by='f_classif correlation', ascending=False )
+        
+        #Mise en forme du Dataframe:
+        styled_correlation_ranking_DF = correlation_ranking_DF.style.set_table_styles([{'selector': 'th',
+                                                                                        'props': [('background-color', 'lightgray'), ('text-align', 'center')]
+                                                                                    }]).format({'f_classif correlation': '{:.6f}',
+                                                                                                'Feature mean for R = 1': '{:.6f}',
+                                                                                                'Feature mean for R = 0': '{:.6f}',
+                                                                                                'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
+                                                                                                'p value': '{:.1e}'})
+        # Affichez le DataFrame trié et formaté
+        return styled_correlation_ranking_DF
+
 # --------------------------------------------------------------
 # Restricted dataset creation (used in 'II)2)')
 # --------------------------------------------------------------
