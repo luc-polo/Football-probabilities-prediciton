@@ -21,7 +21,7 @@ from configuration import constant_variables
 #Ploting the mean of a feature over Game Weeks
 def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_column_name, dataset_0):
     """  
-    This function creates a line plot to visualize the mean values of a particular feature across different game weeks. This function is (in my memories), made to know starting which Game Week the features have a moderated variance. Indeed, at the beginning of the year the features avg are too weak and unrepresentative.
+        This function creates a line plot to visualize the mean values of a particular feature across different game weeks. This function is (in my memories), made to know starting which Game Week the features have a moderated variance. Indeed, at the beginning of the year the features avg are too weak and unrepresentative.
     
     Args:
         home_feature_column_name (str): Name of the column of the home feature we want to compute the avg over Game Weeks
@@ -70,7 +70,7 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
 #Assessing the CORRELATION between two features
 def calculcate_feature_correlation( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0):
     """  
-    This function computes the correlation of biserial point between a specific feature and the matchs' results, applying some filters to select matchs used to compute our result.
+        This function computes the correlation of biserial point between a specific feature and the matchs' results, applying some filters to select matchs used to compute our result.
     
     Args:
         home_feature_column_name (str): Name of the column of the home feature we want to compute the correlation of biserial point
@@ -123,7 +123,7 @@ def calculcate_feature_correlation( home_feature_column_name, away_feature_colum
 
 def feature_correlation_with_results_analysis( home_feature_column_name, away_feature_column_name, k, min_week_game, date_min, dataset_0):    
     """  
-    This function computes the correlation of biserial point between a specific feature and the matchs' results, applying some filters to select matchs used to compute our result. Other statistics are also displayed: Avg of the feature when Result = 1 and 0. As well as p value.
+        This function computes the correlation of biserial point between a specific feature and the matchs' results, applying some filters to select matchs used to compute our result. Other statistics are also displayed: Avg of the feature when Result = 1 and 0. As well as p value.
     
     Args:
         home_feature_column_name (str): Name of the column of the home feature we want to compute the correlation of biserial point
@@ -165,7 +165,7 @@ def feature_correlation_with_results_analysis( home_feature_column_name, away_fe
     
 def ranking_features_correlation_with_result( liste_features_names_HT, liste_features_names_AT, k, min_week_game, date_min, dataset_0):
     """  
-    This function ranks different features on their biseral point correlation. It displays a table with the result of this ranking.
+        This function ranks different features on their biseral point correlation. It displays a table with the result of this ranking.
     
     Args:
         liste_features_names_HT (list): Name of the home features we want to compute the correlation of biserial point and to rank.
@@ -229,7 +229,7 @@ def ranking_features_correlation_with_result( liste_features_names_HT, liste_fea
 
 def calculcate_feature_f_classif_correlation(home_feature_column_name, away_feature_column_name, min_week_game, date_min, dataset_0):
     """  
-    This function computes the f_classif correlation, applying some filters to select matchs used to compute our result.
+        This function computes the f_classif correlation, applying some filters to select matchs used to compute our result.
     
     Args:
         home_feature_column_name (str): Name of the column of the home feature we want to compute the f_classif correlation of
@@ -269,7 +269,7 @@ def calculcate_feature_f_classif_correlation(home_feature_column_name, away_feat
 
 def ranking_features_f_classif( liste_features_names_HT, liste_features_names_AT, min_week_game, date_min, dataset_0):
     """  
-    This function ranks different features on their f_classif correlation. It displays a table with the result of this ranking.
+        This function ranks different features on their f_classif correlation. It displays a table with the result of this ranking.
     
     Args:
         liste_features_names_HT (list): Name of the home features we want to compute the f_classif correlation and to rank.
@@ -439,8 +439,8 @@ def restricted_datasets(dataset_0):
 #Transformer à utiliser dans la pipeline elle même
 class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
     """  
-    This transformer removes highly correlated features from a dataset. It does this by first calculating the correlation matrix for the dataset and then identifying pairs of features that have a correlation coefficient above a specified threshold. For each pair of highly correlated features, it then removes the feature that has the lowest correlation with the target variable.
-    We use it in  the pipeline
+        This transformer removes highly correlated features from a dataset. It does this by first calculating the correlation matrix for the dataset and then identifying pairs of features that have a correlation coefficient above a specified threshold. For each pair of highly correlated features, it then removes the feature that has the lowest correlation with the target variable.
+        We use it in  the pipeline
     
     Args:
         corr_threshold (float): The corr_threshold parameter determines the threshold at which two features are considered to be highly correlated. Features with a correlation coefficient above this threshold will be removed from the dataset.
@@ -511,7 +511,7 @@ class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
 # --------------------------------------------------------------
 def wrapper_features_selection(X_0,Y_0, model_0):
     """  
-    Function designed for testing Wrapper feature selection performance and conducting feature selection. It is not included in the pipeline because it significantly slows down its execution. The function displays the performance of model_0, obtained by cross-validation on the training set, using several subsets of features.
+        Function designed for testing Wrapper feature selection performance and conducting feature selection. It is not included in the pipeline because it significantly slows down its execution. The function displays the performance of model_0, obtained by cross-validation on the training set, using several subsets of features.
     
     Args:
         X_0 (DataFrame):  A DataFrame representing the features of the dataset. Features selection we conduct must be performed on the training set, so X_train should be provided.
@@ -548,7 +548,7 @@ def wrapper_features_selection(X_0,Y_0, model_0):
 
 def filter_features_selection(X_0, Y_0, nb_features_to_select, score_func, report):
     """  
-    Funciton made to make tests on Filter features selection performances. It displays the performances of 
+        Funciton made to make tests on Filter features selection performances. It displays the performances of 
     
     Args:
         X_0 (DataFrame):  A DataFrame representing the features of the dataset. The test we make must be done on train set so here we must input X_train
