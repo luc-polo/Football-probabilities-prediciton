@@ -1,7 +1,7 @@
-src.__main__
+src.main
 =========================
 
-.. automodule:: src.__main__.ipynb
+.. automodule:: src.main.ipynb
    :members:
    :undoc-members:
    :show-inheritance:
