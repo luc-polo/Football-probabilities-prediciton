@@ -21,6 +21,7 @@ sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Pr
 #Import my modules
 from configuration import constant_variables
 
+x = constant_variables.CV
 
 # --------------------------------------------------------------
 # Plot single feature histogram (used in 'I)1)')
