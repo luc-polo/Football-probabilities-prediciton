@@ -74,6 +74,9 @@ def plot_calibration_curve(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_0,
         plt.title('Calibration Curve for non calibrated Pipeline')
     plt.xlabel('Mean Predicted Probability')
     plt.ylabel('Fraction of Positives')
+    # Afficher nb_bins
+    plt.text(0.0, 0.83, f"nb_bins = {n_bins_0}", fontsize=12)
+
     if calibrated_model_or_not == True:
         plt.legend(['Perfectly calibrated', 'Calibrated pipe calibrat° curve'], loc='best')
     else:
