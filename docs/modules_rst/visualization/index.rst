@@ -7,3 +7,4 @@ Welcome to the documentation for the Visualization module.
    :maxdepth: 2
 
    visualize
+   learning_curves

@@ -53,17 +53,21 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, grid_sea
     plt.plot(train_sizes, train_scores.mean(axis=1), label='Train set')
     plt.plot(train_sizes, test_scores.mean(axis=1), label='Test set')
 
-    #increasing nb of graduation a grid lines
-    plt.minorticks_on()
-    plt.grid( which='major', linewidth=2)
-    plt.grid( which = 'minor', linewidth=1)
+    #Legend
     plt.xlabel('training_set size')
     plt.ylabel('neg log loss')
     plt.title('Learning curve of the pipeline')
     plt.legend() 
+    #increasing nb of graduation a grid lines
+    plt.minorticks_on()
+    plt.grid( which='major', linewidth=2)
+    plt.grid( which = 'minor', linewidth=1)
+    plt.show()
 
+# --------------------------------------------------------------
+# Learning curve for calibrator
+# --------------------------------------------------------------
 
-#learning curve for calibrator
 def learning_curve_calibrator(nb_test_sets_sizes, X_test_0, X_valid_0, Y_test_0, Y_valid_0, test_size_0, pipe_0, n_bins_0, cross_val_nb):
     """
         This function plots learning curves of our calibrator, using the combination of test and valid sets as its base data. Train set mustn't be added to the base data as the pipeline we will train a calibrator on, has been trained on train set. It would skew the test. 
@@ -145,6 +149,12 @@ def learning_curve_calibrator(nb_test_sets_sizes, X_test_0, X_valid_0, Y_test_0,
     plt.title('Learning curve of the calibrator')
     plt.xlabel('Training Size')
     plt.ylabel('Avg deviation')
+    # Afficher le nb_bins utilisé pour évaluer la déviation moyenne de chaque calibrator
+    plt.text(0, -2.1, f"nb_bins = {n_bins_0}", fontsize=10)
+    # Afficher le cross_val_nb utilisé pour évaluer la déviation moyenne de chaque calibrator
+    plt.text(0, -2.8, f"cross validation number for each point = {cross_val_nb}", fontsize=10)
+    # Afficher la taille du test set utilisé pour évaluer le calibrator
+    plt.text(0, -3.5, f"Test set size = {round(test_size_0*lc_calib_X.shape[0])}", fontsize=10)
     # Plot an horizontal line at the last point avg variation value
     plt.axhline(y=deviation_list[-1], color='red', linestyle='--')
     
