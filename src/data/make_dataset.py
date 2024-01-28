@@ -47,7 +47,7 @@ football_data_2023_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.2
 def read_data(files, Footy_or_Football):
     """
         Taking in entry the paths of the csv files, it outputs a DataFrame that is the concatenation of all our data.
-        During this process the function converts 'date_GMT' column do datetime format, delete the raws of matchs definitivly.
+        During this process the function converts 'date_GMT' or 'Date' column do datetime format, delete the raws of matchs definitivly canceled (only for footy stats datasets as for football-data the canceled matchs do not appear).
 
     Args:
         files (list): The list of paths towards csv files that contain the data of one season for one championship. That's a list of str.
@@ -62,48 +62,55 @@ def read_data(files, Footy_or_Football):
         DataFrame
     """
     #Read CSV files and concat them
-    dataset= pd.concat(map(pd.read_csv, files), ignore_index=True)
+    dataset = pd.concat(map(pd.read_csv, files), ignore_index=True)
     
     # Working with datetimes
     if Footy_or_Football == 'footy':
         dataset["date_GMT"]=dataset["date_GMT"].apply(lambda x: parse(x))
     else:
-        dataset["Date"] = dataset["Date"].astype(str)
-        print(dataset["Date"].isna().sum())
-        dataset['Date'] = pd.to_datetime(dataset['Date'], errors='coerce')
+        dataset["Date"]=pd.to_datetime(dataset['Date'], format='mixed')
 
     
     if Footy_or_Football == 'footy':
-        #Suppresession des lignes où le match a été annulé (covid)
+        #Suppresession des lignes où le match a été annulé (covid). These matchs do not appear into Footaball-Data datasets
         rows_to_keep = dataset["status"] != "canceled"
         dataset = dataset[rows_to_keep].reset_index(drop=True)
-    
-    
+        
     return(dataset)
 
-#dataset = read_data(files)
+
 
 # --------------------------------------------------------------
 # Define a function to load the dataframe saved at data/interim/data_interim.pkl
 # --------------------------------------------------------------
 
-def load_data(seasons_present_in_df_info):
+def load_data(seasons_present_in_df_info, footy_or_football):
     """ 
-    This function imports/loads the DataFrame we will name dataset, from data/interim/data_interim.
-    It says what are the seasons represented in this dataframe if asked.
+        This function imports/loads the DataFrames we will name dataset, from data/interim/.
+        It says what are the seasons represented in this dataframe if asked.
     """
     
-    daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl'
-    # Importation of dataset
-    dataset = pd.read_pickle(daframe_location_path)
+    footy_daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/footy_data_interim.pkl'
+    
+    footbal_data_daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/football_data_data_interim.pkl'
+    
+    if footy_or_football == 'footy':
+        # Importation of dataset
+        dataset = pd.read_pickle(footy_daframe_location_path)
+    if footy_or_football == 'football_data':
+        # Importation of dataset
+        dataset = pd.read_pickle(footbal_data_daframe_location_path)
     
     if seasons_present_in_df_info == True:
-        #Make out what are the seasons represented in this dataframe
-        seasons_in_dataframe = dataset['date_GMT'].dt.year.unique()
+        if footy_or_football == 'footy':
+            #Make out what are the seasons represented in this dataframe
+            seasons_in_dataframe = dataset['date_GMT'].dt.year.unique()
+        else:
+            seasons_in_dataframe = dataset['Date'].dt.year.unique()
         # Remove the holdest year which is only the beginning of the first season
         min_value = min(seasons_in_dataframe)
         seasons_in_dataframe = seasons_in_dataframe[seasons_in_dataframe != min_value]
-        print("This dataframe contains matchs of the seasons: ", seasons_in_dataframe)
+        print(f"The {footy_or_football} dataframe contains matchs of the seasons: ", seasons_in_dataframe)
 
     return dataset
 
@@ -111,43 +118,53 @@ def load_data(seasons_present_in_df_info):
 # Export dataset
 # --------------------------------------------------------------
 
-def save_dataframe_into_data_interim(dataset_0):
+def save_dataframe_into_data_interim(dataset_0, footy_or_football):
     """ 
         This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location. It also displays wether the old and new dataframe saved into data/interim are the same.
     
     Args:
         dataset_0 (Dataframe): the dataframe we want to save
         
+        footy_or_football (str): Wether the datset inputed is Footy stats or Football data dataset. We need it to set a different name for files we will save into data/interim.
+        
     Returns:
         None
     """
 
-    # Define the absolute path of the dataset destination, which is also the path of the actual doc located there that we will delete
-    dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/data_interim.pkl"
+    # Define the absolute paths of the datasets destination, which is also the paths of the actual docs located there that we will delete
+    footy_dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/footy_data_interim.pkl"
     
-    #We compare if the old data_interim.pkl file that we are gonna delete and dataset_0¨are exactly the same
-    old_dataframe = load_data(seasons_present_in_df_info = False)
-    if old_dataframe.equals(dataset_0):
-        print("The old data_interim.pkl file, and the new one ARE the same")
+    football_data_dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/football_data_data_interim.pkl"
+    
+    if footy_or_football == 'footy':
+        dataset_destination_path = footy_dataset_destination_path
     else:
-        print("The old data_interim.pkl file, and the new one ARE NOT the same")
+        dataset_destination_path = football_data_dataset_destination_path
+        
     
     
-    # We delete the old file
+    #We compare if the old data_interim.pkl files that we are gonna delete and dataset_0 are exactly the same
+    old_dataframe = load_data(False, footy_or_football)
+    if old_dataframe.equals(dataset_0):
+        print(f"The old {footy_or_football}_data_interim.pkl file, and the new one ARE the same")
+    else:
+        print("The old {footy_or_football}_data_interim.pkl file, and the new one ARE NOT the same")
+
+    # We delete the old file 
     try: 
         os.remove(dataset_destination_path)
-        print("The old 'data_interim.pkl' file was well deleted")
+        print(f"The old '{footy_or_football}_data_interim.pkl' file was well deleted")
     except Exception as e:
-        print(f"An error occurred while deleting the old datafram file: {e}")
-        print("The old 'data_interim.pkl' file was not removed (probably because it does not exist in this location).")
+        print(f"An error occurred while deleting the old {footy_or_football} dataframe file: {e}")
+        print(f"The old '{footy_or_football}_data_interim.pkl' file was not removed (probably because it does not exist in this location).")
         
 
     # Export the dataset to the path constructed
     try: 
         dataset_0.to_pickle(dataset_destination_path)
-        print("The new 'data_interim.pkl' file was well saved \n")
+        print(f"The new '{footy_or_football}_data_interim.pkl' file was well saved \n")
     except Exception as e:
-        print(f"An error occurred while saving the new dataframe: {e}")
-        print("The 'data_interim.pkl' was not saved. \n")
+        print(f"An error occurred while saving the new {footy_or_football} dataframe: {e}")
+        print("The '{footy_or_football}_data_interim.pkl' was not saved. \n")
 
 
