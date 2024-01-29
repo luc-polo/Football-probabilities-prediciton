@@ -68,7 +68,14 @@ def read_data(files, Footy_or_Football):
     if Footy_or_Football == 'footy':
         dataset["date_GMT"]=dataset["date_GMT"].apply(lambda x: parse(x))
     else:
-        dataset["Date"]=pd.to_datetime(dataset['Date'], format='mixed')
+        for index, row in dataset.iterrows():
+            if len(str(row['Date'])) == 8:
+                dataset.at[index,'Date'] = pd.to_datetime(dataset.at[index,'Date'], format='%d/%m/%y')
+                dataset.at[index,'Date'] = dataset.at[index,'Date'].strftime('%d/%m/%Y')
+
+            elif len(str(row['Date'])) == 10:
+                row['Date'] = pd.to_datetime(row['Date'], format='%d/%m/%Y')
+                
 
     
     if Footy_or_Football == 'footy':
