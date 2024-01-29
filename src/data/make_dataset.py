@@ -71,10 +71,12 @@ def read_data(files, Footy_or_Football):
         for index, row in dataset.iterrows():
             if len(str(row['Date'])) == 8:
                 dataset.at[index,'Date'] = pd.to_datetime(dataset.at[index,'Date'], format='%d/%m/%y')
-                dataset.at[index,'Date'] = dataset.at[index,'Date'].strftime('%d/%m/%Y')
+                dataset.at[index,'Date'] = pd.to_datetime(dataset.at[index,'Date'], format='mixed')
 
             elif len(str(row['Date'])) == 10:
-                row['Date'] = pd.to_datetime(row['Date'], format='%d/%m/%Y')
+                dataset.at[index,'Date'] = pd.to_datetime(dataset.at[index,'Date'], format='%d/%m/%Y')
+        dataset['Date'] = pd.to_datetime(dataset['Date'])
+
                 
 
     
