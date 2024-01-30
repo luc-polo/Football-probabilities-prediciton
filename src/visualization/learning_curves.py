@@ -22,7 +22,7 @@ from configuration import constant_variables
 # Learning curve for Pipeline
 # --------------------------------------------------------------
 
-def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, grid_search_0, scoring_0):
+def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, pipeline_0, scoring_0):
     """
         This function plots learning curves of our pipeline, using the combination of train and valid sets as its base data.
 
@@ -35,7 +35,7 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, grid_sea
         
         Y_valid_0 (DataFrame): Target dataframe of our validationset
         
-        grid_search_0 (): The GridSearchCV() object that contains the results of the research of best parameters for our pipeline.
+        pipeline_0 (): The pipeline chosen (scaler + model + features selector (not always))
         
         scoring_0 (str): The scoring function we want to use to measure model performances and plot its learning curves
 
@@ -48,7 +48,7 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, grid_sea
 
 
     #On calcule les données nécessaires au tracage des learning curves
-    train_sizes, train_scores, test_scores = learning_curve(clone(grid_search_0.best_estimator_), lc_X, lc_Y, train_sizes = np.linspace(0.04, 1, 55), cv = constant_variables.CV, scoring = scoring_0, random_state = 765, n_jobs= -1, shuffle = True)
+    train_sizes, train_scores, test_scores = learning_curve(clone(pipeline_0), lc_X, lc_Y, train_sizes = np.linspace(0.04, 1, 55), cv = constant_variables.CV, scoring = scoring_0, random_state = 765, n_jobs= -1, shuffle = True)
 
     plt.plot(train_sizes, train_scores.mean(axis=1), label='Train set')
     plt.plot(train_sizes, test_scores.mean(axis=1), label='Test set')
