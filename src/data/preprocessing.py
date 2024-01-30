@@ -20,7 +20,7 @@ from configuration import constant_variables
 # --------------------------------------------------------------
 #  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
-def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proportion, test_proportion, dataset_0):
+def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proportion, test_proportion, random_state_0, dataset_0):
     """  
     This function selects the data from dataset_restricted_0, removes rows where the nb of matchs played by teams is inferior to min_played_matchs_nb, removes column(s) of feature(s) we don't want to keep in our dataset (if there are), returns separated features and labels.
     Then it splits our data into train, valid and test sets and convert them into dataframes. It returns X_train, Y_train, X_valid, Y_valid, X_test, Y_test, ready to be given tou our model and the calibrator.
@@ -42,9 +42,11 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
     
     #Definition of Y
     #On  selectionne uniquement les lignes où le nb de match joués > min_played_matchs_nb (défini dans 'Definition of restricted datasets...')
+    
     col1 = dataset_0[dataset_0['HT_played_matchs_nb']>constant_variables.min_played_matchs_nb]['RH']
     col2 = dataset_0[dataset_0['AT_played_matchs_nb']>constant_variables.min_played_matchs_nb]['RA']
     Df_concatenated_target_column = pd.concat([col1, col2], axis=0, ignore_index=True)
+    
     #On convertit les deux colonnes concaténées en Dataframe
     Df_concatenated_target_column = pd.DataFrame(Df_concatenated_target_column, columns = ["Result"])
 
@@ -56,12 +58,24 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
 
     
     # Convertir X et Y en tableaux NumPy pour les conformer au type de données pris en entrée par la fonction train_test_split
-    X_np_values= X.values
+    X_np_values = X.values
+    X_Season_year_np_values = Df_concatendated['Season_year'].values #Used to do a stratified splitting
     Y_np_values = Y.values
     
+    
     # Split the data into training, validation, and test sets
-    X_train, X_temp, Y_train, Y_temp = train_test_split(X_np_values, Y_np_values, test_size=(1-train_proportion), random_state=42, shuffle = True, stratify = Y_np_values)
-    X_valid, X_test, Y_valid, Y_test = train_test_split(X_temp, Y_temp, test_size=(test_proportion/(1-train_proportion)), random_state=42, shuffle = True, stratify = Y_temp)
+    X_train, X_temp, Y_train, Y_temp = train_test_split(X_np_values,
+                                                        Y_np_values,
+                                                        test_size=(1-train_proportion),
+                                                        random_state = random_state_0,
+                                                        shuffle = True,
+                                                        stratify = Y_np_values)
+    X_valid, X_test, Y_valid, Y_test = train_test_split(X_temp,
+                                                        Y_temp,
+                                                        test_size=(test_proportion/(1-train_proportion)),
+                                                        random_state = random_state_0,
+                                                        shuffle = True,
+                                                        stratify = Y_temp)
 
 
 
