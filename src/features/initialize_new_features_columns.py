@@ -57,7 +57,17 @@ def add_columns_and_complete_col_ranks(dataset_0):
     rg_H_HAS, rg_A_HAS= [ds_len - 2, ds_len - 1]
     
     dico_col_ranks.update({'rg_H_HAS': rg_H_HAS, 'rg_A_HAS': rg_A_HAS})
-
+    
+    
+                #Colonne Season year
+    columns = ['Season_year']
+    temp_df = pd.DataFrame(0, index = dataset_0.index, columns=columns)
+    dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
+    ds_len = dataset_0.shape[1]
+    rg_SY = ds_len - 1
+    
+    dico_col_ranks.update({'rg_SY':rg_SY})
+    
 
                 #MATCHS PLAYED NB and VICTORIES NB (pre match) (since the beginning of the season)
     columns = ['HT_played_matchs_nb', 'AT_played_matchs_nb', 'HT_victories_nb', 'AT_victories_nb']
