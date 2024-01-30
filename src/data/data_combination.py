@@ -1,5 +1,6 @@
 """This module contains all the function necessary to combine/merge the data of Footy Stats and Football Data"""
 
+import pandas as pd
 
 # --------------------------------------------------------------
 # 
@@ -67,7 +68,29 @@ def find_corresponding_match(row_nb_in_footy_dataset, footy_dataset_0, football_
     return row_nb_in_football_data_dataset
     
 
-def replace_col_values():
+def replace_col_values(footy_col_name, football_data_col_name, footy_dataset_0, football_data_dataset_0):
     """Replace values in the HT and AT columns of Footy Stats dataset by the values in Football Data values
     """
+    nb_of_values_modified = 0
+    nb_of_values_not_modified = 0
+    for index, value in footy_dataset_0[footy_col_name].items():
+        # Find the corresponding match row in Football Data dataset
+        row_index_in_football_data_dataset = find_corresponding_match(index, footy_dataset_0, football_data_dataset_0)
+        
+        # If value in Football Data dataset in Nan we do not change
+        if pd.isna(football_data_dataset_0.at[row_index_in_football_data_dataset, football_data_col_name]):
+            nb_of_values_not_modified+=1
+            pass # Do nothing
+        # else replace the value in footy dataset by the one in football data dateset
+        else:
+            footy_dataset_0.at[index, footy_col_name] = football_data_dataset_0.at[row_index_in_football_data_dataset, football_data_col_name]
+            nb_of_values_modified +=1
+            
+    # Print a little report of the modification made
+    print(f"In the column {footy_col_name} of footy_dataset, {nb_of_values_modified} values were modified, {nb_of_values_not_modified} were not because the corresponding value in football_data_dataset was Nan.")
+    
+    return footy_dataset_0
+        
+    
+    
 
