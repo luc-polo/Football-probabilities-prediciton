@@ -58,6 +58,8 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, pipeline
     plt.ylabel('neg log loss')
     plt.title('Learning curve of the pipeline')
     plt.legend() 
+    # setting graduations
+    plt.ylim(-0.65, -0.61)  # Adjust the y axis limits
     #increasing nb of graduation a grid lines
     plt.minorticks_on()
     plt.grid( which='major', linewidth=2)
