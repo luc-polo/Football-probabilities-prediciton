@@ -43,12 +43,12 @@ def home_away_status(dataset_0):
 #Calculation of the season year
 #VARIABLE
 def season_year(dataset_0):
-    dataset_0['Season_year'].astype(str)
+    
+    dataset_0['Season_year'].astype(int)
     for season in constant_variables.seasons:
         start_date = season - relativedelta(years=1)
         end_date = season
-        dataset_0.loc[(start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date), 'Season_year'] = '2019'
-        
+        dataset_0.loc[(start_date < dataset_0["date_GMT"]) & (dataset_0["date_GMT"] <= end_date), 'Season_year'] = int(season.year)
         
     return dataset_0
 
