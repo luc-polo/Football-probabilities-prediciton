@@ -374,7 +374,8 @@ def restricted_datasets(dataset_0):
                             "HT_Diff_Goal_Diff_3lm", "AT_Diff_Goal_Diff_3lm",
                             "HT_Diff_Points_1lm", "AT_Diff_Points_1lm",
                             "HT_Diff_Goal_Diff_1lm", "AT_Diff_Goal_Diff_1lm",
-                            "HT_Diff_avg_fouls_nb", "AT_Diff_avg_fouls_nb"]
+                            "HT_Diff_avg_fouls_nb", "AT_Diff_avg_fouls_nb",
+                            "Season_year", "Season_year"]
     names_col_concat_rest_ds_3=["Avg_victory",
                                 "Avg_points_pm_ponderated_by_adversary_perf",
                                 "Avg_goal_diff", 
@@ -397,7 +398,8 @@ def restricted_datasets(dataset_0):
                                 "Diff_Goal_Diff_3lm", 
                                 "Diff_Points_1lm", 
                                 "Diff_Goal_Diff_1lm",
-                                "Diff_avg_fouls_nb"]
+                                "Diff_avg_fouls_nb",
+                                "Season year"]
     #concaténation des colonnes HT et AT dans un meme dataframe
     concat_restricted_ds_3 = useful_functions.HT_AT_col_merger(names_col_rest_ds_3, names_col_concat_rest_ds_3, min_played_matchs_nb_0, dataset_0)  
                 
@@ -420,13 +422,15 @@ def restricted_datasets(dataset_0):
                             "HT_avg_possession","AT_avg_possession",
                             "HT_avg_xg","AT_avg_xg",
                             "HT_avg_odds_victory_proba","AT_avg_odds_victory_proba",
-                            "HT_H_A_status", "AT_H_A_status"
+                            "HT_H_A_status", "AT_H_A_status", 
+                            "Season_year", "Season_year" 
                             ]
     names_col_concat_rest_ds_2 =["Avg_victory","Avg_points_pm_ponderated_by_adversary_perf","Avg_goal_diff", 
                                 'Avg_scored_g_conceeded_g_ratio','Avg_collected_points', 'Week_ranking',
                                 "Annual_budget", "Points_5lm", "Goal_Diff_5lm", 'Week_ranking_5lm', 'Diff_avg_corners_nb',
                                 'Avg_shots_nb', 'Avg_shots_on_target_nb', 'Avg_fouls_nb', 'Avg_possession', 'Avg_xg', 'Avg_odds_victory_proba',
-                                'H_A_status']
+                                'H_A_status',
+                                'Season_year']
     #concaténation des colonnes HT et AT dans un meme dataframe
     concat_restricted_ds_2 = useful_functions.HT_AT_col_merger(names_col_rest_ds_2, names_col_concat_rest_ds_2, min_played_matchs_nb_0, dataset_0)
         
