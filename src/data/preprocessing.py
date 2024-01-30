@@ -59,7 +59,6 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
     
     # Convertir X et Y en tableaux NumPy pour les conformer au type de données pris en entrée par la fonction train_test_split
     X_np_values = X.values
-    X_Season_year_np_values = Df_concatendated['Season_year'].values #Used to do a stratified splitting
     Y_np_values = Y.values
     
     
