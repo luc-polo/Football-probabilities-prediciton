@@ -38,11 +38,21 @@ def team_names_uniformisation(Football_data_dataset_0, Footy_Stats_dataset_0):
 
 
 def find_corresponding_match(row_nb_in_footy_dataset, footy_dataset_0, football_data_dataset_0):
-    """Find the corresponding match in Football Data dataset and return its index
-    """
-    date_of_the_match = footy_dataset_0.at[row_nb_in_footy_dataset,'date_GMT'].date()
+    """For a given match (referred with its row nb) in footy_dataset, find the corresponding match in Football Data dataset and return its index. This function is used in replace_col_values() to change some footy_dataset columns values with footabll_data_dataset values.
     
-    dat_col_of_footaball_dataset = football_data_dataset_0['Date'].dt.date
+    Args:
+        row_nb_in_footy_dataset (int): The row index of the match in footy_dataset_0 we want to find in football_data_dataset_0.
+        
+        footy_dataset_0 (DataFrame): The dataframe with 'Footy Stats' data.
+        
+        football_data_dataset_0 (DataFrame): The dataframe with 'Football Data' data.
+    
+    Returns:
+        int : The row nb in football_data_dataset of the match we look for
+    """
+    date_of_the_match = footy_dataset_0.at[row_nb_in_footy_dataset,'date_GMT'].date()  # the date_GMT column a format dd/mm/yyyy, used below 
+    
+    dat_col_of_footaball_dataset = football_data_dataset_0['Date'].dt.date  # the Date column at format dd/mm/yyyy, used below
     
     # We identify all rows in football_data_dataset_0 that have the same date as the match of footy dataset we are looking for
     possible_rows_identified_with_dates = football_data_dataset_0[dat_col_of_footaball_dataset == date_of_the_match]
