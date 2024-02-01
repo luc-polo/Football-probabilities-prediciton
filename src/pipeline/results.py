@@ -8,7 +8,7 @@ from sklearn.calibration import calibration_curve
 import warnings
 from sklearn.utils import check_matplotlib_support, column_or_1d,  check_consistent_length
 from sklearn.calibration import _check_pos_label_consistency
-import pandas_profiling
+from tabulate import tabulate
 
 
 
