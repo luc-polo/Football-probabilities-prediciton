@@ -1,13 +1,11 @@
 """This module contains all the functions executing steps of preprocessing, implying data manipulation (not observation). That's mostly used into V) part
 """
 
-
-
-
 import sys
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
+import matplotlib.pyplot as plt
 
 # modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
@@ -102,8 +100,21 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, random_state_
     else:
         return (X_train, Y_train, X_test, Y_test)
 
-
-    
+# Displaying the histogram of samples in train and test sets depending on the season
+def hist_seasons(X_train_0, X_test_0):
+    seasons = sorted(set(X_train_0['Season_year']))
+    bin_edges = seasons + [max(seasons) + 1]
+    plt.figure(figsize=(7,5))
+    plt.hist(X_train_0['Season_year'], label = 'Train set', bins = bin_edges, align='left', rwidth=0.5)
+    plt.hist(X_test_0['Season_year'], label = 'Test set', bins = bin_edges, align='left', rwidth=0.5)
+    plt.xlabel('Season')
+    plt.ylabel('Number of samples')
+    plt.title('Seasons Distribution between Train and Test Sets"')
+    plt.legend()
+    plt.grid()
+    plt.show()
+    print(len(set(X_train_0['Season_year'])))
+        
 # --------------------------------------------------------------
 #  Removing outliers (not used but kept in case... placed in 'V)3)')
 # --------------------------------------------------------------
