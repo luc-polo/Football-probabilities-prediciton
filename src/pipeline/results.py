@@ -50,8 +50,7 @@ def GridSearchCV_results(grid_search_0, X_train_0):
 # Calibration Results
 # --------------------------------------------------------------
 
-
-#We modify the calibration_curve of scikit learn in order it return the width of the bins:
+#We modify the calibration_curve funct° of scikit to make it returns the width of the bins we need to display stats
 def calibration_curve_bis(
     y_true,
     y_prob,
@@ -189,64 +188,7 @@ def calibration_curve_bis(
     return prob_true, prob_pred, bin_total, bins
 
 
-
-
 # Plot calibration curves of calibrated and not calibrated pipeline/model
-def plot_calibration_curve(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_0, color_0, calibrated_model_or_not):
-    """  
-        Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
-     
-     Args:
-        pipeline_0 (pipeline): The calibrated or non calibrated pipeline we want to plot the calibration curve of.
-        
-        X_test_0 (DataFrame): The features Dataframe used to plot the calibration curve.
-        
-        Y_test_0 (DataFrame): The labels/targets Dataframe used to plot the calibration curve.
-        
-        n_bins_0 (int): Number of bins to discretize the predicted probabilities.
-        
-        strategy_0 (str): strategy to discretize the probabilities interval to define the bins intervals. Etither 'uniform' or 'quantile'
-        
-        color_0 (str): Color for plotting the calibration curve. Blue for the calibrated model and Red for non calibrated one.
-        
-        calibrated_model_or_not (Boolean): Wether the pipeline inputed is the calibrated one or not (used to define graph anotations)
-    
-     Returns:
-        sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
-     """
-    Calibration_disp = CalibrationDisplay.from_estimator(pipeline_0, X_test_0, Y_test_0, n_bins = n_bins_0, strategy =strategy_0, color= color_0)
-    
-    # Add labels, legend, and grid   
-    plt.xlabel('Mean Predicted Probability')
-    plt.ylabel('Fraction of Positives')
-    if calibrated_model_or_not == True:
-        plt.title('Calibration Curve for calibrated Pipeline')
-    elif calibrated_model_or_not == False:
-        plt.title("Calibration Curve for non calibrated Pipeline")
-    # Afficher nb_bins
-    plt.text(0.0, 0.83, f"nb_bins = {n_bins_0}", fontsize=10)
-
-    if calibrated_model_or_not == True:
-        plt.legend(['Perfectly calibrated', 'Calibrated pipe calibrat° curve'], loc='best')
-    else:
-        plt.legend(['Perfectly calibrated', 'Non calibrated pipe calibrat° curve'], loc='best')
-    plt.minorticks_on() 
-    plt.grid(linewidth=0.5, which ='minor')
-    plt.grid(linewidth=0.9)
-    plt.show() 
-    
-    """
-    #Plot histogram of predicted probabilities 
-    plt.hist(
-        Calibration_disp.y_prob,
-        range=(0, 1),
-        bins= len(Calibration_disp.prob_pred),
-        color= color_0)
-    plt.show
-    """
-    
-    return Calibration_disp
-
 def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_0, color_0, calibrated_model_or_not):
     """  
         Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
@@ -272,7 +214,6 @@ def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_
     y_proba_pred = pipeline_0.predict_proba(X_test_0)[:,1]
     prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, y_proba_pred, n_bins= n_bins_0, strategy=strategy_0)
     
-    prob_pred = [x - 0.09 for x in prob_pred]
     
     # Plot the calibration curve
     plt.figure(figsize=(8, 6))
@@ -308,16 +249,19 @@ def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_
     plt.show()
     
     #Display stats on bins
-    print('Statistics on the above learning curve bins:\n')
+    print('Above learning curve statistics on bins:\n')
     learning_curve_bins_stats = pd.DataFrame({
         'Bin interval':[[round(bins[i], 2), round(bins[i+1], 2)]  for i in range(len(bins)-1)],
         'Predictions nb in the bin': [samples_nb_per_bin[i] for i in range(len(bins)-1)]})
-    print(learning_curve_bins_stats)
+    
+    # Improve table design
+    fancy_learning_curve_bins_stats = tabulate(learning_curve_bins_stats, headers='keys', tablefmt='fancy_grid')
+    print(fancy_learning_curve_bins_stats)
     
     return prob_true, prob_pred
 
-# Print the statistics of the calibrated pipeline
-def print_calibration_stats(prob_pred_0, prob_true_0, X_test_0, X_valid_0, calibrated_or_not):
+# Print the statistics about pipeline calibration
+def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_valid_0):
     """
         Present the stats related to the calibrated pipeline calibration:
         - The size of datasets used to train the calibrator and test the pipeline (if it has been calibrated)
@@ -350,15 +294,67 @@ def print_calibration_stats(prob_pred_0, prob_true_0, X_test_0, X_valid_0, calib
     #Convert table_data into a DataFrame
     calibration_df = pd.DataFrame(table_data)
     
-    print('\n\nProbabilities deviation statistics:\n')
+    print('\n\nAbove learning curve statistics on probabilities deviation:\n')
     if calibrated_or_not == 'calibrated':
         #On affiche la taille du train_set du calibrateur et du test_set sur lequel on a testé notre model calibré
         print('Train_set size of the calibrator : ', X_valid_0.shape[0])
     
-    # Ilprove table design
-    fency_table = tabulate(calibration_df, headers='keys', tablefmt='fancy_grid')
+    # Improve table design
+    fancy_table = tabulate(calibration_df, headers='keys', tablefmt='fancy_grid')
 
     # Afficher le tableau 
-    print(fency_table)
+    print(fancy_table)
 
     print('\nLa deviation moyenne pour ce paramétrage est de ', round(deviation*100, 2), "%")
+    
+# Plot histogram of predicted probabilities 
+def plot_histo_predicted_proba(pipeline_0, X_0, bins_0, color_0, calibrated_or_not ):
+    """Plot the histogram of the proba predicted by the pipeline inputted on the features dataset inputted.
+
+    Args:
+        pipeline_0 (Pipeline): The pipeline we want to get the predicted probabilities distribution of
+        X_0 (DataFrame): The features dataset we will make the predictions on
+        bins_0 (int): The number of bins we want for our histogram
+        color (str): The colour we want for our histogram bars
+        calibrated_or_not (str): Only two possible values: 'calibrated' or 'non calibrated'. Used to print the title and axes names.
+    """
+    proba_pred = pipeline_0.predict_proba(X_0)[:,1]
+    plt.hist(
+        proba_pred,
+        range=(0, 1),
+        bins= bins_0,
+        color= color_0)
+    plt.title(f'Histogram of predicted probabilities of the {calibrated_or_not} pipeline')
+    plt.xlabel('Probability value')
+    plt.ylabel('Number of predicted proba')
+    plt.grid()
+    plt.show
+
+# Ratio probabilities pred/sum of true target
+def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipeline_0):
+    """Prints the ratio of the sum of predicted probabilities by the pipeline on the train set to the sum of true labels on the train set, as well as the same ratios for the test set. This function serves as a diagnostic tool to assess the coherence of the model trainin. In a well-trained model, the ratio for the train set must be equal to 1t. The function also provides valuable insights into the precision of predicted probabilities by calculating the ratio on the test set.
+
+    Args:
+        X_train_0 (_type_): Feature data for the train set
+        Y_train_0 (_type_): True labels for the train set.
+        X_test_0 (_type_): Feature data for the test set.
+        Y_test_0 (_type_): True labels for the test set.
+        pipeline_0 (_type_): The trained machine learning pipeline.
+    """
+    proba_pred_train = pipeline_0.predict_proba(X_train_0)[:,1]
+    proba_pred_test = pipeline_0.predict_proba(X_test_0)[:,1]
+    
+    proba_train_sum=round(proba_pred_train.sum(), 2)
+    sum_true_values_train = Y_train_0.sum()
+    ratio_train = proba_train_sum/sum_true_values_train
+    
+    print(f"\n\nLa somme des proba prédites sur le TRAIN SET est {proba_train_sum} la somme des true event est {sum_true_values_train.item()}")
+    print(f'Le rapport des proba prédites sur le nb de true target est {ratio_train.item()}')
+    
+    proba_test_sum=round(proba_pred_test.sum(), 2)
+    sum_true_values_test = Y_test_0.sum()
+    ratio_test = proba_test_sum/sum_true_values_test
+    
+    print(f"\n\nLa somme des proba prédites sur le TEST SET est {proba_test_sum} la somme des true event est {sum_true_values_test.item()}")
+    print(f'Le rapport des proba prédites sur le nb de true target est {ratio_test.item()}')
+    
