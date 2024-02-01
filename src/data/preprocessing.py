@@ -20,24 +20,24 @@ from configuration import constant_variables
 # --------------------------------------------------------------
 #  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
-def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proportion, test_proportion, random_state_0, dataset_0):
+def formatting_splitting(dataset_restricted_0, col_to_delete_list, random_state_0, dataset_0, test_proportion, *train_proportion):
     """  
     This function selects the data from dataset_restricted_0, removes rows where the nb of matchs played by teams is inferior to min_played_matchs_nb, removes column(s) of feature(s) we don't want to keep in our dataset (if there are), returns separated features and labels.
-    Then it splits our data into train, valid and test sets and convert them into dataframes. It returns X_train, Y_train, X_valid, Y_valid, X_test, Y_test, ready to be given tou our model and the calibrator.
+    Then it splits our data into train, (valid if needed) and test sets and convert them into dataframes. It returns X_train, Y_train, X_test, Y_test, (X_valid, Y_valid) ready to be given tou our model and the calibrator.
     
     Args:  
         dataset_restricted_0 (DataFrame): Restricted dataset obtained in III)3)
         
         col_to_delete_list (list): (If there are) List of columns names we want to delete from dataset because we don't want the model to use it.
         
-        train_proportion (int)
-        
-        test_proportion (int)
-        
         dataset_0 (DataFrame): The dataset containing the data.
+        
+        test_proportion (int): The prooportion of the dataset we want to dedicate to the test set
+                
+        *train_proportion (int): To precise only if we want to make a validation set. The prooportion of the dataset we want to dedicate to the train set
     
     Returns:
-        Tuple: (X_train, Y_train, X_valid, Y_valid, X_test, Y_test)
+        Tuple: (X_train, Y_train, X_test, Y_test, *X_valid, *Y_valid)
     """
     
     #Definition of Y
@@ -63,18 +63,28 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
     
     
     # Split the data into training, validation, and test sets
-    X_train, X_temp, Y_train, Y_temp = train_test_split(X_np_values,
-                                                        Y_np_values,
-                                                        test_size=(1-train_proportion),
-                                                        random_state = random_state_0,
-                                                        shuffle = True,
-                                                        stratify = Y_np_values)
-    X_valid, X_test, Y_valid, Y_test = train_test_split(X_temp,
-                                                        Y_temp,
-                                                        test_size=(test_proportion/(1-train_proportion)),
-                                                        random_state = random_state_0,
-                                                        shuffle = True,
-                                                        stratify = Y_temp)
+    if train_proportion:
+        X_train, X_temp, Y_train, Y_temp = train_test_split(X_np_values,
+                                                            Y_np_values,
+                                                            test_size=(1-train_proportion),
+                                                            random_state = random_state_0,
+                                                            shuffle = True,
+                                                            stratify = Y_np_values)
+        
+        X_valid, X_test, Y_valid, Y_test = train_test_split(X_temp,
+                                                            Y_temp,
+                                                            test_size=(test_proportion/(1-train_proportion)),
+                                                            random_state = random_state_0,
+                                                            shuffle = True,
+                                                            stratify = Y_temp)
+    else:
+        X_train, X_test, Y_train, Y_test = train_test_split(X_np_values,
+                                                            Y_np_values,
+                                                            test_size=test_proportion,
+                                                            random_state = random_state_0,
+                                                            shuffle = True,
+                                                            stratify = Y_np_values)
+        
 
 
 
@@ -83,10 +93,14 @@ def formatting_splitting(dataset_restricted_0, col_to_delete_list, train_proport
     X_test = pd.DataFrame(X_test, columns=X.columns)
     Y_train = pd.DataFrame(Y_train, columns=Y.columns)
     Y_test = pd.DataFrame(Y_test, columns=Y.columns)
-    X_valid = pd.DataFrame(X_valid, columns=X.columns)
-    Y_valid = pd.DataFrame(Y_valid, columns=Y.columns)
+    if train_proportion:
+        X_valid = pd.DataFrame(X_valid, columns=X.columns)
+        Y_valid = pd.DataFrame(Y_valid, columns=Y.columns)
     
-    return (X_train, Y_train, X_valid, Y_valid, X_test, Y_test)
+    if train_proportion:
+        return (X_train, Y_train, X_test, Y_test, X_valid, Y_valid)
+    else:
+        return (X_train, Y_train, X_test, Y_test)
 
 
     
