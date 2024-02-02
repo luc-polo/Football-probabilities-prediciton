@@ -105,8 +105,7 @@ def hist_seasons(X_train_0, X_test_0):
     seasons = sorted(set(X_train_0['Season_year']))
     bin_edges = seasons + [max(seasons) + 1]
     plt.figure(figsize=(7,5))
-    plt.hist(X_train_0['Season_year'], label = 'Train set', bins = bin_edges, align='left', rwidth=0.5)
-    plt.hist(X_test_0['Season_year'], label = 'Test set', bins = bin_edges, align='left', rwidth=0.5)
+    plt.hist([X_train_0['Season_year'], X_test_0['Season_year']], label = ['Train set', 'Test set'], bins = bin_edges, align='left', rwidth=0.5)
     plt.xlabel('Season')
     plt.ylabel('Number of samples')
     plt.title('Seasons Distribution between Train and Test Sets"')
