@@ -172,9 +172,9 @@ def points_pm_ponderated_by_adversary_perf(dico_col_rk, dataset_0):
 
 
 
-#Calculation and manipulation of NB OF SCORED GOALS and NB CONCEEDED GOALS (pm, sbos)
+#Calculation and manipulation of NB OF SCORED GOALS and NB CONCEDED GOALS (pm, sbos)
 #VARRIABLE                    V
-def scored_and_conceeded_goals(dico_col_rk, dataset_0):
+def scored_and_conceded_goals(dico_col_rk, dataset_0):
     #sert pour la boucle qui va permettre de remplir les dictionnaires "dico_goals_scored" et "dico_goals_conceeded"
     nb_matchs_traites=0
     rownb_last_season_match=0
@@ -217,8 +217,8 @@ def scored_and_conceeded_goals(dico_col_rk, dataset_0):
 #PER MATCH AVG HT/AT DIFF     V
 def goal_difference(dataset_0):
     #GOAL DIFFERENCE
-    dataset_0["goal_diff_HT_PM"] = dataset_0["scored_goals_HT_PM"] - dataset_0["conceeded_goals_HT_PM"]
-    dataset_0["goal_diff_AT_PM"] = dataset_0["scored_goals_AT_PM"] - dataset_0["conceeded_goals_AT_PM"]
+    dataset_0["goal_diff_HT_PM"] = dataset_0["scored_goals_HT_PM"] - dataset_0["conceded_goals_HT_PM"]
+    dataset_0["goal_diff_AT_PM"] = dataset_0["scored_goals_AT_PM"] - dataset_0["conceded_goals_AT_PM"]
     #OK (12/09/23)
 
     #PER MATCH AVG GOAL DIFF
@@ -231,20 +231,20 @@ def goal_difference(dataset_0):
     
     return dataset_0
 
-#SCORED GOALS / CONCEEDED GOALS (pm, sbos):
+#SCORED GOALS / CONCEDED GOALS (pm, sbos):
 #VARIABLE                    V
 #PER MATCH AVG               X 
 #HT/AT DIFF                  V
-def scored_conceeded_goals_ratio(dataset_0):
-    #(SCORED GOALS / CONCEEDED GOALS)
-    dataset_0["HT_avg_scored_g_conceedded_g_ratio"] = dataset_0["scored_goals_HT_PM"]/(dataset_0["conceeded_goals_HT_PM"].apply(useful_functions.un_ou_x))
-    dataset_0["AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["scored_goals_AT_PM"]/(dataset_0["conceeded_goals_AT_PM"].apply(useful_functions.un_ou_x))
+def scored_conceded_goals_ratio(dataset_0):
+    #(SCORED GOALS / CONCEDED GOALS)
+    dataset_0["HT_avg_scored_g_conceded_g_ratio"] = dataset_0["scored_goals_HT_PM"]/(dataset_0["conceded_goals_HT_PM"].apply(useful_functions.un_ou_x))
+    dataset_0["AT_avg_scored_g_conceded_g_ratio"] = dataset_0["scored_goals_AT_PM"]/(dataset_0["conceded_goals_AT_PM"].apply(useful_functions.un_ou_x))
     #OK
     #Vérifié vitfait sur la saison 2016-2017
 
-    #(SCORED GOALS / CONCEEDED GOALS) HT/AT DIFF
-    dataset_0["Diff_HT_avg_scored_g_conceedded_g_ratio"] = dataset_0["HT_avg_scored_g_conceedded_g_ratio"] - dataset_0["AT_avg_scored_g_conceedded_g_ratio"] 
-    dataset_0["Diff_AT_avg_scored_g_conceedded_g_ratio"] = dataset_0["AT_avg_scored_g_conceedded_g_ratio"] - dataset_0["HT_avg_scored_g_conceedded_g_ratio"]
+    #(SCORED GOALS / CONCEDED GOALS) HT/AT DIFF
+    dataset_0["Diff_HT_avg_scored_g_conceded_g_ratio"] = dataset_0["HT_avg_scored_g_conceded_g_ratio"] - dataset_0["AT_avg_scored_g_conceded_g_ratio"] 
+    dataset_0["Diff_AT_avg_scored_g_conceded_g_ratio"] = dataset_0["AT_avg_scored_g_conceded_g_ratio"] - dataset_0["HT_avg_scored_g_conceded_g_ratio"]
     
     return dataset_0
 
@@ -297,8 +297,8 @@ def points_nb( dico_col_rk,dataset_0):
     #Vérifié vitfait
 
     #HT/AT DIFF PER MATCH AVG POINTS NB
-    dataset_0["Diff_pnt_HT_AT_ratio"] = (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
-    dataset_0["Diff_pnt_AT_HT_ratio"] = (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["Diff_pnt_HT_ratio"] = (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    dataset_0["Diff_pnt_AT_ratio"] = (dataset_0["Prematch_AT_PN"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["Prematch_HT_PN"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     
     return dataset_0
 
@@ -592,10 +592,9 @@ def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
 #RANKING ON 1,3,5 LAST MATCHS (pm)
 #VARIABLE                    V
 #PER MATCH AVG               X
-#HT/AT DIFF                  X
+#HT/AT DIFF                  V
 def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
-    #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prends pas en compte le nb de buts marqués 
-    #en cas d'égalité de goal average et de points
+    #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prends pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
 
 
     for i in (constant_variables.seasons):
@@ -657,6 +656,14 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, dataset_0)
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, dataset_0)
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, dataset_0) 
+    
+    #HT/AT DIFF
+    dataset_0["Diff_HT_ranking_5lm"] = dataset_0["HT_5lm_week_ranking"] - dataset_0["AT_5lm_week_ranking"]
+    dataset_0["Diff_AT_ranking_5lm"] = -dataset_0["Diff_HT_ranking_5lm"]
+    dataset_0["Diff_HT_ranking_3lm"] = dataset_0["HT_3lm_week_ranking"] - dataset_0["AT_3lm_week_ranking"]
+    dataset_0["Diff_AT_ranking_3lm"] = -dataset_0["Diff_HT_ranking_3lm"]
+    dataset_0["Diff_HT_ranking_1lm"] = dataset_0["HT_1lm_week_ranking"] - dataset_0["AT_1lm_week_ranking"]
+    dataset_0["Diff_AT_ranking_1lm"] = -dataset_0["Diff_HT_ranking_1lm"]
         
     return dataset_0
     #OK

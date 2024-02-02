@@ -109,7 +109,7 @@ def add_columns_and_complete_col_ranks(dataset_0):
 
 
                 #SCORED GOALS CONCEDED GOALS (pre match) (since the beginning of the season)
-    columns = ['scored_goals_HT_PM', 'conceeded_goals_HT_PM', 'scored_goals_AT_PM', 'conceeded_goals_AT_PM']
+    columns = ['scored_goals_HT_PM', 'conceded_goals_HT_PM', 'scored_goals_AT_PM', 'conceded_goals_AT_PM']
     temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
@@ -133,11 +133,11 @@ def add_columns_and_complete_col_ranks(dataset_0):
     dico_col_ranks.update({'rg_gdHTPM':rg_gdHTPM, 'rg_gdATPM':rg_gdATPM, 'rg_HTAGDPM':rg_HTAGDPM, 'rg_ATAGDPM':rg_ATAGDPM, 'rg_DHTGDPM':rg_DHTGDPM, 'rg_DATGDPM':rg_DATGDPM })
     
     
-        #SCORED GOALS/CONCEEDED GOALS  (pre match) (since the beginning of the season)   
+        #SCORED GOALS/CONCEDED GOALS  (pre match) (since the beginning of the season)   
     #Variable 
     #Per match HT/AT Diff        
-    columns =['HT_avg_scored_g_conceedded_g_ratio', 'AT_avg_scored_g_conceedded_g_ratio',
-            'Diff_HT_avg_scored_g_conceedded_g_ratio', 'Diff_AT_avg_scored_g_conceedded_g_ratio']
+    columns =['HT_avg_scored_g_conceded_g_ratio', 'AT_avg_scored_g_conceded_g_ratio',
+            'Diff_HT_avg_scored_g_conceded_g_ratio', 'Diff_AT_avg_scored_g_conceded_g_ratio']
     temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]         
@@ -151,13 +151,13 @@ def add_columns_and_complete_col_ranks(dataset_0):
     #Per Match Avg
     #Per match Avg HT/AT Diff
     columns = ['Prematch_HT_PN', 'Prematch_AT_PN', 'HT_avg_collected_points_pm', 'AT_avg_collected_points_pm',
-            'Diff_pnt_HT_AT_ratio', 'Diff_pnt_AT_HT_ratio']
+            'Diff_pnt_HT_ratio', 'Diff_pnt_AT_ratio']
     temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1] 
-    rg_PHTPN, rg_PATPN, rg_HTavgCPpm, rg_ATavgCPpm, rg_Diff_pnt_HT_AT_ratio, rg_Diff_pnt_AT_HT_ratio  = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    rg_PHTPN, rg_PATPN, rg_HTavgCPpm, rg_ATavgCPpm, rg_Diff_pnt_HT_ratio, rg_Diff_pnt_AT_ratio  = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
     
-    dico_col_ranks.update({'rg_PHTPN':rg_PHTPN, 'rg_PATPN':rg_PATPN, 'rg_HTavgCPpm':rg_HTavgCPpm, 'rg_ATavgCPpm':rg_ATavgCPpm, 'rg_Diff_pnt_HT_AT_ratio':rg_Diff_pnt_HT_AT_ratio, 'rg_Diff_pnt_AT_HT_ratio':rg_Diff_pnt_AT_HT_ratio })
+    dico_col_ranks.update({'rg_PHTPN':rg_PHTPN, 'rg_PATPN':rg_PATPN, 'rg_HTavgCPpm':rg_HTavgCPpm, 'rg_ATavgCPpm':rg_ATavgCPpm, 'rg_Diff_pnt_HT_ratio':rg_Diff_pnt_HT_ratio, 'rg_Diff_pnt_AT_ratio':rg_Diff_pnt_AT_ratio })
 
 
 
@@ -215,7 +215,12 @@ def add_columns_and_complete_col_ranks(dataset_0):
     ds_len = dataset_0.shape[1]
     rg_GDHT5LMPM, rg_GDAT5LMPM, rg_GDHT3LMPM, rg_GDAT3LMPM, rg_GDHT1LMPM, rg_GDAT1LMPM, rg_HTDGD5LM, rg_ATDGD5LM, rg_HTDGD3LM, rg_ATDGD3LM, rg_HTDGD1LM, rg_ATDGD1LM = [ds_len - 12, ds_len - 11, ds_len - 10, ds_len - 9, ds_len - 8, ds_len - 7, ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
     
-    dico_col_ranks.update({'rg_GDHT5LMPM':rg_GDHT5LMPM, 'rg_GDAT5LMPM':rg_GDAT5LMPM, 'rg_GDHT3LMPM':rg_GDHT3LMPM, 'rg_GDAT3LMPM':rg_GDAT3LMPM, 'rg_GDHT1LMPM':rg_GDHT1LMPM, 'rg_GDAT1LMPM':rg_GDAT1LMPM, 'rg_HTDGD5LM':rg_HTDGD5LM, 'rg_ATDGD5LM':rg_ATDGD5LM, 'rg_HTDGD3LM':rg_HTDGD3LM, 'rg_ATDGD3LM':rg_ATDGD3LM, 'rg_HTDGD1LM':rg_HTDGD1LM, 'rg_ATDGD1LM':rg_ATDGD1LM  })
+    dico_col_ranks.update({'rg_GDHT5LMPM':rg_GDHT5LMPM, 'rg_GDAT5LMPM':rg_GDAT5LMPM,
+                           'rg_GDHT3LMPM':rg_GDHT3LMPM, 'rg_GDAT3LMPM':rg_GDAT3LMPM,
+                           'rg_GDHT1LMPM':rg_GDHT1LMPM, 'rg_GDAT1LMPM':rg_GDAT1LMPM,
+                           'rg_HTDGD5LM':rg_HTDGD5LM, 'rg_ATDGD5LM':rg_ATDGD5LM,
+                           'rg_HTDGD3LM':rg_HTDGD3LM, 'rg_ATDGD3LM':rg_ATDGD3LM,
+                           'rg_HTDGD1LM':rg_HTDGD1LM, 'rg_ATDGD1LM':rg_ATDGD1LM  })
 
 
 
@@ -223,13 +228,18 @@ def add_columns_and_complete_col_ranks(dataset_0):
         #RANKING ON 1,2,5 LAST MATCHS (prematch)
     #Variable
     columns = ["HT_5lm_week_ranking", "AT_5lm_week_ranking", "HT_3lm_week_ranking", "AT_3lm_week_ranking",
-            "HT_1lm_week_ranking", "AT_1lm_week_ranking"]
+            "HT_1lm_week_ranking", "AT_1lm_week_ranking", "Diff_HT_ranking_5lm", "Diff_AT_ranking_5lm", "Diff_HT_ranking_3lm", "Diff_AT_ranking_3lm", "Diff_HT_ranking_1lm", "Diff_AT_ranking_1lm"]
     temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
     dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
     ds_len = dataset_0.shape[1]
-    rg_HT5lm_WR, rg_AT5lm_WR, rg_HT3lm_WR, rg_AT3lm_WR, rg_HT1lm_WR, rg_AT1lm_WR = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    rg_HT5lm_WR, rg_AT5lm_WR, rg_HT3lm_WR, rg_AT3lm_WR, rg_HT1lm_WR, rg_AT1lm_WR, rg_HTDR5LM, rg_ATDR5LM, rg_HTDR3LM, rg_ATDR3LM, rg_HTDR1LM, rg_ATDR1LM = [ds_len - 12, ds_len - 11, ds_len - 10, ds_len - 9, ds_len - 8, ds_len - 7,ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
     
-    dico_col_ranks.update({'rg_HT5lm_WR':rg_HT5lm_WR, 'rg_AT5lm_WR':rg_AT5lm_WR, 'rg_HT3lm_WR':rg_HT3lm_WR, 'rg_AT3lm_WR':rg_AT3lm_WR, 'rg_HT1lm_WR':rg_HT1lm_WR, 'rg_AT1lm_WR':rg_AT1lm_WR })
+    dico_col_ranks.update({'rg_HTDR5LM' : rg_HTDR5LM, 'rg_ATDR5LM':rg_ATDR5LM,
+                           'rg_HTDR3LM': rg_HTDR3LM, 'rg_ATDR3LM': rg_ATDR3LM,
+                           'rg_HTDR1LM': rg_HTDR1LM, 'rg_ATDR1LM': rg_ATDR1LM,
+                           'rg_HT5lm_WR':rg_HT5lm_WR, 'rg_AT5lm_WR':rg_AT5lm_WR,
+                           'rg_HT3lm_WR':rg_HT3lm_WR, 'rg_AT3lm_WR':rg_AT3lm_WR,
+                           'rg_HT1lm_WR':rg_HT1lm_WR, 'rg_AT1lm_WR':rg_AT1lm_WR })
 
 
                                         #STATISTIQUES DE JEU
