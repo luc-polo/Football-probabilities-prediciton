@@ -12,7 +12,7 @@ from sklearn.pipeline import Pipeline
 # --------------------------------------------------------------
 scaler = StandardScaler()
 
-model_01 = LogisticRegression(penalty = 'l2', C = 0.0486967525, fit_intercept=True, random_state = 999, solver = 'sag', class_weight = {1:0.6, 0:0.4}, max_iter= 3000, verbose = False, tol=1e-4)
+model_01 = LogisticRegression(penalty = 'l2', C = 0.0486967525, fit_intercept=True, random_state = 999, solver = 'sag', max_iter= 3000, verbose = False, tol=1e-4)
 
 features_selected_01 =['Avg_victory', 'Avg_points_pm_ponderated_by_adversary_perf',
        'Avg_goal_diff', 'Avg_scored_g_conceeded_g_ratio',
