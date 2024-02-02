@@ -407,7 +407,7 @@ def restricted_datasets(dataset_0):
     #Restricted dataset 2
     names_col_rest_ds_2 = ["Diff_HT_avg_victory_pm", "Diff_AT_avg_victory_pm", 
                             "HT_Diff_points_ponderated_by_adversary_perf", "AT_Diff_points_ponderated_by_adversary_perf",
-                            "Diff_HT_goal_diff_pm","Diff_HT_goal_diff_pm",
+                            "Diff_HT_goal_diff_pm","Diff_AT_goal_diff_pm",
                             "Diff_HT_avg_scored_g_conceded_g_ratio","Diff_AT_avg_scored_g_conceded_g_ratio",
                             "Diff_pnt_HT_ratio","Diff_pnt_AT_ratio",
                             "Diff_HT_ranking","Diff_AT_ranking",
@@ -420,7 +420,7 @@ def restricted_datasets(dataset_0):
                             "HT_Diff_avg_shots_on_target_nb","AT_Diff_avg_shots_on_target_nb",
                             "HT_Diff_avg_fouls_nb","AT_Diff_avg_fouls_nb",
                             "HT_Diff_avg_possession","AT_Diff_avg_possession",
-                            "AT_Diff_avg_xg","AT_Diff_avg_xg",
+                            "HT_Diff_avg_xg","AT_Diff_avg_xg",
                             "HT_Diff_avg_odds_victory_proba","AT_Diff_avg_odds_victory_proba",
                             "HT_H_A_status", "AT_H_A_status", 
                             "Season_year", "Season_year" 
