@@ -7,6 +7,8 @@ import sys
 from dateutil.relativedelta import relativedelta
 import pandas as pd
 
+from data import data_combination
+
 
 # modify the sys.path list to include the path to the data directory that contains the modules that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
@@ -337,7 +339,6 @@ def ranking(dico_col_rk, dataset_0):
                     #AWAY TEAM
                     useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "away", dico_col_rk, dataset_0)
                     
-                    
                 #Si il manque une ou plusieurs équipes au classement on va chercher leur prochain match pour avoir leurs stats pre-match et les incorporer au classement
                 useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dico_col_rk, dataset_0)
                 
@@ -345,9 +346,7 @@ def ranking(dico_col_rk, dataset_0):
                 useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dico_col_rk, dataset_0)            
                 
                 
-                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,
-                #sont des matchs reportés, alors on va classer ces equipes dans le classement réalisé précedemment pour la journée w, en ayant 
-                #préalablement retiré les equipes en question du classement
+                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w, sont des matchs reportés, alors on va classer ces equipes dans le classement réalisé précedemment pour la journée w, en ayant préalablement retiré les equipes en question du classement
                 nb_line_last_match_of_week = min(Indices)
 
                 if nb_line_last_match_of_week != 0 :
@@ -658,11 +657,11 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, dataset_0) 
     
     #HT/AT DIFF
-    dataset_0["Diff_HT_ranking_5lm"] = dataset_0["HT_5lm_week_ranking"] - dataset_0["AT_5lm_week_ranking"]
+    dataset_0["Diff_HT_ranking_5lm"] = -(dataset_0["HT_5lm_week_ranking"] - dataset_0["AT_5lm_week_ranking"])
     dataset_0["Diff_AT_ranking_5lm"] = -dataset_0["Diff_HT_ranking_5lm"]
-    dataset_0["Diff_HT_ranking_3lm"] = dataset_0["HT_3lm_week_ranking"] - dataset_0["AT_3lm_week_ranking"]
+    dataset_0["Diff_HT_ranking_3lm"] = -(dataset_0["HT_3lm_week_ranking"] - dataset_0["AT_3lm_week_ranking"])
     dataset_0["Diff_AT_ranking_3lm"] = -dataset_0["Diff_HT_ranking_3lm"]
-    dataset_0["Diff_HT_ranking_1lm"] = dataset_0["HT_1lm_week_ranking"] - dataset_0["AT_1lm_week_ranking"]
+    dataset_0["Diff_HT_ranking_1lm"] = -(dataset_0["HT_1lm_week_ranking"] - dataset_0["AT_1lm_week_ranking"])
     dataset_0["Diff_AT_ranking_1lm"] = -dataset_0["Diff_HT_ranking_1lm"]
         
     return dataset_0
@@ -875,6 +874,7 @@ def odds_victory_proba(dico_col_rk_0, dataset_0):
 
 
         nb_matchs_trates+=df.shape[0]
+        
 
     #PER MATCH AVG
     dataset_0["HT_avg_odds_victory_proba"] = dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))
@@ -883,5 +883,40 @@ def odds_victory_proba(dico_col_rk_0, dataset_0):
     #PER MATCH AVG HT/AT DIFF
     dataset_0["HT_Diff_avg_odds_victory_proba"] = (dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["AT_odds_victory_proba"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
     dataset_0["AT_Diff_avg_odds_victory_proba"] = (dataset_0["AT_odds_victory_proba"]/(dataset_0["AT_played_matchs_nb"].apply(useful_functions.un_ou_x))) - (dataset_0["HT_odds_victory_proba"]/(dataset_0["HT_played_matchs_nb"].apply(useful_functions.un_ou_x)))
+    
+    return dataset_0
+
+# Max odd
+#VARIABLE                    V
+#PER MATCH AVG               X
+#PER MATCH AVG HT/AT DIFF    X
+def max_odd(dataset_0,  dataset_football_data_0):
+    
+    #We ensure that the columns are defined as float columns (because i had an error that raised saying that they are int64 col)
+    dataset_0["HTW_Max_odd"] = dataset_0["HTW_Max_odd"].astype(float)
+    dataset_0["ATW_Max_odd"] = dataset_0["ATW_Max_odd"].astype(float)
+    dataset_0["D_Max_odd"] = dataset_0["D_Max_odd"].astype(float)
+    
+    for i in range(dataset_0.shape[0]):
+        #We find corresponding line index of the match in football-data dataset
+        line_nb = data_combination.find_corresponding_match(i, dataset_0, dataset_football_data_0)
+        
+        # We fill the home team win maximum market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb, 'BbMxH']):
+            dataset_0.at[i,'HTW_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxH']
+        else:    
+            dataset_0.at[i,'HTW_Max_odd'] = dataset_football_data_0.at[line_nb,'MaxH']
+        
+        # We fill the away team win maximum market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb,'BbMxA']):
+            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxA']
+        else:    
+            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb, 'MaxA']
+        
+        # We fill the draw maximum market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb,'BbMxD']):
+            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxD']
+        else:    
+            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb, 'MaxD']
     
     return dataset_0

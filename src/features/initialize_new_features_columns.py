@@ -357,6 +357,15 @@ def add_columns_and_complete_col_ranks(dataset_0):
     
     dico_col_ranks.update({'rg_HTOVP':rg_HTOVP, 'rg_ATOVP':rg_ATOVP, 'rg_HTAOVP':rg_HTAOVP, 'rg_ATAOVP':rg_ATAOVP, 'rg_HTDOVP':rg_HTDOVP, 'rg_ATDOVP':rg_ATDOVP})
     
+    # Max_odds
+    #Variable
+    columns = ['HTW_Max_odd', 'ATW_Max_odd', 'D_Max_odd', 'HTW_avg_odd', 'ATW_avg_odd', 'D_avg_odd']
+    temp_df = pd.DataFrame(0, index=dataset_0.index, columns=columns)
+    dataset_0 = pd.concat([dataset_0, temp_df], axis=1)
+    ds_len = dataset_0.shape[1]
+    rg_HTWMO, rg_ATWMO, rg_DMO, rg_HTWAO, rg_ATWAO, rg_DAO = [ds_len - 6, ds_len - 5, ds_len - 4, ds_len - 3, ds_len - 2, ds_len - 1]
+    
+    dico_col_ranks.update({'rg_HTWMO':rg_HTWMO, 'rg_ATWMO':rg_ATWMO, 'rg_DMO':rg_DMO, 'rg_HTWAO':rg_HTWAO, 'rg_ATWAO':rg_ATWAO, 'rg_DAO':rg_DAO})
     
     
     return(dataset_0, dico_col_ranks)
