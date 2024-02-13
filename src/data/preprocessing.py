@@ -108,7 +108,7 @@ def hist_seasons(X_train_0, X_test_0):
     plt.hist([X_train_0['Season_year'], X_test_0['Season_year']], label = ['Train set', 'Test set'], bins = bin_edges, align='left', rwidth=0.5)
     plt.xlabel('Season')
     plt.ylabel('Number of samples')
-    plt.title('Seasons Distribution between Train and Test Sets"')
+    plt.title('Seasons Distribution between Train and Test Sets')
     plt.legend()
     plt.grid()
     plt.show()
