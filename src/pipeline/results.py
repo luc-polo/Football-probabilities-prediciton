@@ -332,7 +332,7 @@ def plot_histo_predicted_proba(pipeline_0, X_0, bins_0, color_0, calibrated_or_n
 
 # Ratio probabilities pred/sum of true target
 def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipeline_0):
-    """Prints the ratio of the sum of predicted probabilities by the pipeline on the train set to the sum of true labels on the train set, as well as the same ratios for the test set. This function serves as a diagnostic tool to assess the coherence of the model trainin. In a well-trained model, the ratio for the train set must be equal to 1t. The function also provides valuable insights into the precision of predicted probabilities by calculating the ratio on the test set.
+    """Prints the ratio of the sum of predicted probabilities by the pipeline on the train set to the sum of true labels on the train set, as well as the same ratios for the test set. This function serves as a diagnostic tool to assess the coherence of the model training. In a well-trained model, the ratio for the train set must be equal to 1t (according to info on internet). The function also provides valuable insights into the precision of predicted probabilities by calculating the ratio on the test set.
 
     Args:
         X_train_0 (_type_): Feature data for the train set
@@ -343,6 +343,7 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     """
     proba_pred_train = pipeline_0.predict_proba(X_train_0)[:,1]
     proba_pred_test = pipeline_0.predict_proba(X_test_0)[:,1]
+    print(proba_pred_test.sum())
     
     proba_train_sum=round(proba_pred_train.sum(), 2)
     sum_true_values_train = Y_train_0.sum()
