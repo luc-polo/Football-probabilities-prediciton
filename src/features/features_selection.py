@@ -473,6 +473,7 @@ class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
         
         #The first step in fit is to find the correlated features in the X_0 dataset 
         #We calculate  the correlation matrix
+        X_0 = pd.DataFrame(X_0)
         cor_matrix = X_0.corr().abs()
         # Create an empty list to store the pairs of highly correlated features
         highly_correlated_pairs = []
@@ -517,10 +518,12 @@ class correlated_features_removal_transformer(BaseEstimator, TransformerMixin):
     
     
     def transform(self, X_0):
-        clean_data = X_0
+        # We convert X_0 into a dataframe
+        clean_data = pd.DataFrame(X_0)
         #On supprime du clean dataset les features à supprimer
         clean_data.drop(self.features_to_remove, axis=1, inplace=True)
-        return clean_data
+        #We reconvert the cleaned data into a numpy array
+        return clean_data.values
     
     
 # --------------------------------------------------------------
