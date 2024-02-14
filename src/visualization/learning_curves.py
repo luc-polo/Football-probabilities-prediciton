@@ -22,18 +22,14 @@ from configuration import constant_variables
 # Learning curve for Pipeline
 # --------------------------------------------------------------
 
-def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, pipeline_0, scoring_0):
+def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0):
     """
         This function plots learning curves of our pipeline, using the combination of train and valid sets as its base data.
 
     Args:
         X_train_0 (DataFrame): Features dataframe of our trainset
         
-        X_valid_0 (DataFrame): Features dataframe of our validationset
-        
         Y_train_0 (DataFrame): Target dataframe of our trainset
-        
-        Y_valid_0 (DataFrame): Target dataframe of our validationset
         
         pipeline_0 (): The pipeline chosen (scaler + model + features selector (not always))
         
@@ -42,13 +38,9 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, pipeline
     Returns:
         None
     """
-    #On fussionne le train set et le valid set pour entrer l'ensemble des données (sauf les test_sets) dans la funct learning_curve()
-    lc_X = pd.concat([X_train_0, X_valid_0], ignore_index = True)
-    lc_Y = pd.concat([Y_train_0, Y_valid_0], ignore_index = True)
-
 
     #On calcule les données nécessaires au tracage des learning curves
-    train_sizes, train_scores, test_scores = learning_curve(clone(pipeline_0), lc_X, lc_Y, train_sizes = np.linspace(0.04, 1, 55), cv = constant_variables.CV, scoring = scoring_0, random_state = 765, n_jobs= -1, shuffle = True)
+    train_sizes, train_scores, test_scores = learning_curve(clone(pipeline_0), X_train_0, Y_train_0, train_sizes = np.linspace(0.04, 1, 55), cv = constant_variables.CV, scoring = scoring_0, random_state = 765, n_jobs= -1, shuffle = True)
 
     plt.plot(train_sizes, train_scores.mean(axis=1), label='Train set')
     plt.plot(train_sizes, test_scores.mean(axis=1), label='Test set')
@@ -59,7 +51,7 @@ def pipeline_learning_curve(X_train_0, X_valid_0, Y_train_0, Y_valid_0, pipeline
     plt.title('Learning curve of the pipeline')
     plt.legend() 
     # setting graduations
-    plt.ylim(-0.65, -0.61)  # Adjust the y axis limits
+    plt.ylim(-0.635, -0.58)  # Adjust the y axis limits
     #increasing nb of graduation a grid lines
     plt.minorticks_on()
     plt.grid( which='major', linewidth=2)
