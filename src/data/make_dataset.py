@@ -28,6 +28,7 @@ footy_2020_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Pro
 footy_2021_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2020-to-2021-stats.csv"
 footy_2022_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2021-to-2022-stats.csv"
 footy_2023_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2022-to-2023-stats.csv"
+footy_2024_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2023-to-2024-stats.csv"
 
 
 football_data_2015_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2014-2015_ligue1.csv"
@@ -39,7 +40,7 @@ football_data_2020_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.2
 football_data_2021_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2020-2021_ligue1.csv"
 football_data_2022_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2021-2022_ligue1.csv"
 football_data_2023_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2022-2023_ligue1.csv"
-
+football_data_2024_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2023-2024_ligue1.csv"
 
 # --------------------------------------------------------------
 # Convert CSV into DataFrame
