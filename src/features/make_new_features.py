@@ -920,3 +920,38 @@ def max_odd(dataset_0,  dataset_football_data_0):
             dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb, 'MaxD']
     
     return dataset_0
+
+# Avg odd
+#VARIABLE                    V
+#PER MATCH AVG               X
+#PER MATCH AVG HT/AT DIFF    X
+def avg_odd(dataset_0,  dataset_football_data_0):
+    
+    #We ensure that the columns are defined as float columns (because i had an error that raised saying that they are int64 col)
+    dataset_0["HTW_avg_odd"] = dataset_0["HTW_avg_odd"].astype(float)
+    dataset_0["ATW_avg_odd"] = dataset_0["ATW_avg_odd"].astype(float)
+    dataset_0["D_avg_odd"] = dataset_0["D_avg_odd"].astype(float)
+    
+    for i in range(dataset_0.shape[0]):
+        #We find corresponding line index of the match in football-data dataset
+        line_nb = data_combination.find_corresponding_match(i, dataset_0, dataset_football_data_0)
+        
+        # We fill the home team win avg market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb, 'BbAvH']):
+            dataset_0.at[i,'HTW_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvH']
+        else:    
+            dataset_0.at[i,'HTW_avg_odd'] = dataset_football_data_0.at[line_nb,'AvgH']
+        
+        # We fill the away team win avg market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb,'BbAvA']):
+            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvA']
+        else:    
+            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb, 'AvgA']
+        
+        # We fill the draw avg market odd
+        if not np.isnan(dataset_football_data_0.at[line_nb,'BbAvD']):
+            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvD']
+        else:    
+            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb, 'AvgD']
+    
+    return dataset_0
