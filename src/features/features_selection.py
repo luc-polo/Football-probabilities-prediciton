@@ -28,7 +28,6 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
         
         away_feature_column_name (str): Name of the column of the away feature we want to compute the avg over Game Weeks
         
-        
         dataset_0 (DataFrame): The dataset containing the data.
     
     Returns:
@@ -50,6 +49,7 @@ def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_co
     plt.xlabel('Game Week')
     plt.ylabel(f'Mean of {home_feature_column_name.replace("HT_", "")}')
     plt.title(f'Mean of {home_feature_column_name.replace("HT_", "")} over Game Weeks')
+    plt.ylim(-3, 3)
     plt.grid(True)
     plt.legend()
     # Affichez le graphique
@@ -349,7 +349,6 @@ def restricted_datasets(dataset_0):
 
 
     #Restricted dataset 1
-
 
     #Restricted dataset 3
     names_col_rest_ds_3 =  ["Diff_HT_avg_victory_pm", "Diff_AT_avg_victory_pm", 
