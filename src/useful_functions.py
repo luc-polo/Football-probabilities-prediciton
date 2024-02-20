@@ -200,7 +200,7 @@ def classement_team_on_X_last_matchs(y_0, ranking_0, pnt_list_0 , goal_diff_list
     insert_func(name_team, ranking_0, pnt_list_0, goal_diff_list_0, k, gd, rank)
     
 
-def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, dico_col_rk, dataset_0):
+def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, dico_col_rk, nb_teams_0, dataset_0):
     """ 
         Add the teams missing in a Game Week ranking (because of postponed matches). The function, starting from one line of the Game Week concerned, iterates through the dataset by descending line numbers, to find the last matchs of teams missing, to add the teams in the ranking.
     
@@ -220,7 +220,7 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, di
     Returns:
         None
     """
-    while len(ranking_0)< constant_variables.nb_teams:
+    while len(ranking_0)< nb_teams_0:
         while dataset_0.iloc[y_0,4] in ranking_0 and dataset_0.iloc[y_0,5] in ranking_0:
             y_0+=1
         if dataset_0.iloc[y_0,4] not in ranking_0:
@@ -230,7 +230,7 @@ def ajout_missing_teams_ranking(y_0, ranking_0, pnt_list_0, goal_diff_list_0, di
             classement_team(y_0, ranking_0, pnt_list_0 , goal_diff_list_0, "away", dico_col_rk, dataset_0)
 
 #Fonction qui permet de rajouter les equipes manquantes (pour cause de match reporté) aux classements sur les X derniers matchs:
-def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches, dico_col_rk_0, dataset_0):
+def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goal_diff_list_0, x_last_matches, dico_col_rk_0, nb_teams_0, dataset_0):
     """ 
         Add the teams missing in a Game Week ranking on the X last matches (because of postponed matches). The function, starting from one line of the Game Week concerned, iterates through the dataset by descending line numbers, to find the last matchs of teams missing, to add them in the ranking on the X last matches.
         It makes the same thing as ajout_missing_teams_ranking(), but with one difference: It uses the statistics on the X last matches (which are not located in the same dataset columns), to compute the rank. 
@@ -254,7 +254,7 @@ def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goa
         None
     """
     y_local = y_0
-    while len(ranking_0)< constant_variables.nb_teams:
+    while len(ranking_0)< nb_teams_0:
         while dataset_0.iloc[y_local,4] in ranking_0 and dataset_0.iloc[y_local,5] in ranking_0:
             y_local+=1
         if dataset_0.iloc[y_local,4] not in ranking_0:
