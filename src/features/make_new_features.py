@@ -312,12 +312,13 @@ def ranking(dico_col_rk, dataset_0):
     #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prend pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
     L,largeur = dataset_0.shape
 
-
+    nb_teams = constant_variables.nb_teams
     for i in (constant_variables.seasons):
 
         start_date = i - relativedelta(years=1)
         end_date = i
-        
+        if i > pd.to_datetime("07/15/2023"):
+            nb_teams=18
         for w in range(1,constant_variables.nb_championship_weeks + 1):
             pnt_list=[]
             ranking=[]
@@ -327,7 +328,7 @@ def ranking(dico_col_rk, dataset_0):
             
             if Indices.any():
                 #On supprime les matchs qui ont été reportés:
-                Indices = [y for y in Indices if y <= (Indices[0] + ((constant_variables.nb_teams / 2) - 1))]
+                Indices = [y for y in Indices if y <= (Indices[0] + ((nb_teams / 2) - 1))]
 
                 #On fait une première boucle qui va permettre de classer les équipes avant le début de la w ème journée:
                 for y in Indices:
@@ -340,7 +341,7 @@ def ranking(dico_col_rk, dataset_0):
                     useful_functions.classement_team(y, ranking, pnt_list , goal_diff_list, "away", dico_col_rk, dataset_0)
                     
                 #Si il manque une ou plusieurs équipes au classement on va chercher leur prochain match pour avoir leurs stats pre-match et les incorporer au classement
-                useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dico_col_rk, dataset_0)
+                useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dico_col_rk, nb_teams, dataset_0)
                 
                 #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
                 useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dico_col_rk, dataset_0)            
@@ -401,8 +402,9 @@ def annnual_budget(dataset_0):
     budgets_2021={"PSG": 640, "Lyon": 285, "Monaco": 215, "Marseille": 140, "Lille": 147, "St Etienne": 95, "Bordeaux": 65, "Rennes": 105, "Nantes": 75, "Nice": 75, "Montpellier": 54.5, "Reims": 70, "Strasbourg": 50, "Lens": 46, "Dijon": 50, "Lorient": 45, "Nîmes": 40, "Angers": 45, "Brest": 35, "Metz": 50} 
     budgets_2022={"PSG": 500, "Lyon": 250, "Monaco": 215, "Marseille": 250, "Lille": 147, "St Etienne": 70, "Bordeaux": 112, "Rennes": 110, "Nantes": 65, "Nice": 90, "Montpellier": 44, "Reims": 60, "Strasbourg": 45, "Lens": 43, "Troyes": 30, "Lorient": 50, "Clermont": 20, "Angers": 41, "Brest": 32, "Metz": 50}
     budgets_2023={"PSG": 700, "Lyon": 250, "Monaco": 240, "Marseille": 250, "Lille": 100, "Auxerre": 32, "Ajaccio": 22, "Rennes": 90, "Nantes": 75, "Nice": 100, "Montpellier": 52, "Reims": 70, "Strasbourg": 45, "Lens": 62, "Troyes": 45, "Lorient": 50, "Clermont": 25, "Angers": 40, "Brest": 48, "Toulouse": 40}
+    budgets_2024={"PSG": 700, "Lyon": 220, "Monaco": 205, "Marseille": 270, "Lille": 100, "Le Havre": 32, "Rennes": 110, "Nantes": 75, "Nice": 85, "Montpellier": 50, "Reims": 75, "Strasbourg": 65, "Lens": 118, "Lorient": 70, "Clermont": 22, "Metz": 45, "Brest": 48, "Toulouse": 50}
 
-    dicos_budgets=[budgets_2015, budgets_2016, budgets_2017, budgets_2018, budgets_2019, budgets_2020, budgets_2021, budgets_2022, budgets_2023]
+    dicos_budgets=[budgets_2015, budgets_2016, budgets_2017, budgets_2018, budgets_2019, budgets_2020, budgets_2021, budgets_2022, budgets_2023, budgets_2024]
 
     j=0
     
@@ -595,9 +597,13 @@ def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
 def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
     #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prends pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
 
+    nb_teams = constant_variables.nb_teams
 
     for i in (constant_variables.seasons):
-
+        
+        if i > pd.to_datetime("07/15/2023"):
+            nb_teams = 18
+        
         start_date = i - relativedelta(years=1)
         end_date = i
         
@@ -609,7 +615,7 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
             
             if Indices.any():
                 #On supprime les matchs qui ont été reportés:
-                Indices = [y for y in Indices if y <= (Indices[0] + ((constant_variables.nb_teams / 2) - 1))]
+                Indices = [y for y in Indices if y <= (Indices[0] + ((nb_teams / 2) - 1))]
                 
                 #On calcule et on ajoute dans les colonnes du dataset, le rang avant le debut de la w eme journée de chaque team dans les 3 classements et on classe les potentielles equipes qui jouaient un match reporté juste avant le premier match de la journée w
                 
@@ -635,9 +641,9 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
                 
                 #On rajoute au classement les équipes manquantes (en cas de matchs reportés):
 
-                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, dataset_0)
-                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, dataset_0)
-                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, dataset_0)
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, nb_teams, dataset_0)
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, nb_teams, dataset_0)
+                useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, nb_teams, dataset_0)
 
                 
                 #On remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT (uniquement si il s'agit d'une journée de championnat superieure au nombre de journées sur les quelles sont calculé le classement):
@@ -902,22 +908,22 @@ def max_odd(dataset_0,  dataset_football_data_0):
         line_nb = data_combination.find_corresponding_match(i, dataset_0, dataset_football_data_0)
         
         # We fill the home team win maximum market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb, 'BbMxH']):
-            dataset_0.at[i,'HTW_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxH']
-        else:    
+        if not np.isnan(dataset_football_data_0.at[line_nb, 'MaxH']):
             dataset_0.at[i,'HTW_Max_odd'] = dataset_football_data_0.at[line_nb,'MaxH']
+        else:    
+            dataset_0.at[i,'HTW_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxH']
         
         # We fill the away team win maximum market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb,'BbMxA']):
-            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxA']
+        if not np.isnan(dataset_football_data_0.at[line_nb,'MaxA']):
+            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb,'MaxA']
         else:    
-            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb, 'MaxA']
+            dataset_0.at[i,'ATW_Max_odd'] = dataset_football_data_0.at[line_nb, 'BbMxA']
         
         # We fill the draw maximum market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb,'BbMxD']):
-            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb,'BbMxD']
+        if not np.isnan(dataset_football_data_0.at[line_nb,'MaxD']):
+            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb,'MaxD']
         else:    
-            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb, 'MaxD']
+            dataset_0.at[i,'D_Max_odd'] = dataset_football_data_0.at[line_nb, 'BbMxD']
     
     return dataset_0
 
@@ -937,21 +943,21 @@ def avg_odd(dataset_0,  dataset_football_data_0):
         line_nb = data_combination.find_corresponding_match(i, dataset_0, dataset_football_data_0)
         
         # We fill the home team win avg market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb, 'BbAvH']):
-            dataset_0.at[i,'HTW_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvH']
-        else:    
+        if not np.isnan(dataset_football_data_0.at[line_nb, 'AvgH']):
             dataset_0.at[i,'HTW_avg_odd'] = dataset_football_data_0.at[line_nb,'AvgH']
+        else:    
+            dataset_0.at[i,'HTW_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvH']
         
         # We fill the away team win avg market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb,'BbAvA']):
-            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvA']
+        if not np.isnan(dataset_football_data_0.at[line_nb,'AvgA']):
+            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb,'AvgA']
         else:    
-            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb, 'AvgA']
+            dataset_0.at[i,'ATW_avg_odd'] = dataset_football_data_0.at[line_nb, 'BbAvA']
         
         # We fill the draw avg market odd
-        if not np.isnan(dataset_football_data_0.at[line_nb,'BbAvD']):
-            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb,'BbAvD']
+        if not np.isnan(dataset_football_data_0.at[line_nb,'AvgD']):
+            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb,'AvgD']
         else:    
-            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb, 'AvgD']
+            dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb, 'BbAvD']
     
     return dataset_0
