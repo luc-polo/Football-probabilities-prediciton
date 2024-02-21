@@ -235,6 +235,16 @@ def outliers_removal(X_0, Y_0, iqr_multiplier):
     return(clean_data, clean_target)
 
 def imputation(feature_to_impute_name, features_list, X_0):
+    """Apply imputation (KNNImputer) to a (whole) specific column. The imputation computation is performed using a list of features input into the function parameters.
+    
+    Args:
+        feature_to_impute_name (str): The name of the feature we want to impute
+        features_list (list): The list that contains the names of the features we want to input into KNNImputer in order to impute missing values for the feature_to_impute_name
+        X_0 (DataFrame): dataset containing the feature we want to impute
+        
+    Returns:
+        DataFrame: X_0 where we only imputed missing values of feature_to_impute_name
+    """
 
     # Make 2 copy of the original dataset
     features_list.append(feature_to_impute_name)
@@ -244,10 +254,8 @@ def imputation(feature_to_impute_name, features_list, X_0):
 
     X_col_names = X_to_impute.columns
     
-    
-
     # Apply the KNNImputer on X_to_impute
-    imputer = KNNImputer(missing_values = 0, n_neighbors=5)
+    imputer = KNNImputer(missing_values = 0, n_neighbors=5, weights='distance')
     fully_imputed_X = imputer.fit_transform(X_to_impute)
     fully_imputed_X = pd.DataFrame(fully_imputed_X, columns = X_col_names)
 
