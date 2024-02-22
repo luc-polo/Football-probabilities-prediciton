@@ -1,5 +1,5 @@
 """This module contains functions used to display the results of our pipeline"""
-
+import sys
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -9,8 +9,10 @@ import warnings
 from sklearn.utils import check_matplotlib_support, column_or_1d,  check_consistent_length
 from sklearn.calibration import _check_pos_label_consistency
 from tabulate import tabulate
+from dateutil.relativedelta import relativedelta
 
-
+from configuration import constant_variables
+from data import preprocessing
 
 # --------------------------------------------------------------
 # GridSearchCV() Results
@@ -189,7 +191,7 @@ def calibration_curve_bis(
 
 
 # Plot calibration curves of calibrated and not calibrated pipeline/model
-def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_0, color_0, calibrated_model_or_not):
+def plot_calibration_curve_2(Y_test_0, proba_pred_0, n_bins_0, strategy_0, color_0, calibrated_model_or_not):
     """  
         Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
      
@@ -199,6 +201,8 @@ def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_
         X_test_0 (DataFrame): The features Dataframe used to plot the calibration curve.
         
         Y_test_0 (DataFrame): The labels/targets Dataframe used to plot the calibration curve.
+        
+        proba_pred_0 (list): the one d array containing the probabilities predicted by our pipeline on X_test_0
         
         n_bins_0 (int): Number of bins to discretize the predicted probabilities.
         
@@ -211,8 +215,8 @@ def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_
      Returns:
         sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
      """
-    y_proba_pred = pipeline_0.predict_proba(X_test_0)[:,1]
-    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, y_proba_pred, n_bins= n_bins_0, strategy=strategy_0)
+    
+    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0)
     
     
     # Plot the calibration curve
@@ -243,7 +247,7 @@ def plot_calibration_curve_2(pipeline_0, X_test_0, Y_test_0, n_bins_0, strategy_
     # Display the parameter n_bins_0 value
     plt.text(0.00, 0.9, f'n_bins: {n_bins_0}', ha='left', va='top', fontsize=12)
     # Display the number of samples/predictions used to plot the curve
-    plt.text(0.00, 0.84, f'test_set size: {X_test_0.shape[0]}', ha='left', va='top', fontsize=12)
+    plt.text(0.00, 0.84, f'test_set size: {Y_test_0.shape[0]}', ha='left', va='top', fontsize=12)
     
     plt.legend()
     plt.show()
@@ -308,19 +312,18 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
     print('\nLa deviation moyenne pour ce paramétrage est de ', round(deviation*100, 2), "%")
     
 # Plot histogram of predicted probabilities 
-def plot_histo_predicted_proba(pipeline_0, X_0, bins_0, color_0, calibrated_or_not ):
+def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, calibrated_or_not ):
     """Plot the histogram of the proba predicted by the pipeline inputted on the features dataset inputted.
 
     Args:
-        pipeline_0 (Pipeline): The pipeline we want to get the predicted probabilities distribution of
-        X_0 (DataFrame): The features dataset we will make the predictions on
+        proba_pred_0 (np.ndarray): The proba predicted by the model we want to plot the histogram of
         bins_0 (int): The number of bins we want for our histogram
         color (str): The colour we want for our histogram bars
         calibrated_or_not (str): Only two possible values: 'calibrated' or 'non calibrated'. Used to print the title and axes names.
     """
-    proba_pred = pipeline_0.predict_proba(X_0)[:,1]
+
     plt.hist(
-        proba_pred,
+        proba_pred_0,
         range=(0, 1),
         bins= bins_0,
         color= color_0)
@@ -358,4 +361,88 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     
     print(f"\n\nLa somme des proba prédites sur le TEST SET est {proba_test_sum}, la somme des true event est {sum_true_values_test.item()}")
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
+
+
+#Testtt
+def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, seasons_0, dataset_0):
+    """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
+
+    Args:
+        H_A_col_to_concat_0 (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
+        
+        col_concatenated_names_0 (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
+        
+        col_to_delete_list_0 (list): List of column names to be deleted
+        
+        contextual_col_0 (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model
+        
+        pipeline_0 (pipeline): The non fitted pipeline selected by GridSearchCV we will use to make proba predictions
+        
+        seasons_0 (list): list of the seasons years we want to make the tests on. We usually input 'test_seasons' defined in V)1)
+        
+        dataset_0 (_type_): The original dataset containing ALL data.
+
+    Returns:
+        Tuple: (proba_predicted, Y, X_info) The np.array containing the proba predicted on the test seasons, the Results corresponding to these predictions, the contextual columns corresponding to these predictions. 
+    """
     
+    proba_predicted = []
+    Y = []
+    X_info = pd.DataFrame(columns=contextual_col_0)
+    
+    #We define the seasons end dates of the the seaons we want to make predictions on
+    seasons = []
+    for seas in seasons_0:
+        for date in constant_variables.seasons:
+            if date.year == seas:
+                seasons.append(date)
+    
+    for season in seasons:
+        nb_of_GW_for_this_season = dataset_0['Game Week'].max()
+        for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
+            
+            #we start fining the date of the first match of this game week
+            combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
+            first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
+            
+    
+            # We test if at least one of the Game Week matches has been completed
+            if not (dataset_0[combined_conditions]['status'] == 'incomplete').all():
+                #We build up the dataset of all the data beofore this game week:
+                train_dataset_for_this_gw = dataset_0[dataset_0['date_GMT']<first_match_date]
+                
+                #We apply the formatting and train_test_split on this dataset
+                X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_gw )
+                
+                #We train the pipeline on this formatted dataset
+                pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
+                
+                
+                #We build up the test_datset for this GW
+                test_dataset_for_this_gw = dataset_0[combined_conditions]
+                
+                #We apply the formatting and train_test_split on this dataset
+                X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_gw )
+                
+                #We predict proba on this gw matches:
+                porba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
+                
+                #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
+                #Proba pred
+                for proba in porba_pred_for_this_gw:
+                    proba_predicted.append(proba)
+                    
+                #Y_test
+                for R in Y_test_for_this_gw['Result']:
+                    Y.append(R)
+
+                
+                #X_test_info
+                if not X_info.empty:
+                    X_info = pd.concat([X_info, X_test_info_for_this_gw], ignore_index=True, axis = 0)
+                else:
+                    X_info = X_test_info_for_this_gw
+                
+
+    return (np.array(proba_predicted), pd.DataFrame(Y, columns =['Result']), X_info)
+
