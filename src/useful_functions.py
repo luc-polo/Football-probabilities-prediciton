@@ -264,7 +264,7 @@ def ajout_missing_teams_ranking_on_X_last_matchs(y_0, ranking_0, pnt_list_0, goa
             classement_team_on_X_last_matchs(y_local, ranking_0, pnt_list_0 , goal_diff_list_0, "away", x_last_matches, dico_col_rk_0 , dataset_0)
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT:
-def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
+def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, nb_teams_0, dataset_0):
     """ 
         Fill, for each match of the w th Game Week, the dataset with the prematch ranks of teams (input with ranking_0). The prematch ranks are input into the function through a ranking list (containing teams names oredered following their rank).
     
@@ -273,6 +273,8 @@ def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
         
         ranking_0 (list): Ranking list that contains teams names oredered following their rank. This list is utilized to stock the prematch ranks of teams, which are then filled into the dataset.
         
+        nb_teams_0 (int): Number of team in the championship for the season treated
+        
         dataset_0 (DataFrame): DataFrame containing our data.
     
     Returns:
@@ -280,11 +282,11 @@ def fill_dataset_with_teams_rank(Indices_0, ranking_0, dico_col_rk, dataset_0):
     """
     
     for y in Indices_0:  
-                dataset_0.iloc[y, dico_col_rk['rg_HTWR']]= ranking_0.index(dataset_0.iloc[y,4]) + 1
-                dataset_0.iloc[y, dico_col_rk['rg_ATWR']]= ranking_0.index(dataset_0.iloc[y,5]) + 1 
+                dataset_0.iloc[y, dico_col_rk['rg_HTWR']]= (ranking_0.index(dataset_0.iloc[y,4]) + 1)/nb_teams_0
+                dataset_0.iloc[y, dico_col_rk['rg_ATWR']]= (ranking_0.index(dataset_0.iloc[y,5]) + 1)/nb_teams_0
 
 #Remplit pour chaque match de la w ème journée le dataset avec les classements prematch sur les X last matchs des HT et AT:   
-def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_matches, dico_col_rk_0, dataset_0):
+def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_matches, dico_col_rk_0, nb_teams_0, dataset_0):
     """ 
         Exactly the same as fill_dataset_with_team_rank() but for the rankings in x last matchs
     
@@ -296,6 +298,8 @@ def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_m
         x_last_matches (int): The number of most recent matches considered to compute teams statistics and set the rankings. x_last_matches is included in [1, 3, 5].
         
         dico_col_rk_0 (dict): Dictionnarry containing the dataset_0 columns ranks names as keys and their values as values.
+        
+        nb_teams_0 (int): Number of team in the championship for the season treated
         
         dataset_0 (DataFrame): DataFrame containing our data.
     
@@ -309,8 +313,8 @@ def fill_dataset_with_teams_rank_on_X_last_matchs(Indices_0, ranking_0, x_last_m
         decalage = 4
     
     for y in Indices_0:  
-                dataset_0.iloc[y, dico_col_rk_0['rg_HT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[y,4]) + 1
-                dataset_0.iloc[y, dico_col_rk_0['rg_AT5lm_WR'] + decalage]= ranking_0.index(dataset_0.iloc[y,5]) + 1
+                dataset_0.iloc[y, dico_col_rk_0['rg_HT5lm_WR'] + decalage]= (ranking_0.index(dataset_0.iloc[y,4]) + 1)/nb_teams_0
+                dataset_0.iloc[y, dico_col_rk_0['rg_AT5lm_WR'] + decalage]= (ranking_0.index(dataset_0.iloc[y,5]) + 1)/nb_teams_0
 
 #Permet de supprimer les equipes du match reporté en question, des classements de la w eme journee
 def delete_postponned_match_teams_from_ranking(ranking_0, pnt_list_0, goal_diff_list_0, l_0, dataset_0):

@@ -309,6 +309,10 @@ def points_nb( dico_col_rk,dataset_0):
 #PER MATCH AVG               X
 #HT/AT DIFF                  V
 def ranking(dico_col_rk, dataset_0):
+    #Convert the columns into float type
+    dataset_0['HT_week_ranking'] = dataset_0['HT_week_ranking'].astype(float)
+    dataset_0['AT_week_ranking'] = dataset_0['AT_week_ranking'].astype(float)
+    
     #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prend pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
     L,largeur = dataset_0.shape
 
@@ -344,7 +348,7 @@ def ranking(dico_col_rk, dataset_0):
                 useful_functions.ajout_missing_teams_ranking( y, ranking, pnt_list, goal_diff_list, dico_col_rk, nb_teams, dataset_0)
                 
                 #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
-                useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dico_col_rk, dataset_0)            
+                useful_functions.fill_dataset_with_teams_rank(Indices, ranking, dico_col_rk, nb_teams, dataset_0)            
                 
                 
                 #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w, sont des matchs reportés, alors on va classer ces equipes dans le classement réalisé précedemment pour la journée w, en ayant préalablement retiré les equipes en question du classement
@@ -365,8 +369,8 @@ def ranking(dico_col_rk, dataset_0):
                         useful_functions.classement_team(l, ranking, pnt_list, goal_diff_list, "away", dico_col_rk, dataset_0)
                         
                         #On remplit pour chaque match de la w ème journée les classements prematch des HT et AT:
-                        dataset_0.iloc[l, dico_col_rk['rg_HTWR']]= ranking.index(dataset_0.iloc[l,4]) + 1
-                        dataset_0.iloc[l, dico_col_rk['rg_ATWR']]= ranking.index(dataset_0.iloc[l,5]) + 1
+                        dataset_0.iloc[l, dico_col_rk['rg_HTWR']]= (ranking.index(dataset_0.iloc[l,4]) + 1)/nb_teams
+                        dataset_0.iloc[l, dico_col_rk['rg_ATWR']]= (ranking.index(dataset_0.iloc[l,5]) + 1)/nb_teams
                         
                         #Pour Tester:
                         """print("le ranking avant le match rattrapé est:")
@@ -596,6 +600,14 @@ def goal_diff_on_x_last_matchs(dico_col_rk, dataset_0):
 #HT/AT DIFF                  V
 def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
     #Ce  classement classe les teams selon leur nombre de point et goal difference, mais ne prends pas en compte le nb de buts marqués en cas d'égalité de goal average et de points
+    
+    #Convert the columns into float type
+    dataset_0['HT_5lm_week_ranking'] = dataset_0['HT_5lm_week_ranking'].astype(float)
+    dataset_0['AT_5lm_week_ranking'] = dataset_0['AT_5lm_week_ranking'].astype(float)
+    dataset_0['HT_3lm_week_ranking'] = dataset_0['HT_3lm_week_ranking'].astype(float)
+    dataset_0['AT_3lm_week_ranking'] = dataset_0['AT_3lm_week_ranking'].astype(float)
+    dataset_0['HT_1lm_week_ranking'] = dataset_0['HT_1lm_week_ranking'].astype(float)
+    dataset_0['AT_1lm_week_ranking'] = dataset_0['AT_1lm_week_ranking'].astype(float)
 
     nb_teams = constant_variables.nb_teams
 
@@ -640,7 +652,6 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
 
                 
                 #On rajoute au classement les équipes manquantes (en cas de matchs reportés):
-
                 useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, nb_teams, dataset_0)
                 useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, nb_teams, dataset_0)
                 useful_functions.ajout_missing_teams_ranking_on_X_last_matchs(y, ranking_1lm_list, pnt_1lm_list , goal_diff_1lm_list, 1, dico_col_rk_0, nb_teams, dataset_0)
@@ -648,11 +659,11 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
                 
                 #On remplit pour chaque match de la w ème journée le dataset avec les classements prematch des HT et AT (uniquement si il s'agit d'une journée de championnat superieure au nombre de journées sur les quelles sont calculé le classement):
                 if dataset_0.at[Indices[0],"Game Week"]>5:
-                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 5, dico_col_rk_0, dataset_0)
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 5, dico_col_rk_0, nb_teams, dataset_0)
                 if dataset_0.at[Indices[0],"Game Week"]>3:
-                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 3, dico_col_rk_0, dataset_0)
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 3, dico_col_rk_0, nb_teams, dataset_0)
                 if dataset_0.at[Indices[0],"Game Week"]>1:
-                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 1, dico_col_rk_0, dataset_0)
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 1, dico_col_rk_0, nb_teams, dataset_0)
                 
                 #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,
                 #sont des matchs reportés, alors on va classer ces equipes dans les classements réalisés précedemment pour la journée w, en ayant 
