@@ -48,7 +48,7 @@ football_data_2024_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.2
 def read_data(files, Footy_or_Football):
     """
         Taking in entry the paths of the csv files, it outputs a DataFrame that is the concatenation of all our data.
-        During this process the function converts 'date_GMT' or 'Date' column do datetime format, delete the raws of matchs definitivly canceled (only for footy stats datasets as for football-data the canceled matchs do not appear).
+        During this process the function converts 'date_GMT' or 'Date' column do datetime format, delete the raws of matchs definitivly canceled or not played yet(only for footy stats datasets as for football-data the canceled matchs do not appear).
 
     Args:
         files (list): The list of paths towards csv files that contain the data of one season for one championship. That's a list of str.
@@ -82,8 +82,9 @@ def read_data(files, Footy_or_Football):
 
     
     if Footy_or_Football == 'footy':
-        #Suppresession des lignes où le match a été annulé (covid). These matchs do not appear into Footaball-Data datasets
-        rows_to_keep = dataset["status"] != "canceled"
+        #Suppresession des lignes où le match a été annulé (covid) u pas encore joué. These matchs do not appear into Footaball-Data datasets
+        rows_to_keep = dataset["status"] == "complete"
+
         dataset = dataset[rows_to_keep].reset_index(drop=True)
         
     return(dataset)
