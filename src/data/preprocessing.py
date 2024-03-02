@@ -20,8 +20,44 @@ import useful_functions
 # --------------------------------------------------------------
 #  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
+#Funciton for formatting ant cleaning data
+def formatting_cleaning( H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, dataset_0):
+    """This function is used in other functions as the two following. It contains all the what the formatting_splitting functions do, excepted the train_test_plit step.
+    This function selects a restricted number of features and concatenates Home and Away features for them, applying a filter on minimum GW. It as well as creates a X_info dataset with all the contextual features we don't want to input in our model.
+
+    Args:
+        H_A_col_to_concat (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
+        
+        col_concatenated_names (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
+        
+        col_to_delete_list (list): List of column names to be deleted
+        
+        contextual_col (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model.
+        
+        dataset_0 (DataFrame): The original dataset
+         
+
+    Returns:
+        Tuple: (X_0, X_0_info, Y_0) X_0 is the formatted/clean features dataset and Y_0 the one of the target. X_0_info contains the contextual features (teams names, dates...)
+    """
+    Y_0 = useful_functions.HT_AT_col_merger(['RH', 'RA'], ['Result'], constant_variables.min_played_matchs_nb, dataset_0)
+    X_0 = useful_functions.HT_AT_col_merger(H_A_col_to_concat, col_concatenated_names, constant_variables.min_played_matchs_nb, dataset_0)
+    
+    
+    #Supprimer les colonnes demandées
+    for col in col_to_delete_list:
+        X_0.drop(col, axis=1, inplace = True)
+        
+    #We stock and delete the col containing contextual info on matchs (teams names, dates...)
+    X_0_info = X_0[contextual_col]
+
+    for col in contextual_col:
+        X_0.drop(col, axis=1, inplace=True)
+        
+    return X_0, X_0_info, Y_0
+
 # Function that shuffle data in the splitting process
-def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, random_state_0, dataset_0, test_proportion, *train_proportion):
+def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, random_state_0, dataset_0, test_proportion, *train_proportion):
     """  
     This function selects the features H_A_col_to_concat, concatenates HT and AT col, removes rows where the nb of matchs played by teams is inferior to min_played_matchs_nb, removes column(s) of feature(s) we don't want to keep in our dataset (if there are), returns separated features and labels.
     Then it splits our data into train, (valid if needed) and test sets and convert them into dataframes. It returns X_train, Y_train, X_test, Y_test, (X_valid, Y_valid) ready to be given to our model and the calibrator. X_train_info, X_test_info, and (X_valid_info) contain contextual information such as team names, which we may need after executing the pipeline to analyze the coherence of the predicted probabilities.
@@ -34,6 +70,8 @@ def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_
         dataset_restricted_0 (DataFrame): Restricted dataset obtained in III)3)
         
         col_to_delete_list (list): (If there are) List of columns names we want to delete from dataset because we don't want the model to use it.
+        
+        contextual_col (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model.
         
         dataset_0 (DataFrame): The dataset containing the data.
         
@@ -96,12 +134,12 @@ def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_
         Y_valid = pd.DataFrame(Y_valid, columns=Y.columns)
     
     #We stock and delete the col containing contextual info on matchs (teams names, dates...)
-    X_train_info = X_train[["Team_we_pred_vict_proba","Adversary", "Date"]]
-    X_test_info = X_test[["Team_we_pred_vict_proba","Adversary", "Date"]]
+    X_train_info = X_train[contextual_col]
+    X_test_info = X_test[contextual_col]
     if train_proportion:
-            X_valid_info = X_valid[["Team_we_pred_vict_proba","Adversary"]]
+            X_valid_info = X_valid[contextual_col]
             
-    for col in ["Team_we_pred_vict_proba","Adversary", "Date"]:
+    for col in contextual_col:
         X_train.drop(col, axis=1, inplace=True)
         X_test.drop(col, axis=1, inplace=True)
         if train_proportion:
@@ -112,21 +150,28 @@ def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_
     else:
         return (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test)
 
-# Funciton that makes a splitting based on seasons
-def formatting_splitting_seasons(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, dataset_0, test_seasons, train_seasons):
+# Function that makes a splitting based on seasons
+def formatting_splitting_seasons(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, dataset_0, test_seasons, train_seasons):
     """
         This function splits the dataset into train and test sets based on seasons and performs data formatting
 
     Args:
-        H_A_col_to_concat (list): List of column names to concatenate.
-        col_concatenated_names (list): List of names for the concatenated columns.
+        H_A_col_to_concat (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
+        
+        col_concatenated_names (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
+        
         col_to_delete_list (list): List of column names to be deleted.
+        
+        contextual_col (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model.
+        
         dataset_0 (DataFrame): The original dataset.
+        
         test_seasons (list): List of seasons we want to put in test set
+        
         train_seasons (list): List of seasons we want to put in train set
 
     Returns:
-        _type_: _description_
+        Tuple: (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test) X_ are the formatted/clean features datasets and Y_ the ones of the targets. X_info contain the contextual features (teams names, dates...)
     """
     
     #We split the data following seasons:
@@ -135,24 +180,10 @@ def formatting_splitting_seasons(H_A_col_to_concat, col_concatenated_names, col_
     
     #Definition of Y and X
     #On selectionne uniquement les lignes où le nb de match joués > min_played_matchs_nb (défini dans 'Definition of restricted datasets...'). Et on concatenne les HT et AT col
-    Y_test = useful_functions.HT_AT_col_merger(['RH', 'RA'], ['Result'], constant_variables.min_played_matchs_nb, df_test)
-    X_test = useful_functions.HT_AT_col_merger(H_A_col_to_concat, col_concatenated_names, constant_variables.min_played_matchs_nb, df_test)
     
-    Y_train = useful_functions.HT_AT_col_merger(['RH', 'RA'], ['Result'], constant_variables.min_played_matchs_nb, df_train)
-    X_train = useful_functions.HT_AT_col_merger(H_A_col_to_concat, col_concatenated_names, constant_variables.min_played_matchs_nb, df_train)
+    X_test, X_test_info, Y_test = formatting_cleaning( H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, df_test)
     
-    #Supprimer les colonnes demandées
-    for col in col_to_delete_list:
-        X_train.drop(col, axis=1, inplace = True)
-        X_test.drop(col, axis=1, inplace = True)
-    
-    #We stock and delete the col containing contextual info on matchs (teams names, dates...)
-    X_train_info = X_train[["Team_we_pred_vict_proba","Adversary", "Date"]]
-    X_test_info = X_test[["Team_we_pred_vict_proba","Adversary", "Date"]]
-
-    for col in ["Team_we_pred_vict_proba","Adversary", "Date"]:
-        X_train.drop(col, axis=1, inplace=True)
-        X_test.drop(col, axis=1, inplace=True)
+    X_train, X_train_info, Y_train = formatting_cleaning( H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, df_train)
 
     return (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test)
 
