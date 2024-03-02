@@ -14,7 +14,7 @@ nb_teams = 20
 nb_championship_weeks = 38
 
 #On définit un nb de matchs min joués pour selectionner les lignes du dataset surlesquelles le model tournera
-min_played_matchs_nb=5
+min_played_matchs_nb= 5
 
 # Define the stratified k-fold cross-validation strategy that  we will use in several functions
 CV = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
