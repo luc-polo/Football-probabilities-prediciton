@@ -1,6 +1,7 @@
 """This module contains all the function necessary to combine/merge the data of Footy Stats and Football Data"""
 
 import pandas as pd
+from datetime import timedelta
 
 # --------------------------------------------------------------
 # 
@@ -17,7 +18,8 @@ def team_names_uniformisation(Football_data_dataset_0, Footy_Stats_dataset_0):
     # Change Football Data team names
     football_datat_team_names_to_change = {'Ajaccio GFCO' : 'Gazélec Ajaccio',
                                            'Paris SG': 'PSG',
-                                           'Evian Thonon Gaillard': 'Evian'}
+                                           'Evian Thonon Gaillard': 'Evian', 
+                                           'Nimes' : 'Nîmes'}
     
     for team_name in football_datat_team_names_to_change.keys():
         Football_data_dataset_0["HomeTeam"].replace(team_name, football_datat_team_names_to_change[team_name], inplace=True)
@@ -56,7 +58,7 @@ def find_corresponding_match(row_nb_in_footy_dataset, footy_dataset_0, football_
     dat_col_of_footaball_dataset = football_data_dataset_0['Date'].dt.date  # the Date column at format dd/mm/yyyy, used below
     
     # We identify all rows in football_data_dataset_0 that have the same date as the match of footy dataset we are looking for
-    possible_rows_identified_with_dates = football_data_dataset_0[dat_col_of_footaball_dataset == date_of_the_match]
+    possible_rows_identified_with_dates = football_data_dataset_0[(dat_col_of_footaball_dataset >= date_of_the_match - timedelta(days=1))& (dat_col_of_footaball_dataset <= date_of_the_match + timedelta(days=1))]
     
     row_nb_in_football_data_dataset = 0
     
@@ -64,6 +66,7 @@ def find_corresponding_match(row_nb_in_footy_dataset, footy_dataset_0, football_
         if row['HomeTeam'] == footy_dataset_0.at[row_nb_in_footy_dataset, 'home_team_name'] and row['AwayTeam'] == footy_dataset_0.at[row_nb_in_footy_dataset, 'away_team_name']:
             row_nb_in_football_data_dataset = index
             break   # Exit the loop once a match is found
+    
     
     return row_nb_in_football_data_dataset
     
