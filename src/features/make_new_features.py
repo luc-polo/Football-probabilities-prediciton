@@ -972,3 +972,4 @@ def avg_odd(dataset_0,  dataset_football_data_0):
             dataset_0.at[i,'D_avg_odd'] = dataset_football_data_0.at[line_nb, 'BbAvD']
     
     return dataset_0
+
