@@ -10,6 +10,8 @@ from sklearn.utils import check_matplotlib_support, column_or_1d,  check_consist
 from sklearn.calibration import _check_pos_label_consistency
 from tabulate import tabulate
 from dateutil.relativedelta import relativedelta
+from tabulate import tabulate
+import time
 
 from configuration import constant_variables
 from data import preprocessing
@@ -312,7 +314,7 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
     print('\nLa deviation moyenne pour ce paramétrage est de ', round(deviation*100, 2), "%")
     
 # Plot histogram of predicted probabilities 
-def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, calibrated_or_not ):
+def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, title ):
     """Plot the histogram of the proba predicted by the pipeline inputted on the features dataset inputted.
 
     Args:
@@ -321,13 +323,14 @@ def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, calibrated_or_not
         color (str): The colour we want for our histogram bars
         calibrated_or_not (str): Only two possible values: 'calibrated' or 'non calibrated'. Used to print the title and axes names.
     """
-
+    plt.figure()  # Create a new figure for each histogram
+    
     plt.hist(
         proba_pred_0,
         range=(0, 1),
         bins= bins_0,
         color= color_0)
-    plt.title(f'Histogram of predicted probabilities of the {calibrated_or_not} pipeline')
+    plt.title(f'Histogram of the {title}')
     plt.xlabel('Probability value')
     plt.ylabel('Number of predicted proba')
     plt.grid()
@@ -362,9 +365,8 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     print(f"\n\nLa somme des proba prédites sur le TEST SET est {proba_test_sum}, la somme des true event est {sum_true_values_test.item()}")
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
 
-
-#Testtt
-def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, seasons_0, dataset_0):
+#Proba prediction retraining model before each week
+def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, seasons_0, week_or_seas, dataset_0):
     """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
 
     Args:
@@ -379,6 +381,8 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
         pipeline_0 (pipeline): The non fitted pipeline selected by GridSearchCV we will use to make proba predictions
         
         seasons_0 (list): list of the seasons years we want to make the tests on. We usually input 'test_seasons' defined in V)1)
+        
+        week_or_seas (Boolean): Do we want to train the model before each GW? 'week' or 'season'
         
         dataset_0 (_type_): The original dataset containing ALL data.
 
@@ -398,51 +402,259 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                 seasons.append(date)
     
     for season in seasons:
-        nb_of_GW_for_this_season = dataset_0['Game Week'].max()
-        for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
-            
-            #we start fining the date of the first match of this game week
-            combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
-            first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
-            
-    
-            # We test if at least one of the Game Week matches has been completed
-            if not (dataset_0[combined_conditions]['status'] == 'incomplete').all():
-                #We build up the dataset of all the data beofore this game week:
-                train_dataset_for_this_gw = dataset_0[dataset_0['date_GMT']<first_match_date]
+        
+        if week_or_seas == 'week':
+            nb_of_GW_for_this_season = dataset_0['Game Week'].max()
+            for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
                 
-                #We apply the formatting and train_test_split on this dataset
-                X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_gw )
+                #we start fining the date of the first match of this game week
+                combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
+                first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
                 
-                #We train the pipeline on this formatted dataset
-                pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
-                
-                
-                #We build up the test_datset for this GW
-                test_dataset_for_this_gw = dataset_0[combined_conditions]
-                
-                #We apply the formatting and train_test_split on this dataset
-                X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_gw )
-                
-                #We predict proba on this gw matches:
-                porba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
-                
-                #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
-                #Proba pred
-                for proba in porba_pred_for_this_gw:
-                    proba_predicted.append(proba)
+        
+                # We test if at least one of the Game Week matches has been completed
+                if not (dataset_0[combined_conditions]['status'] == 'incomplete').all():
+                    #We build up the dataset of all the data beofore this game week:
+                    train_dataset_for_this_gw = dataset_0[dataset_0['date_GMT']<first_match_date]
                     
-                #Y_test
-                for R in Y_test_for_this_gw['Result']:
-                    Y.append(R)
+                    #We apply the formatting and train_test_split on this dataset
+                    X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_gw )
+                    
+                    #We train the pipeline on this formatted dataset
+                    pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
+                    
+                    
+                    #We build up the test_datset for this GW
+                    test_dataset_for_this_gw = dataset_0[combined_conditions]
+                    
+                    #We apply the formatting and train_test_split on this dataset
+                    X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_gw )
+                    
+                    #We predict proba on this gw matches:
+                    poroba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
+                    
+                    #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
+                    #Proba pred
+                    for proba in poroba_pred_for_this_gw:
+                        proba_predicted.append(proba)
+                        
+                    #Y_test
+                    for R in Y_test_for_this_gw['Result']:
+                        Y.append(R)
 
+                    #X_test_info
+                    if not X_info.empty:
+                        X_info = pd.concat([X_info, X_test_info_for_this_gw], ignore_index=True, axis = 0)
+                    else:
+                        X_info = X_test_info_for_this_gw
+        else:
+            train_dataset_for_this_seas = dataset_0[dataset_0['date_GMT']<(season - relativedelta(years=1))]
+            
+            #We apply the formatting and train_test_split on this dataset
+            X_train_for_this_seas, X_train_info_for_this_seas, Y_train_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_seas )
+            
+            #We train the pipeline on this formatted dataset
+            pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
+            
+            #We build up the test_dataset for this season
+            combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])
+            test_dataset_for_this_seas = dataset_0[combined_conditions]
+            
+            #We apply the formatting and train_test_split on this dataset
+            X_test_for_this_seas, X_test_info_for_this_seas, Y_test_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_seas )
+            
+            #We predict proba on this season matches:
+            poroba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:,1]
+            
+            #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
+            #Proba pred
+            for proba in poroba_pred_for_this_seas:
+                proba_predicted.append(proba)
+            
+            #Y_test
+            for R in Y_test_for_this_seas['Result']:
+                Y.append(R)
+            
+            #X_test_info
+            if not X_info.empty:
+                X_info = pd.concat([X_info, X_test_info_for_this_seas], ignore_index=True, axis = 0)
+            else:
+                X_info = X_test_info_for_this_seas
+            
                 
-                #X_test_info
-                if not X_info.empty:
-                    X_info = pd.concat([X_info, X_test_info_for_this_gw], ignore_index=True, axis = 0)
-                else:
-                    X_info = X_test_info_for_this_gw
-                
-
     return (np.array(proba_predicted), pd.DataFrame(Y, columns =['Result']), X_info)
 
+#Model features coefficients study
+
+def features_coeff_report(chosen_pipeline_trained_0, X_train_0):
+    """This function displays the coefficients computed by the model for every feature.
+
+    Args:
+        chosen_pipeline_trained_0 (_type_): The pipeline trained we want to display the features coefficients.
+        X_train_0 (_type_): The train features set
+    """
+
+    #Only for the "normal" proba prediction process
+
+    # Access the coefficients from the Logistic Regression step
+    coefficients = chosen_pipeline_trained_0.named_steps['model'].coef_
+    # Get the indices of the selected features
+    selected_indices = chosen_pipeline_trained_0.named_steps['features_selector'].get_support(indices=True)
+    features = X_train_0.columns[selected_indices]
+    print(coefficients)
+    # Create lists to store feature names and coefficients
+    feature_names = []
+    coeff_values = []
+
+    # Display feature names and coefficients
+    for feature, coef in zip(features, coefficients[0]):
+        feature_names.append(feature)
+        coeff_values.append(coef)
+
+    # Create a dictionary for the model_coeff_table
+    model_coeff_table = {
+        'Feature': feature_names,
+        'Coefficient': coeff_values,
+    }
+
+    fancy_model_coeff_table = tabulate(model_coeff_table, headers='keys', tablefmt='fancy_grid')
+
+    print(fancy_model_coeff_table)
+
+
+#Calibration performances displaying depending on the nb of matches statistics are computed on (the nb of GW already played)
+def calibration_over_season_advancement(season_divisions_nb, X_info_0, proba_pred_0, Y_0):
+    """Returns a subset of datasets that are divisions of the original test_set obtained grouping it by played_matches_nb values. For instance the first dataset returned is all the matches of the test_set where played_matches_nb is in [6,21], the second one all the matches where played_matches_nb is in [22, 37]. These dataset will be used to compare calibration of pred_proba through the advencement of the season.
+
+    Args:
+        season_divisions_nb (_type_): The number of subdatasets we want to return. It's 2, 3  or maximum 4. If more there wont't be anough data to plot representative calibration curves.
+        X_info_0 (_type_): The dataset containing contextual features of test_dataset
+        proba_pred_0 (_type_): The predicted probabilities for the test_dataset
+        Y_0 (_type_): The results of the matches of the test_dataset
+
+    Returns:
+        _type_: _description_
+    """
+    # Compute the limits of played matchs nb for each dataframe division
+    max_nb_of_gw = X_info_0['Played_matchs_nb'].max() 
+    split_points = np.linspace(constant_variables.min_played_matchs_nb, max_nb_of_gw, num=season_divisions_nb+1, dtype=int)[:]
+
+    # Concat probabilities predicted, contextual features and matchs result
+    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
+    col_names = []
+    col_names.extend(X_info_0.columns.tolist())
+    col_names.extend(proba_pred_01.columns.tolist())
+    col_names.extend(Y_0.columns.tolist())
+    
+    dataset_concatenated = pd.concat([X_info_0, proba_pred_01, Y_0] , axis=1, ignore_index=True)
+    dataset_concatenated.columns = col_names
+    
+    #Divide the dataframe
+    subsets = []  #List that will contain the divisions of dataframe
+    for i in range(season_divisions_nb):
+        subsets.append(dataset_concatenated[
+            (dataset_concatenated['Played_matchs_nb']>split_points[i])
+            &
+            (dataset_concatenated['Played_matchs_nb']<=split_points[i+1])])
+    
+    return subsets
+        
+#Plot learning curves for several subdataframes
+def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0):
+    """Plot calibration curves and histograms for the subset of datasets (returned by calibration_over_season_advancement()) to compare calibration over season advencement.
+
+    Args:
+        subdatasets_0 (_type_): The subset of dataset returned by calibration_over_season_advancement()
+        nb_bins_01 (_type_): The number of bins we want for plotting calibration curves
+        histo_bars_nb_0 (_type_): The number of bars we want in histograms plot
+    """
+    #Plot Calibration curves for each subdataframe
+    for sub_ds in subdatasets_0:
+        print('Calibration curve of proba predicted on matches where Played_matches_nb C [',sub_ds['Played_matchs_nb'].min(),',', sub_ds['Played_matchs_nb'].max(),']')
+        
+        prob_pred_01, prob_true_01 = plot_calibration_curve_2(
+                                        Y_test_0 = sub_ds['Result'].copy(),
+                                        proba_pred_0 = sub_ds['Proba pred'].copy(),
+                                        n_bins_0 = nb_bins_01,
+                                        strategy_0 = 'quantile',
+                                        color_0 = 'red',
+                                        calibrated_model_or_not = False)
+        #We display statistics on the pipeline probabilities deviation 
+        print_calibration_stats(prob_pred_01.copy(),
+                                prob_true_01.copy(),
+                                'non calibrated')
+        
+        print('\n\n')
+        
+    #We plot the histograms corresponding to each subdataset proba_pred
+    for sub_ds in subdatasets_0:
+        histo_title = f'Predicted Proba on matches where Played_matches_nb C [{sub_ds["Played_matchs_nb"].min()},{sub_ds["Played_matchs_nb"].max()}]'
+        plot_histo_predicted_proba(sub_ds['Proba pred'].copy(), histo_bars_nb_0, 'r', histo_title)
+        
+# Compare predicted probabilities and the probabilities of bookmakers
+def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
+    """Returns a dataset that contains he differences between redicted proba and the proba corresponding to avg_odd and max_odd
+
+    Args:
+        proba_pred_0 (_type_): The predicted proba column we want to compare
+        X_info_0 (_type_): The contextual features columns corresponding the the proba_pred_0
+
+    Returns:
+        _type_: _description_
+    """
+    
+    #We concatenate the probabilities predicted and contextual features
+    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
+    col_names = []
+    col_names.extend(X_info_0.columns.tolist())
+    col_names.extend(proba_pred_01.columns.tolist())
+    dataset_concatenated = pd.concat([X_info_0, proba_pred_01] , axis=1, ignore_index=True)
+    dataset_concatenated.columns = col_names
+    
+    #We add a column that contains the difference between predicted proba and the proba corresponding to average_victory_odd
+    dataset_concatenated['Diff proba_pred avg_odd proba'] = dataset_concatenated['Proba pred'] - (1/dataset_concatenated['Avg_victory_odd'])
+    #We add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
+    dataset_concatenated['Diff proba_pred Max_odd proba'] = dataset_concatenated['Proba pred'] - (1/dataset_concatenated['Max_victory_odd'])
+    
+    return dataset_concatenated
+
+# Simulate betting on a certain number of seasons
+def betting_simulation(proba_pred_0,X_info_0, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
+    #We concat proba_pred and contextual coln
+    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
+    col_names = []
+    col_names.extend(X_info_0.columns.tolist())
+    col_names.extend(proba_pred_01.columns.tolist())
+    col_names.extend(Y_0.columns.tolist())
+    dataset_concatenated = pd.concat([X_info_0, proba_pred_01, Y_0] , axis=1, ignore_index=True)
+    dataset_concatenated.columns = col_names
+    
+    #We select only matches that respect the conditions of betting defined by the parameter inputted
+    selected_dataset_1 = dataset_concatenated[(dataset_concatenated['Proba pred'] > proba_interval_0[0]) & (dataset_concatenated['Proba pred'] < proba_interval_0[1])]
+    
+    selected_dataset_2 = selected_dataset_1[selected_dataset_1['Diff proba_pred Max_odd proba'] > min_diff_with_odd_proba_0]
+    
+    selected_dataset_3 = selected_dataset_2[(selected_dataset_2['Played_matchs_nb'] >= GW_interval_0[0]) & (selected_dataset_2['Played_matchs_nb'] <= GW_interval_0[1])]
+    
+    #We compute bets results
+    selected_dataset_3 = selected_dataset_3.assign(Gain = -bet_0)
+    gain = 0
+    nb_of_bets = 0
+    for i in range(selected_dataset_3.shape[0]):
+            gain-= bet_0
+            nb_of_bets +=1
+            
+            if selected_dataset_3['Result'] == 1:
+                gain+= selected_dataset_3['Max_victory_odd']*bet_0
+                selected_dataset_3.at[i,'Gain'] += selected_dataset_3['Max_victory_odd']*bet_0
+    
+    
+
+            
+    
+    
+        
+        
+        
+    
+    
