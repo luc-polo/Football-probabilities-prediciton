@@ -90,7 +90,6 @@ def read_data(files, Footy_or_Football):
     return(dataset)
 
 
-
 # --------------------------------------------------------------
 # Define a function to load the dataframe saved at data/interim/data_interim.pkl
 # --------------------------------------------------------------

@@ -34,7 +34,7 @@ features_selected_01 = ["Diff_Avg_victory",
 pipeline_01 = Pipeline(steps=[ ("scaler", scaler),  ("model", model_01)])
 
 # --------------------------------------------------------------
-# Pipeline 2 (perf = 4.064 before week_ranking changes)
+# Pipeline 2 (perf = 4.064 avg deviation, before week_ranking changes)
 # -------------------------------------------------------------- 
 model_02 = LogisticRegression(penalty = 'l2', C = 0.0177, fit_intercept=True, random_state = 999, solver = 'saga', max_iter= 3000, verbose = False, tol=1e-4)
 features_selected_02 = ["Diff_Avg_points_pm_ponderated_by_adversary_perf",
