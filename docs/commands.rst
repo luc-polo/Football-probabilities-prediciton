@@ -61,7 +61,7 @@ I primarily used the Sphinx documentation to provide a clear and standardized de
     -Documentation outsite functions. We are used to write description of every module, writing a descritption of its actions and use, at the top of the code. See in other modules how it's made. We can also write comments between functions to describe specific actions, but I have no process for that.
 
 
-* How to set up documentation for a module that we have je created?
+* How to set up documentation for a module that we have just created?
     When we create a new module we need to do a few manipulations to include it in the documentation. Here are the steps to follow to activate the documentation on this module:
     
     - 1. Create a new .rst file into docs/modules_rst that you name: 'module_name.rst'. In this .rst file write the following text, replacing module_path by the path towards your module from src directory. For instance: module_path = visualization.visualize, so you replace module_path by this and obtain src.visualization.visualize.
