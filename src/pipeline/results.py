@@ -193,16 +193,14 @@ def calibration_curve_bis(
 
 
 # Plot calibration curves of calibrated and not calibrated pipeline/model
-def plot_calibration_curve_2(Y_test_0, proba_pred_0, n_bins_0, strategy_0, color_0, calibrated_model_or_not):
+def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strategy_0, color_0, GW_training_or_not):
     """  
         Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
      
      Args:
-        pipeline_0 (pipeline): The calibrated or non calibrated pipeline we want to plot the calibration curve of.
-        
-        X_test_0 (DataFrame): The features Dataframe used to plot the calibration curve.
-        
         Y_test_0 (DataFrame): The labels/targets Dataframe used to plot the calibration curve.
+        
+        X_train_0(DataFrame): The X_train used to train the pipeline that predicted proba_pred_0. We use it to display its nb of elements on our graph.
         
         proba_pred_0 (list): the one d array containing the probabilities predicted by our pipeline on X_test_0
         
@@ -212,14 +210,13 @@ def plot_calibration_curve_2(Y_test_0, proba_pred_0, n_bins_0, strategy_0, color
         
         color_0 (str): Color for plotting the calibration curve. Blue for the calibrated model and Red for non calibrated one.
         
-        calibrated_model_or_not (Boolean): Wether the pipeline inputed is the calibrated one or not (used to define graph anotations)
+        GW_training_or_not (Boolean): Wether the pipeline inputed has been retrained every GW or Season before making prediction (used to display the number of sample in trainset)
     
      Returns:
         sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
      """
     
     prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0)
-    
     
     # Plot the calibration curve
     plt.figure(figsize=(8, 6))
@@ -228,14 +225,11 @@ def plot_calibration_curve_2(Y_test_0, proba_pred_0, n_bins_0, strategy_0, color
     plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly calibrated')
     plt.xlabel('Mean predicted probabilities')
     plt.ylabel('Fraction of positives')
-    if calibrated_model_or_not == True:
-        plt.title('Calibration curve for calibrated pipeline')
-    else:
-        plt.title('Calibration curve for non calibrated pipeline')
+    plt.title('Calibration curve of the pipeline')
     plt.grid(True)
     
     
-    #increasing nb of graduation a grid lines
+    #Increasing nb of graduation a grid lines
     plt.minorticks_on()
     plt.grid( which='major', linewidth=2)
     plt.grid( which = 'minor', linewidth=1)
@@ -250,6 +244,9 @@ def plot_calibration_curve_2(Y_test_0, proba_pred_0, n_bins_0, strategy_0, color
     plt.text(0.00, 0.9, f'n_bins: {n_bins_0}', ha='left', va='top', fontsize=12)
     # Display the number of samples/predictions used to plot the curve
     plt.text(0.00, 0.84, f'test_set size: {Y_test_0.shape[0]}', ha='left', va='top', fontsize=12)
+    # Display the train-set size used to train the pipeline used to plot the curve
+    if GW_training_or_not == False:
+        plt.text(0.00, 0.78, f'train_set size: {X_train_0.shape[0]}', ha='left', va='top', fontsize=12)
     
     plt.legend()
     plt.show()
@@ -275,12 +272,12 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
         - The average deviation of probabilities for our pipeline.
     
     Args:
-        CalibrationDisplay_0 (sklearn.calibration.CalibrationDisplay): The figure of the calibration curve on X_test of the calibrated pipeline.
+        prob_pred_0 (): The proba predicted by our pipeline that were returned by results.plot_calibration_curve_2
         
-        X_valid_0 (DataFrame): The features Dataframe we used to train the calibrator. We use it to display its size (nb of rows).
+        prob_true_0 (): The matches results corresponding to the above proba returned by results.plot_calibration_curve_2
         
-        X_test_0 (DataFrame): The features Dataframe we used to test the calibrator. We use it to display its size (nb of rows)
-    
+        calibrated_or_not (str): Wether the probabilities inputed are calibrated or not. 2 values: 'non calibrated' or 'calibrated'
+        
     Returns:
         None
     """
@@ -367,7 +364,7 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
 
 #Proba prediction retraining model before each week
 def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, seasons_0, week_or_seas, dataset_0):
-    """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
+    """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW or season predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
 
     Args:
         H_A_col_to_concat_0 (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
@@ -391,7 +388,8 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
     """
     
     proba_predicted = []
-    Y = []
+    Y = pd.DataFrame(columns=["Result"])    # Initialize an empty DataFrame
+    Y['Result'] = Y['Result'].astype(int)
     X_info = pd.DataFrame(columns=contextual_col_0)
     
     #We define the seasons end dates of the the seaons we want to make predictions on
@@ -407,7 +405,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
             nb_of_GW_for_this_season = dataset_0['Game Week'].max()
             for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
                 
-                #we start fining the date of the first match of this game week
+                #we start finding the date of the first match of this game week
                 combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
                 first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
                 
@@ -424,7 +422,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
                     
                     
-                    #We build up the test_datset for this GW
+                    #We build up the test_dataset for this GW
                     test_dataset_for_this_gw = dataset_0[combined_conditions]
                     
                     #We apply the formatting and train_test_split on this dataset
@@ -439,8 +437,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                         proba_predicted.append(proba)
                         
                     #Y_test
-                    for R in Y_test_for_this_gw['Result']:
-                        Y.append(R)
+                    Y = pd.concat([Y,Y_test_for_this_gw], axis=0, ignore_index = False)
 
                     #X_test_info
                     if not X_info.empty:
@@ -451,7 +448,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
             train_dataset_for_this_seas = dataset_0[dataset_0['date_GMT']<(season - relativedelta(years=1))]
             
             #We apply the formatting and train_test_split on this dataset
-            X_train_for_this_seas, X_train_info_for_this_seas, Y_train_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_seas )
+            X_train_for_this_seas, X_train_info_for_this_seas, Y_train_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_seas)
             
             #We train the pipeline on this formatted dataset
             pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
@@ -472,17 +469,18 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                 proba_predicted.append(proba)
             
             #Y_test
-            for R in Y_test_for_this_seas['Result']:
-                Y.append(R)
+            Y = pd.concat([Y,Y_test_for_this_seas], axis=0, ignore_index = False)
             
             #X_test_info
             if not X_info.empty:
                 X_info = pd.concat([X_info, X_test_info_for_this_seas], ignore_index=True, axis = 0)
             else:
                 X_info = X_test_info_for_this_seas
-            
-                
-    return (np.array(proba_predicted), pd.DataFrame(Y, columns =['Result']), X_info)
+    
+    # We reset the indexes of the Y dataframe because certain rows within the dataframe have the same index, which causes issues when using the dataframe later in the code.
+    Y.reset_index(drop=True, inplace=True)           
+              
+    return (np.array(proba_predicted), Y, X_info)
 
 #Model features coefficients study
 
@@ -560,25 +558,29 @@ def calibration_over_season_advancement(season_divisions_nb, X_info_0, proba_pre
     return subsets
         
 #Plot learning curves for several subdataframes
-def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0):
+def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0, GW_training_or_not_0):
     """Plot calibration curves and histograms for the subset of datasets (returned by calibration_over_season_advancement()) to compare calibration over season advencement.
 
     Args:
         subdatasets_0 (_type_): The subset of dataset returned by calibration_over_season_advancement()
         nb_bins_01 (_type_): The number of bins we want for plotting calibration curves
         histo_bars_nb_0 (_type_): The number of bars we want in histograms plot
+        GW_training_or_not_0 (Boolean): Wether the pipeline used to predict the probabilities we will plot the calib curves has been retrained evey GW or season.
     """
     #Plot Calibration curves for each subdataframe
     for sub_ds in subdatasets_0:
         print('Calibration curve of proba predicted on matches where Played_matches_nb C [',sub_ds['Played_matchs_nb'].min(),',', sub_ds['Played_matchs_nb'].max(),']')
         
+        sub_ds_info= sub_ds.drop(columns = ['Result', 'Proba pred'])
+        
         prob_pred_01, prob_true_01 = plot_calibration_curve_2(
                                         Y_test_0 = sub_ds['Result'].copy(),
+                                        X_train_0= sub_ds_info,              #this dataframe isn't used, it's just to put something
                                         proba_pred_0 = sub_ds['Proba pred'].copy(),
                                         n_bins_0 = nb_bins_01,
                                         strategy_0 = 'quantile',
                                         color_0 = 'red',
-                                        calibrated_model_or_not = False)
+                                        GW_training_or_not = GW_training_or_not_0)
         #We display statistics on the pipeline probabilities deviation 
         print_calibration_stats(prob_pred_01.copy(),
                                 prob_true_01.copy(),
@@ -593,7 +595,7 @@ def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0)
         
 # Compare predicted probabilities and the probabilities of bookmakers
 def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
-    """Returns a dataset that contains he differences between redicted proba and the proba corresponding to avg_odd and max_odd
+    """Returns a dataset that contains the differences between predicted proba and the proba corresponding to avg_odd and max_odd
 
     Args:
         proba_pred_0 (_type_): The predicted proba column we want to compare
@@ -619,35 +621,40 @@ def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
     return dataset_concatenated
 
 # Simulate betting on a certain number of seasons
-def betting_simulation(proba_pred_0,X_info_0, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
-    #We concat proba_pred and contextual coln
-    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
+def betting_simulation(dataset_0, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
+    #We concat proba_pred and contextual col
     col_names = []
-    col_names.extend(X_info_0.columns.tolist())
-    col_names.extend(proba_pred_01.columns.tolist())
+    col_names.extend(dataset_0.columns.tolist())
     col_names.extend(Y_0.columns.tolist())
-    dataset_concatenated = pd.concat([X_info_0, proba_pred_01, Y_0] , axis=1, ignore_index=True)
+    dataset_concatenated = pd.concat([dataset_0, Y_0] , axis=1, ignore_index=True)
     dataset_concatenated.columns = col_names
     
-    #We select only matches that respect the conditions of betting defined by the parameter inputted
-    selected_dataset_1 = dataset_concatenated[(dataset_concatenated['Proba pred'] > proba_interval_0[0]) & (dataset_concatenated['Proba pred'] < proba_interval_0[1])]
+    #We select only matches that respect the conditions of betting defined by the parameters inputted
+    selected_dataset_1 = dataset_concatenated[(dataset_concatenated['Proba pred'] >= proba_interval_0[0]) & (dataset_concatenated['Proba pred'] <= proba_interval_0[1])].copy()
     
-    selected_dataset_2 = selected_dataset_1[selected_dataset_1['Diff proba_pred Max_odd proba'] > min_diff_with_odd_proba_0]
+    selected_dataset_2 = selected_dataset_1[selected_dataset_1['Diff proba_pred Max_odd proba'] >= min_diff_with_odd_proba_0].copy()
     
-    selected_dataset_3 = selected_dataset_2[(selected_dataset_2['Played_matchs_nb'] >= GW_interval_0[0]) & (selected_dataset_2['Played_matchs_nb'] <= GW_interval_0[1])]
-    
+    selected_dataset_3 = selected_dataset_2[(selected_dataset_2['Played_matchs_nb'] >= GW_interval_0[0]) & (selected_dataset_2['Played_matchs_nb'] <= GW_interval_0[1])].copy()
+   
     #We compute bets results
     selected_dataset_3 = selected_dataset_3.assign(Gain = -bet_0)
-    gain = 0
+    selected_dataset_3['Gain'] = selected_dataset_3['Gain'].astype(float)
+                                                                   
     nb_of_bets = 0
-    for i in range(selected_dataset_3.shape[0]):
-            gain-= bet_0
+    for index, row in selected_dataset_3.iterrows():
             nb_of_bets +=1
             
-            if selected_dataset_3['Result'] == 1:
-                gain+= selected_dataset_3['Max_victory_odd']*bet_0
-                selected_dataset_3.at[i,'Gain'] += selected_dataset_3['Max_victory_odd']*bet_0
+            if row['Result'] == 1:
+                selected_dataset_3.at[index, 'Gain'] += row['Max_victory_odd'] * bet_0
     
+    final_gain = selected_dataset_3['Gain'].sum()
+    nb_of_matches = dataset_0.shape[0]
+    ratio_gain_bet = final_gain/(nb_of_bets*bet_0)
+    
+    print('The final gain is', final_gain,'€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
+    print('This is equivalent to a ratio gain/bet =', ratio_gain_bet)
+    
+    return(selected_dataset_3)
     
 
             
