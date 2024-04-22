@@ -661,13 +661,11 @@ def ranking_on_x_last_matchs(dico_col_rk_0, dataset_0):
                 if dataset_0.at[Indices[0],"Game Week"]>5:
                     useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 5, dico_col_rk_0, nb_teams, dataset_0)
                 if dataset_0.at[Indices[0],"Game Week"]>3:
-                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 3, dico_col_rk_0, nb_teams, dataset_0)
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_3lm_list, 3, dico_col_rk_0, nb_teams, dataset_0)
                 if dataset_0.at[Indices[0],"Game Week"]>1:
-                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_5lm_list, 1, dico_col_rk_0, nb_teams, dataset_0)
+                    useful_functions.fill_dataset_with_teams_rank_on_X_last_matchs(Indices, ranking_1lm_list, 1, dico_col_rk_0, nb_teams, dataset_0)
                 
-                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,
-                #sont des matchs reportés, alors on va classer ces equipes dans les classements réalisés précedemment pour la journée w, en ayant 
-                #préalablement retiré les equipes en question des classements
+                #Si le ou les matchs qui précèdent (chronologiquement et donc aussi dans l'ordre des lignes du dataset) le premier de la journée w,sont des matchs reportés, alors on va classer ces equipes dans les classements réalisés précedemment pour la journée w, en ayant préalablement retiré les equipes en question des classements
                 
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_5lm_list, pnt_5lm_list , goal_diff_5lm_list, 5, dico_col_rk_0, dataset_0)
                 useful_functions.classage_teams_playing_postponned_macth_on_X_last_matchs(Indices, w, start_date, end_date, ranking_3lm_list, pnt_3lm_list , goal_diff_3lm_list, 3, dico_col_rk_0, dataset_0)
