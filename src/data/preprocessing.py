@@ -151,7 +151,7 @@ def formatting_splitting_shuffle(H_A_col_to_concat, col_concatenated_names, col_
         return (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test)
 
 # Function that makes a splitting based on seasons
-def formatting_splitting_seasons(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, dataset_0, test_seasons, train_seasons):
+def formatting_splitting_seasonally(H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, dataset_0, test_seasons, train_seasons):
     """
         This function splits the dataset into train and test sets based on seasons and performs data formatting
 
