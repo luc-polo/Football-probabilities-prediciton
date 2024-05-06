@@ -171,7 +171,7 @@ def save_dataframe_into_data_interim(dataset_0, file_name_0):
    # Save the new dataframe
     try:
         dataset_0.to_pickle(dataset_destination_path)
-        print(f"Successfully saved the new dataframe as {file_name_0}")
+        print(f"Successfully saved the new dataframe: {file_name_0}")
     except Exception as e:
         print(f"An error occurred while saving the new dataframe: {e}")
 
