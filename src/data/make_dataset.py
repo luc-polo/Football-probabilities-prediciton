@@ -127,53 +127,48 @@ def load_data(seasons_present_in_df_info, footy_or_football):
 # Export dataset
 # --------------------------------------------------------------
 
-def save_dataframe_into_data_interim(dataset_0, footy_or_football):
+def save_dataframe_into_data_interim(dataset_0, file_name_0):
     """ 
-        This function saves the dataframe created with read_data() in data/interim. We just have to input the dataframe to save. The function deletes the old file at this location. It also displays wether the old and new dataframe saved into data/interim are the same.
+        This function saves a dataframe to a specified location in the data/interim directory. It deletes the old file at this location of the same name, if it exists, and compares the old and new dataframes (returns a string saying wether they are equal or not)
+
     
     Args:
         dataset_0 (Dataframe): the dataframe we want to save
         
-        footy_or_football (str): Wether the datset inputed is Footy stats or Football data dataset. We need it to set a different name for files we will save into data/interim.
+        file_name_0 (str): the name of the file to save the dataframe as (just the name we want to see appear in interim directory)
         
     Returns:
         None
     """
 
-    # Define the absolute paths of the datasets destination, which is also the paths of the actual docs located there that we will delete
-    footy_dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/footy_data_interim.pkl"
-    
-    football_data_dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/football_data_data_interim.pkl"
-    
-    if footy_or_football == 'footy':
-        dataset_destination_path = footy_dataset_destination_path
-    else:
-        dataset_destination_path = football_data_dataset_destination_path
+    # Define the absolute path for the dataset destination
+    dataset_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/{file_name_0}.pkl"
         
     
+    # Load the old dataframe if it exists to compare
+    try:
+        old_dataframe = pd.read_pickle(dataset_destination_path)
+        same_data = old_dataframe.equals(dataset_0)
+        if same_data:
+            print(f"The dataframes are the same for both old and new {file_name_0}")
+        else:
+            print(f"The dataframes are NOT the same for both old and new {file_name_0}")
+    except FileNotFoundError:
+        print(f"No {file_name_0} existing file to compare; treating as new dataset.")
     
-    #We compare if the old data_interim.pkl files that we are gonna delete and dataset_0 are exactly the same
-    old_dataframe = load_data(False, footy_or_football)
-    if old_dataframe.equals(dataset_0):
-        print(f"The old {footy_or_football}_data_interim.pkl file, and the new one ARE the same")
-    else:
-        print("The old {footy_or_football}_data_interim.pkl file, and the new one ARE NOT the same")
-
-    # We delete the old file 
-    try: 
+    # Delete the old file if it exists
+    try:
         os.remove(dataset_destination_path)
-        print(f"The old '{footy_or_football}_data_interim.pkl' file was well deleted")
+        print(f"Successfully deleted the old file: {file_name_0}")
+    except FileNotFoundError:
+        print(f"No old file to delete at: {file_name_0}")
     except Exception as e:
-        print(f"An error occurred while deleting the old {footy_or_football} dataframe file: {e}")
-        print(f"The old '{footy_or_football}_data_interim.pkl' file was not removed (probably because it does not exist in this location).")
+        print(f"An error occurred while deleting the old file: {e}")
         
-
-    # Export the dataset to the path constructed
-    try: 
+   # Save the new dataframe
+    try:
         dataset_0.to_pickle(dataset_destination_path)
-        print(f"The new '{footy_or_football}_data_interim.pkl' file was well saved \n")
+        print(f"Successfully saved the new dataframe as {file_name_0}")
     except Exception as e:
-        print(f"An error occurred while saving the new {footy_or_football} dataframe: {e}")
-        print("The '{footy_or_football}_data_interim.pkl' was not saved. \n")
-
+        print(f"An error occurred while saving the new dataframe: {e}")
 
