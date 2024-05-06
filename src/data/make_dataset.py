@@ -93,33 +93,36 @@ def read_data(files, Footy_or_Football):
 # Define a function to load the dataframe saved at data/interim/data_interim.pkl
 # --------------------------------------------------------------
 
-def load_data(seasons_present_in_df_info, footy_or_football):
+def load_data(seasons_present_in_df_info, file_name_0):
     """ 
         This function imports/loads the DataFrames we will name dataset, from data/interim/.
         It says what are the seasons represented in this dataframe if asked.
+        
+        Args:
+        seasons_present_in_df_info (bool): Whether to print seasons info.
+        file_name_0 (str): The name of the file to load.
+
+        Returns:
+            pd.DataFrame: The loaded dataset.
     """
     
-    footy_daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/footy_data_interim.pkl'
+    dataset_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/{file_name_0}.pkl'
+ 
     
-    footbal_data_daframe_location_path = 'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/football_data_data_interim.pkl'
-    
-    if footy_or_football == 'footy':
-        # Importation of dataset
-        dataset = pd.read_pickle(footy_daframe_location_path)
-    if footy_or_football == 'football_data':
-        # Importation of dataset
-        dataset = pd.read_pickle(footbal_data_daframe_location_path)
+    # Importation of dataset
+    dataset = pd.read_pickle(dataset_location_path)
     
     if seasons_present_in_df_info == True:
-        if footy_or_football == 'footy':
-            #Make out what are the seasons represented in this dataframe
+        try:
+             #Make out what are the seasons represented in the footy dataframe
             seasons_in_dataframe = dataset['date_GMT'].dt.year.unique()
-        else:
+        except KeyError:  # Assuming the error would be an AttributeError if 'date_GMT' does not exist
             seasons_in_dataframe = dataset['Date'].dt.year.unique()
+            
         # Remove the holdest year which is only the beginning of the first season
         min_value = min(seasons_in_dataframe)
         seasons_in_dataframe = seasons_in_dataframe[seasons_in_dataframe != min_value]
-        print(f"The {footy_or_football} dataframe contains matchs of the seasons: ", seasons_in_dataframe)
+        print(f"The {file_name_0} dataframe contains matchs of the seasons: ", seasons_in_dataframe)
 
     return dataset
 
