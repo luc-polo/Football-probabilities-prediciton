@@ -16,7 +16,7 @@ import useful_functions
 from configuration import constant_variables
 
 # --------------------------------------------------------------
-# Features Correlation with matchs' results computing (used in 'II)1)')
+# Features Correlation with matchs' results computing (used in 'III)1)')
 # --------------------------------------------------------------
 #Ploting the mean of a feature over Game Weeks
 def plot_feature_stats_over_game_weeks(home_feature_column_name, away_feature_column_name, dataset_0):
@@ -328,12 +328,11 @@ def ranking_features_f_classif( liste_features_names_HT, liste_features_names_AT
     return styled_f_classif_ranking_DF
 
 # --------------------------------------------------------------
-# Restricted dataset creation (used in 'II)2)')
+# Restricted dataset creation (used in 'III)2)')
 # --------------------------------------------------------------
 def restricted_datasets(dataset_0):
     """ 
-        This function returns restricted dataframes that contain subsets of features considered as relevant. We also gather HT and AT features in one column. We will use these DataFrames to explore their data and to test our model with. The function also eliminate the matchs where Game Week < min_played_matchs_nb (defined in constant_variables).
-        The function still need to be completed. We must make a shorter subset of features.
+        This function returns restricted dataframes that contain subsets of features considered as relevant. We also gather HT and AT features in one column. We will use these DataFrames to explore their data and to test our model with. The function also eliminates the matchs where Game Week < min_played_matchs_nb (defined in constant_variables).
     
     Args:
         dataset_0 (Dataframe): The dataframe we want to extract the columns from
