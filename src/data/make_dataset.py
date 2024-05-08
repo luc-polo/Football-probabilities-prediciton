@@ -108,7 +108,6 @@ def load_data(seasons_present_in_df_info, file_name_0):
     
     dataset_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/{file_name_0}.pkl'
  
-    
     # Importation of dataset
     dataset = pd.read_pickle(dataset_location_path)
     
@@ -132,20 +131,20 @@ def load_data(seasons_present_in_df_info, file_name_0):
 
 def save_dataframe_into_data_interim(dataset_0, file_name_0):
     """ 
-        This function saves a dataframe to a specified location in the data/interim directory. It deletes the old file at this location of the same name, if it exists, and compares the old and new dataframes (returns a string saying wether they are equal or not)
+        This function saves a dataframe to a specified location in the data/ directory. It deletes the old file at this location of the same name, if it exists, and compares the old and new dataframes (returns a string saying wether they are equal or not)
 
     
     Args:
         dataset_0 (Dataframe): the dataframe we want to save
         
-        file_name_0 (str): the name of the file to save the dataframe as (just the name we want to see appear in interim directory)
+        file_name_0 (str): the name of the directory in /data where saving the dataset, followed by the name we want to give to the file to save (the name we want to see appear in interim directory) ex: 'interim/feat_engineered_ds'.
         
     Returns:
         None
     """
 
     # Define the absolute path for the dataset destination
-    dataset_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/{file_name_0}.pkl"
+    dataset_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/{file_name_0}.pkl"
         
     
     # Load the old dataframe if it exists to compare
@@ -162,16 +161,16 @@ def save_dataframe_into_data_interim(dataset_0, file_name_0):
     # Delete the old file if it exists
     try:
         os.remove(dataset_destination_path)
-        print(f"Successfully deleted the old file: {file_name_0}")
+        print(f"Successfully deleted the old file:               {file_name_0}")
     except FileNotFoundError:
-        print(f"No old file to delete at: {file_name_0}")
+        print(f"No old file to delete at:              {file_name_0}")
     except Exception as e:
         print(f"An error occurred while deleting the old file: {e}")
         
    # Save the new dataframe
     try:
         dataset_0.to_pickle(dataset_destination_path)
-        print(f"Successfully saved the new dataframe: {file_name_0}")
+        print(f"Successfully saved the new dataframe:            {file_name_0}")
     except Exception as e:
         print(f"An error occurred while saving the new dataframe: {e}")
 
