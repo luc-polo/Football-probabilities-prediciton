@@ -129,7 +129,7 @@ def load_data(seasons_present_in_df_info, file_name_0):
 # Export dataset
 # --------------------------------------------------------------
 
-def save_dataframe_into_data_interim(dataset_0, file_name_0):
+def save_dataframe(dataset_0, file_name_0):
     """ 
         This function saves a dataframe to a specified location in the data/ directory. It deletes the old file at this location of the same name, if it exists, and compares the old and new dataframes (returns a string saying wether they are equal or not)
 
