@@ -122,7 +122,10 @@ def load_data(seasons_present_in_df_info, file_name_0):
         min_value = min(seasons_in_dataframe)
         seasons_in_dataframe = seasons_in_dataframe[seasons_in_dataframe != min_value]
         print(f"The {file_name_0} dataframe contains matchs of the seasons: ", seasons_in_dataframe)
-
+        #Put a line break before at the end of the text w've just printed
+        print("\n")
+    
+    
     return dataset
 
 # --------------------------------------------------------------
