@@ -92,15 +92,15 @@ pipeline_03 = Pipeline(steps=[('scaler', StandardScaler()),
 
 
 # --------------------------------------------------------------
-# Saving a pipeline function
+# Saving a pipeline
 # -------------------------------------------------------------- 
 
 def save_pipeline(pipeline_0, pipeline_name_0):
-       """_summary_
+       """Save a pipeline into models/ directory
 
        Args:
-           pipeline_0 (_type_): _description_
-           pipeline_name_0 (_type_): _description_
+           pipeline_0 (Pipeline): The pipeline to save
+           pipeline_name_0 (str): The name to give to the .pkl file that will contain the saved pipeline.
        """
        
        # defining the destination path of the pipeline
@@ -124,4 +124,32 @@ def save_pipeline(pipeline_0, pipeline_name_0):
        
        #Put a line break before at the end of the text w've just printed
        print("\n")
+
+
+# --------------------------------------------------------------
+# Loading a pipeline
+# -------------------------------------------------------------- 
+
+def load_pipeline(pipeline_name_0):
+       """Load a saved pipeline from models/ directory
+
+       Args:
+           pipeline_name_0 (str): The name of the .pkl file (located in models/ direcctory) that contains the saved pipeline we want to load
+       """
+       pipeline_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/models/{pipeline_name_0}.pkl'
+ 
+       # Load the pipeline
+       try:
+              pipeline = joblib.load(pipeline_location_path)
+              print(f"Successfully loaded the pipeline: {pipeline_name_0}")
+       except FileNotFoundError:
+              print(f"Pipeline file not found: {pipeline_name_0}")
+              pipeline = None
+       except Exception as e:
+              print(f"An error occurred while loading the pipeline: {e}")
+              pipeline = None
+              
+       #Put a line break before at the end of the text w've just printed
+       print("\n")
        
+       return pipeline
