@@ -90,23 +90,23 @@ def read_data(files, Footy_or_Football):
 
 
 # --------------------------------------------------------------
-# Define a function to load the dataframe saved at data/interim/data_interim.pkl
+# Define a function to load the dataframe saved at data/
 # --------------------------------------------------------------
 
 def load_data(seasons_present_in_df_info, file_name_0):
     """ 
-        This function imports/loads the DataFrames we will name dataset, from data/interim/.
+        This function imports/loads a dataframe in data/ directory.
         It says what are the seasons represented in this dataframe if asked.
         
         Args:
         seasons_present_in_df_info (bool): Whether to print seasons info.
-        file_name_0 (str): The name of the file to load.
+        file_name_0 (str): The name of the directory in /data where the dataset we look for is saved, followed by the name of the dataset.
 
         Returns:
             pd.DataFrame: The loaded dataset.
     """
     
-    dataset_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/{file_name_0}.pkl'
+    dataset_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/{file_name_0}.pkl'
  
     # Importation of dataset
     dataset = pd.read_pickle(dataset_location_path)
@@ -173,4 +173,7 @@ def save_dataframe(dataset_0, file_name_0):
         print(f"Successfully saved the new dataframe:            {file_name_0}")
     except Exception as e:
         print(f"An error occurred while saving the new dataframe: {e}")
+    
+    #Put a line break before at the end of the text w've just printed
+    print("\n")
 
