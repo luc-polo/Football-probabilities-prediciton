@@ -163,7 +163,7 @@ def save_dataframe(dataset_0, file_name_0):
         os.remove(dataset_destination_path)
         print(f"Successfully deleted the old file:               {file_name_0}")
     except FileNotFoundError:
-        print(f"No old file to delete at:              {file_name_0}")
+        print(f"No old file to delete at:                     {file_name_0}")
     except Exception as e:
         print(f"An error occurred while deleting the old file: {e}")
         
