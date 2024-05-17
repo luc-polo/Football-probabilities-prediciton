@@ -20,6 +20,21 @@ import useful_functions
 # --------------------------------------------------------------
 #  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
+
+#Class that gether almost all parameters required in formatting_splitting... funcitons
+
+class DataFormating_choices:
+    def __init__(self, names_col_to_concat, names_col_concatenated, col_to_remove, contextual_col, test_seasons):
+        self.names_col_to_concat = names_col_to_concat
+        self.names_col_concatenated = names_col_concatenated
+        self.col_to_remove = col_to_remove
+        self.contextual_col = contextual_col
+        self.test_seasons = test_seasons
+....
+A FINIR !!!!!
+
+
+
 #Funciton for formatting ant cleaning data
 def formatting_cleaning( H_A_col_to_concat, col_concatenated_names, col_to_delete_list, contextual_col, dataset_0):
     """This function is used in other functions as the two following. It contains all the what the formatting_splitting functions do, excepted the train_test_plit step.
