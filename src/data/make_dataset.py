@@ -155,9 +155,9 @@ def save_dataframe(dataset_0, file_name_0):
         old_dataframe = pd.read_pickle(dataset_destination_path)
         same_data = old_dataframe.equals(dataset_0)
         if same_data:
-            print(f"The dataframes are the same for both old and new {file_name_0}")
+            print(f"The dataframes ARE the same for both old and new {file_name_0}")
         else:
-            print(f"The dataframes are NOT the same for both old and new {file_name_0}")
+            print(f"The dataframes ARE NOT the same for both old and new {file_name_0}")
     except FileNotFoundError:
         print(f"No {file_name_0} existing file to compare; treating as new dataset.")
     
