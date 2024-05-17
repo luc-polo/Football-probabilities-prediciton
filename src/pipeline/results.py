@@ -377,7 +377,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
         
         pipeline_0 (pipeline): The non trained pipeline selected by GridSearchCV (or me) we will use to make proba predictions
         
-        chosen_features_0(list): ch
+        chosen_features_0(list): The features selection associated the the model_chosen (VI)3))
         
         seasons_0 (list): list of the seasons years we want to make the tests on. We usually input 'test_seasons' defined in V)1)
         
