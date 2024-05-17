@@ -363,7 +363,7 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
 
 #Proba prediction retraining model before each week
-def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, seasons_0, week_or_seas, dataset_0):
+def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, chosen_features_0, seasons_0, week_or_seas, dataset_0):
     """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW or season predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
 
     Args:
@@ -375,7 +375,9 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
         
         contextual_col_0 (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model
         
-        pipeline_0 (pipeline): The non fitted pipeline selected by GridSearchCV we will use to make proba predictions
+        pipeline_0 (pipeline): The non trained pipeline selected by GridSearchCV (or me) we will use to make proba predictions
+        
+        chosen_features_0(list): ch
         
         seasons_0 (list): list of the seasons years we want to make the tests on. We usually input 'test_seasons' defined in V)1)
         
@@ -418,6 +420,8 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     #We apply the formatting and train_test_split on this dataset
                     X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_gw )
                     
+                    X_train_for_this_gw = X_train_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+                    
                     #We train the pipeline on this formatted dataset
                     pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
                     
@@ -427,6 +431,8 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     
                     #We apply the formatting and train_test_split on this dataset
                     X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_gw )
+                    
+                    X_test_for_this_gw = X_test_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
                     
                     #We predict proba on this gw matches:
                     poroba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
@@ -450,6 +456,8 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
             #We apply the formatting and train_test_split on this dataset
             X_train_for_this_seas, X_train_info_for_this_seas, Y_train_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_seas)
             
+            X_train_for_this_seas = X_train_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+            
             #We train the pipeline on this formatted dataset
             pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
             
@@ -459,6 +467,9 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
             
             #We apply the formatting and train_test_split on this dataset
             X_test_for_this_seas, X_test_info_for_this_seas, Y_test_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_seas )
+          
+            X_test_for_this_seas = X_test_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+            
             
             #We predict proba on this season matches:
             poroba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:,1]
