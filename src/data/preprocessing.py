@@ -21,42 +21,29 @@ import useful_functions
 #  Formatting X, Y and Splitting it into train, valid, test sets (used in 'V)1)')
 # --------------------------------------------------------------
 
-#Class that gethers almost all parameters required in formatting_splitting... funcitons
-
-class formatting_splitting_args:
-    def __init__(self, H_A_col_to_concat, names_col_concatenated, col_to_remove, contextual_col, test_seasons, train_seasons):
-        self.H_A_col_to_concat = H_A_col_to_concat
-        self.names_col_concatenated = names_col_concatenated
-        self.col_to_remove = col_to_remove
-        self.contextual_col = contextual_col
-        self.test_seasons = test_seasons
-        self.train_seasons = train_seasons
-
-
-
 
 #Funciton for formatting ant cleaning data
-def formatting_cleaning( H_A_col_to_concat, names_col_concatenated, col_to_remove, contextual_col, dataset_0):
-    """This function is used in the following one. It contains all what the formatting_splitting functions do, excepted the train_test_plit step.
-    This function selects a restricted number of features and concatenates Home and Away features for them, applying a filter on minimum GW. It as well as creates a X_info dataset with all the contextual features we don't want to input in our model.
+def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_remove, contextual_col, dataset_0):
+    """
+    This function selects a restricted number of features and concatenates Home and Away features for them, applying a filter on minimum GW. It also creates a X_info dataset with all the contextual features we don't want to input in our model.
 
     Args:
-        H_A_col_to_concat (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
+        H_A_col_to_concat_0 (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
         
-        names_col_concatenated (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
+        names_col_concatenated_0 (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
         
         col_to_remove (list): List of column names to be deleted
         
         contextual_col (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model.
         
-        dataset_0 (DataFrame): The original dataset
+        dataset_0 (DataFrame): The feat_engineered_ds to be cleaned and formatted
          
 
     Returns:
         Tuple: (X_0, X_0_info, Y_0) X_0 is the formatted/clean features dataset and Y_0 the one of the target. X_0_info contains the contextual features (teams names, dates...)
     """
     Y_0 = useful_functions.HT_AT_col_merger(['RH', 'RA'], ['Result'], constant_variables.min_played_matchs_nb, dataset_0)
-    X_0 = useful_functions.HT_AT_col_merger(H_A_col_to_concat, names_col_concatenated, constant_variables.min_played_matchs_nb, dataset_0)
+    X_0 = useful_functions.HT_AT_col_merger(H_A_col_to_concat_0, names_col_concatenated_0, constant_variables.min_played_matchs_nb, dataset_0)
     
     
     #Supprimer les colonnes demandées
@@ -75,35 +62,49 @@ def formatting_cleaning( H_A_col_to_concat, names_col_concatenated, col_to_remov
 
 
 # Function that makes a splitting based on seasons
-def formatting_splitting(formatting_splitting_args_0, dataset_0):
+def splitting(X_0, X_0_info, Y_0, test_seasons, train_seasons):
     """
-        This function splits the dataset into train and test sets based on seasons and performs data formatting (from formatting_splitting)
+        This function splits the formatted datasets into train and test sets, based on seasons.
 
     Args:
-        formatting_splitting_args_0 (object): An instance of the class 'formatting_splitting_arg_0' containing the following attributes:
-            - H_A_col_to_concat (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams column names that we will concatenate.
-            - names_col_concatenated (list): List of names we will assign to the concatenated columns (H_A_col_to_concat).
-            - col_to_remove (list): List of column names to be deleted.
-            - contextual_col (list): List with the names of the concatenated columns containing contextual information that we do not want to give to our model.
-            - test_seasons (list): List of seasons we want to include in the test set.
-            - train_seasons (list): List of seasons we want to include in the train set
+        X_0 (DataFrame): The formatted features dataset.
+        
+        X_0_info (DataFrame): The contextual information dataset.
+        
+        test_seasons (list): List of seasons we want to include in the test set.
+        
+        train_seasons (list): List of seasons we want to include in the train set
         
         dataset_0 (DataFrame): The original dataset.
 
     Returns:
-        Tuple: (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test) X_ are the formatted/clean features datasets and Y_ the ones of the targets. X_info contain the contextual features (teams names, dates...)
+        Tuple: (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test) 
+        X_ are the formatted/clean features datasets and Y_ the ones of the targets. 
+        X_info contain the contextual features (teams names, dates...)
     """
     
-    #We split the data following seasons:
-    df_test = dataset_0[dataset_0['Season_year'].isin(formatting_splitting_args_0.test_seasons)]
-    df_train = dataset_0[dataset_0['Season_year'].isin(formatting_splitting_args_0.train_seasons)]
+    # Split the data based on seasons
     
-    #Definition of Y and X
-    #On selectionne uniquement les lignes où le nb de match joués > min_played_matchs_nb (défini dans 'Definition of restricted datasets...'). Et on concatenne les HT et AT col
+    # Define a condition that selects the indices of matches where season_year is in test_seasons
+    test_date_condition = (X_0["Season_year"].isin(test_seasons))
     
-    X_test, X_test_info, Y_test = formatting_cleaning( formatting_splitting_args_0.H_A_col_to_concat, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col, df_test)
+    X_test = X_0[test_date_condition]
+    X_test_info = X_0_info[test_date_condition]
+    Y_test = Y_0[test_date_condition]
     
-    X_train, X_train_info, Y_train = formatting_cleaning( formatting_splitting_args_0.H_A_col_to_concat, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col, df_train)
+    # Define a conditoin that selects the lines index of matches of the test seasons
+    train_date_condition = (X_0["Season_year"].isin(train_seasons))
+    
+    X_train = X_0[train_date_condition]
+    X_train_info = X_0_info[train_date_condition]
+    Y_train = Y_0[train_date_condition]
+    
+     # Test 1: Check if the total number of rows in X_test and X_train equals the number of rows in X_0
+    assert len(X_test) + len(X_train) == len(X_0), "The total number of rows in X_test and X_train does not equal the number of rows in X_0."
+
+    # Test 2: Check if there are no common rows between X_test and X_train
+    common_rows = pd.concat([X_test, X_train]).duplicated(keep=False)
+    assert not common_rows.any(), "There are common rows between X_test and X_train."
 
     return (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test)
 
