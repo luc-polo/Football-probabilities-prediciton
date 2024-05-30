@@ -62,7 +62,7 @@ def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_r
 
 
 # Function that makes a splitting based on seasons
-def splitting(X_0, X_0_info, Y_0, test_seasons_0, train_seasons_0):
+def splitting(X_0, X_0_info, Y_0, test_seasons_0, train_seasons_0, min_matchs_nb_per_seas_0):
     """
         This function splits the formatted datasets into train and test sets, based on seasons.
 
@@ -75,7 +75,8 @@ def splitting(X_0, X_0_info, Y_0, test_seasons_0, train_seasons_0):
         
         train_seasons_0 (list): List of seasons we want to include in the train set
         
-        dataset_0 (DataFrame): The original dataset.
+        min_matchs_nb_per_seas_0 (int): Minimum number of samples per season in X_train and X_test to pass the tests. It's made to identify potential errors in the splitting process linked to the season conditon (train_date_condition = (X_0["Season_year"].isin(train_seasons_0))).
+    
 
     Returns:
         Tuple: (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test) 
@@ -98,9 +99,14 @@ def splitting(X_0, X_0_info, Y_0, test_seasons_0, train_seasons_0):
     X_train = X_0[train_date_condition]
     X_train_info = X_0_info[train_date_condition]
     Y_train = Y_0[train_date_condition]
+
     
-     # Test 1: Check if the total number of rows in X_test and X_train equals the number of rows in X_0
-    assert len(X_test) + len(X_train) == len(X_0), "The total number of rows in X_test and X_train does not equal the number of rows in X_0."
+    # Test 1: Check if the number of samples of each season in X_train["Season_year"] and X_test["Season_year"] is greater than min_matchs_nb_per_seas_0
+    train_season_counts = X_train["Season_year"].value_counts()
+    test_season_counts = X_test["Season_year"].value_counts()
+    
+    assert all(train_season_counts >= min_matchs_nb_per_seas_0), f"Some seasons in X_train have fewer than {min_matchs_nb_per_seas_0} samples."
+    assert all(test_season_counts >= min_matchs_nb_per_seas_0), f"Some seasons in X_test have fewer than {min_matchs_nb_per_seas_0} samples."
 
     # Test 2: Check if there are no common rows between X_test and X_train
     common_rows = pd.concat([X_test, X_train]).duplicated(keep=False)
@@ -114,14 +120,23 @@ def hist_seasons(X_train_0, X_test_0):
     seasons = sorted(set(pd.concat([X_train_0['Season_year'], X_test_0['Season_year']], axis=0)))
     bin_edges = seasons + [max(seasons) + 1]
     plt.figure(figsize=(7,5))
-    plt.hist([X_train_0['Season_year'], X_test_0['Season_year']], label = ['Train set', 'Test set'], bins = bin_edges, align='left', rwidth=0.5)
+    counts, bins, patches = plt.hist([X_train_0['Season_year'], X_test_0['Season_year']], 
+                                     label=['Train set', 'Test set'], 
+                                     bins=bin_edges, 
+                                     align='left', 
+                                     rwidth=0.5)
     plt.xlabel('Season')
     plt.ylabel('Number of samples')
     plt.title('Seasons Distribution between Train and Test Sets')
     plt.legend()
     plt.grid()
+    # Adding the number of samples per season on top of each bar
+    for i in range(len(bins)-1):
+        plt.text(bins[i] - 0.15, counts[0][i] + 1, str(int(counts[0][i])), color='blue', ha='center')
+        plt.text(bins[i] + 0.15, counts[1][i] + 1, str(int(counts[1][i])), color='orange', ha='center')
+        
     plt.show()
-    print(len(set(X_train_0['Season_year'])))
+
         
 # --------------------------------------------------------------
 #  Removing outliers (not used but kept in case... placed in 'V)3)')
