@@ -23,7 +23,7 @@ import useful_functions
 
 
 #Funciton for formatting ant cleaning data
-def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_remove, contextual_col, dataset_0):
+def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col, dataset_0):
     """
     This function selects a restricted number of features and concatenates Home and Away features for them, applying a filter on minimum GW. It also creates a X_info dataset with all the contextual features we don't want to input in our model.
 
@@ -32,7 +32,7 @@ def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_r
         
         names_col_concatenated_0 (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
         
-        col_to_remove (list): List of column names to be deleted
+        col_to_remove_0 (list): List of column names to be deleted
         
         contextual_col (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model.
         
@@ -47,7 +47,7 @@ def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_r
     
     
     #Supprimer les colonnes demandées
-    for col in col_to_remove:
+    for col in col_to_remove_0:
         X_0.drop(col, axis=1, inplace = True)
         
     #We stock and delete the col containing contextual info on matchs (teams names, dates...)
@@ -62,7 +62,7 @@ def formatting_cleaning( H_A_col_to_concat_0, names_col_concatenated_0, col_to_r
 
 
 # Function that makes a splitting based on seasons
-def splitting(X_0, X_0_info, Y_0, test_seasons, train_seasons):
+def splitting(X_0, X_0_info, Y_0, test_seasons_0, train_seasons_0):
     """
         This function splits the formatted datasets into train and test sets, based on seasons.
 
@@ -71,9 +71,9 @@ def splitting(X_0, X_0_info, Y_0, test_seasons, train_seasons):
         
         X_0_info (DataFrame): The contextual information dataset.
         
-        test_seasons (list): List of seasons we want to include in the test set.
+        test_seasons_0 (list): List of seasons we want to include in the test set.
         
-        train_seasons (list): List of seasons we want to include in the train set
+        train_seasons_0 (list): List of seasons we want to include in the train set
         
         dataset_0 (DataFrame): The original dataset.
 
@@ -85,15 +85,15 @@ def splitting(X_0, X_0_info, Y_0, test_seasons, train_seasons):
     
     # Split the data based on seasons
     
-    # Define a condition that selects the indices of matches where season_year is in test_seasons
-    test_date_condition = (X_0["Season_year"].isin(test_seasons))
+    # Define a condition that selects the indices of matches where season_year is in test_seasons_0
+    test_date_condition = (X_0["Season_year"].isin(test_seasons_0))
     
     X_test = X_0[test_date_condition]
     X_test_info = X_0_info[test_date_condition]
     Y_test = Y_0[test_date_condition]
     
     # Define a conditoin that selects the lines index of matches of the test seasons
-    train_date_condition = (X_0["Season_year"].isin(train_seasons))
+    train_date_condition = (X_0["Season_year"].isin(train_seasons_0))
     
     X_train = X_0[train_date_condition]
     X_train_info = X_0_info[train_date_condition]
@@ -107,7 +107,7 @@ def splitting(X_0, X_0_info, Y_0, test_seasons, train_seasons):
     assert not common_rows.any(), "There are common rows between X_test and X_train."
 
     return (X_train_info, X_train, Y_train, X_test_info, X_test, Y_test)
-
+ 
 
 # Displaying the histogram of samples in train and test sets depending on the season
 def hist_seasons(X_train_0, X_test_0):
