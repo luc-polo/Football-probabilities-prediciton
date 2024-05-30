@@ -362,41 +362,37 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     print(f"\n\nLa somme des proba prédites sur le TEST SET est {proba_test_sum}, la somme des true event est {sum_true_values_test.item()}")
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
 
-#Proba prediction retraining model before each week
-def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, pipeline_0, chosen_features_0, seasons_0, week_or_seas, dataset_0):
+#Proba prediction retraining model before each seas
+def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, chosen_features_0, week_or_seas, test_seasons):
     """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW or season predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
 
-    Args:
-        H_A_col_to_concat_0 (list): List of column names we want to include in the final dataset for our pipeline. It contains the Home and Away teams col names that we will concatenate.
+    Args:                                                                         
+        X_0 (DataFrame): Features dataframe
         
-        col_concatenated_names_0 (list): List of names we will assign to the concatenated col (H_A_col_to_concat).
+        Y_0 (DataFrame): Target dataframe
         
-        col_to_delete_list_0 (list): List of column names to be deleted
+        X_info_0 (DataFrame): Contextual information dataframe
         
-        contextual_col_0 (list): List with the names of the concatenated columns containing a contextual information. That's the col we do not want to give to our model
-        
-        pipeline_0 (pipeline): The non trained pipeline selected by GridSearchCV (or me) we will use to make proba predictions
+        pipeline_0 (Pipeline): The machine learning pipeline to use for training and predictions
         
         chosen_features_0(list): The features selection associated the the model_chosen (VI)3))
         
-        seasons_0 (list): list of the seasons years we want to make the tests on. We usually input 'test_seasons' defined in V)1)
+        week_or_seas (Boolean): Do we want to train the model before each GW ('week') or each season ('season').
         
-        week_or_seas (Boolean): Do we want to train the model before each GW? 'week' or 'season'
-        
-        dataset_0 (_type_): The original dataset containing ALL data.
+        test_seasons (list): List of seasons we want to make predictions on.
 
     Returns:
-        Tuple: (proba_predicted, Y, X_info) The np.array containing the proba predicted on the test seasons, the Results corresponding to these predictions, the contextual columns corresponding to these predictions. 
+        Tuple: (proba_predicted, Y_pred, X_info) The np.array containing the proba predicted on the test seasons, the results corresponding to these predictions, the contextual columns corresponding to these predictions. 
     """
     
     proba_predicted = []
-    Y = pd.DataFrame(columns=["Result"])    # Initialize an empty DataFrame
-    Y['Result'] = Y['Result'].astype(int)
-    X_info = pd.DataFrame(columns=contextual_col_0)
+    Y_pred = pd.DataFrame(columns=["Result"])    # Initialize an empty DataFrame to contain the results of the matches we will make predicitons on
+    Y_pred['Result'] = Y['Result'].astype(int)
+    X_info_pred = pd.DataFrame(columns = X_info_0.columns())
     
     #We define the seasons end dates of the the seaons we want to make predictions on
     seasons = []
-    for seas in seasons_0:
+    for seas in test_seasons:
         for date in constant_variables.seasons:
             if date.year == seas:
                 seasons.append(date)
@@ -404,11 +400,18 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
     for season in seasons:
         
         if week_or_seas == 'week':
-            nb_of_GW_for_this_season = dataset_0['Game Week'].max()
+            nb_of_GW_for_this_season = X_info_0['Game Week'].max() # Find the maximum game day in the dataset
             for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
                 
                 #we start finding the date of the first match of this game week
                 combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
+                first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
+                
+            nb_of_GW_for_this_season = dataset_0['Game Week'].max()
+            for game_week in range(constant_variables.min_played_matchs_nb + 2, nb_of_GW_for_this_season + 1):
+                combined_conditions = (dataset_0['date_GMT'] < season) & \
+                                      ((season - relativedelta(years=1)) < dataset_0['date_GMT']) & \
+                                      (dataset_0['Game Week'] == game_week)
                 first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
                 
         
@@ -418,7 +421,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     train_dataset_for_this_gw = dataset_0[dataset_0['date_GMT']<first_match_date]
                     
                     #We apply the formatting and train_test_split on this dataset
-                    X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_gw )
+                    X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(formatting_splitting_args_0.H_A_col_to_concat_0, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col_0, train_dataset_for_this_gw )
                     
                     X_train_for_this_gw = X_train_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
                     
@@ -430,7 +433,7 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     test_dataset_for_this_gw = dataset_0[combined_conditions]
                     
                     #We apply the formatting and train_test_split on this dataset
-                    X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_gw )
+                    X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(formatting_splitting_args_0.H_A_col_to_concat_0, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col_0, test_dataset_for_this_gw )
                     
                     X_test_for_this_gw = X_test_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
                     
@@ -451,47 +454,47 @@ def proba_prediction_model_retrained_each_GW(H_A_col_to_concat_0, col_concatenat
                     else:
                         X_info = X_test_info_for_this_gw
         else:
-            train_dataset_for_this_seas = dataset_0[dataset_0['date_GMT']<(season - relativedelta(years=1))]
             
-            #We apply the formatting and train_test_split on this dataset
-            X_train_for_this_seas, X_train_info_for_this_seas, Y_train_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, train_dataset_for_this_seas)
+            #We build up the train_dataset for this season
+            train_conditions = (X_info['date_GMT'] < (season - relativedelta(years=1)))
+            X_train_for_this_seas = X[train_conditions]
+            Y_train_for_this_seas = Y[train_conditions]
+            
             
             X_train_for_this_seas = X_train_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
             
             #We train the pipeline on this formatted dataset
             pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
             
-            #We build up the test_dataset for this season
-            combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])
-            test_dataset_for_this_seas = dataset_0[combined_conditions]
             
-            #We apply the formatting and train_test_split on this dataset
-            X_test_for_this_seas, X_test_info_for_this_seas, Y_test_for_this_seas = preprocessing.formatting_cleaning(H_A_col_to_concat_0, col_concatenated_names_0, col_to_delete_list_0, contextual_col_0, test_dataset_for_this_seas )
-          
-            X_test_for_this_seas = X_test_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+            #We build up the test_dataset for this season
+            test_conditions = (X_info['date_GMT'] < season) & \
+                              ((season - relativedelta(years=1)) < X_info['date_GMT'])
+            X_test_for_this_seas = X[test_conditions]
+            X_test_info_for_this_seas = X_info[test_conditions]
+            Y_test_for_this_seas = Y[test_conditions]
+            
+            X_test_for_this_seas = X_test_for_this_seas[chosen_features_0] # Features selection linked to the model chosen ( VI)3 )
+            
             
             
             #We predict proba on this season matches:
-            poroba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:,1]
+            proba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:, 1]
+
             
-            #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
+            #We add to the general datasets the proba_pred, X_test_info, Y_test for this season
             #Proba pred
-            for proba in poroba_pred_for_this_seas:
-                proba_predicted.append(proba)
-            
+            proba_predicted.extend(proba_pred_for_this_seas)
             #Y_test
-            Y = pd.concat([Y,Y_test_for_this_seas], axis=0, ignore_index = False)
-            
+            Y_pred = pd.concat([Y_pred, Y_test_for_this_seas], axis=0, ignore_index=False)
             #X_test_info
-            if not X_info.empty:
-                X_info = pd.concat([X_info, X_test_info_for_this_seas], ignore_index=True, axis = 0)
-            else:
-                X_info = X_test_info_for_this_seas
+            X_info_pred = pd.concat([X_info_pred, X_test_info_for_this_seas], ignore_index=True, axis=0)
+            
     
     # We reset the indexes of the Y dataframe because certain rows within the dataframe have the same index, which causes issues when using the dataframe later in the code.
-    Y.reset_index(drop=True, inplace=True)           
+    Y_pred.reset_index(drop=True, inplace=True)           
               
-    return (np.array(proba_predicted), Y, X_info)
+    return (np.array(proba_predicted), Y_pred, X_info_pred)
 
 #Model features coefficients study
 
