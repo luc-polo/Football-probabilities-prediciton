@@ -8,7 +8,6 @@ from sklearn.calibration import calibration_curve
 import warnings
 from sklearn.utils import check_matplotlib_support, column_or_1d,  check_consistent_length
 from sklearn.calibration import _check_pos_label_consistency
-from tabulate import tabulate
 from dateutil.relativedelta import relativedelta
 from tabulate import tabulate
 import time
@@ -216,7 +215,7 @@ def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strate
         sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
      """
     
-    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0)
+    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0, pos_label = 1)
     
     # Plot the calibration curve
     plt.figure(figsize=(8, 6))
@@ -363,8 +362,8 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
 
 #Proba prediction retraining model before each seas
-def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, chosen_features_0, week_or_seas, test_seasons):
-    """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW or season predictions. It's different from the classic predictions process because the model has the experience of the season running past matches.
+def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, week_or_seas, test_seasons, chosen_features_0 = None):
+    """Make proba predictions on the seasons we selelected for testing, retraining the pipeline before each GW or season predictions. It's different from the classic predictions process because the model has the experience of the season running past matches
 
     Args:                                                                         
         X_0 (DataFrame): Features dataframe
@@ -375,11 +374,12 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, chosen_
         
         pipeline_0 (Pipeline): The machine learning pipeline to use for training and predictions
         
-        chosen_features_0(list): The features selection associated the the model_chosen (VI)3))
-        
         week_or_seas (Boolean): Do we want to train the model before each GW ('week') or each season ('season').
         
         test_seasons (list): List of seasons we want to make predictions on.
+        
+        chosen_features_0(list): The features selection associated to the model_chosen (VI)3)) Not needed if the pipeline comes from GridSearchCV
+        
 
     Returns:
         Tuple: (proba_predicted, Y_pred, X_info) The np.array containing the proba predicted on the test seasons, the results corresponding to these predictions, the contextual columns corresponding to these predictions. 
@@ -387,8 +387,8 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, chosen_
     
     proba_predicted = []
     Y_pred = pd.DataFrame(columns=["Result"])    # Initialize an empty DataFrame to contain the results of the matches we will make predicitons on
-    Y_pred['Result'] = Y['Result'].astype(int)
-    X_info_pred = pd.DataFrame(columns = X_info_0.columns())
+    Y_0['Result'] = Y_0['Result'].astype(int)
+    X_info_pred = pd.DataFrame(columns = X_info_0.columns)
     
     #We define the seasons end dates of the the seaons we want to make predictions on
     seasons = []
@@ -396,87 +396,85 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, chosen_
         for date in constant_variables.seasons:
             if date.year == seas:
                 seasons.append(date)
-    
+                
+    #Loop over each season in this dataset
     for season in seasons:
         
         if week_or_seas == 'week':
-            nb_of_GW_for_this_season = X_info_0['Game Week'].max() # Find the maximum game day in the dataset
-            for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW_for_this_season + 1):
+            
+            # Find the max number of Game Week in this dataset
+            nb_of_GW = X_info_0['Game Week'].max()
+            
+            # Loop over each GW of this season
+            for game_week in range(constant_variables.min_played_matchs_nb +2, nb_of_GW + 1):
                 
                 #we start finding the date of the first match of this game week
-                combined_conditions = (dataset_0['date_GMT']<season) & ((season - relativedelta(years=1)) <dataset_0['date_GMT'])& (dataset_0['Game Week'] == game_week)
-                first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
+                test_condition_for_this_gw = (X_info_0['Date'] < season) & \
+                                      (X_info_0['Date'] > (season - relativedelta(years=1))) &(X_info_0['Game Week'] == game_week)
                 
-            nb_of_GW_for_this_season = dataset_0['Game Week'].max()
-            for game_week in range(constant_variables.min_played_matchs_nb + 2, nb_of_GW_for_this_season + 1):
-                combined_conditions = (dataset_0['date_GMT'] < season) & \
-                                      ((season - relativedelta(years=1)) < dataset_0['date_GMT']) & \
-                                      (dataset_0['Game Week'] == game_week)
-                first_match_date = dataset_0[combined_conditions]['date_GMT'].min()
-                
-        
-                # We test if at least one of the Game Week matches has been completed
-                if not (dataset_0[combined_conditions]['status'] == 'incomplete').all():
-                    #We build up the dataset of all the data beofore this game week:
-                    train_dataset_for_this_gw = dataset_0[dataset_0['date_GMT']<first_match_date]
+                # Verify that we have the data for this GW matches (if the season is incomplete, the data is missing for the last GW)
+                if test_condition_for_this_gw.sum()>0: 
+                    first_match_date_this_gw = X_info_0[test_condition_for_this_gw]['Date'].min()
+                    train_condition_for_this_gw = X_info_0['Date']<first_match_date_this_gw
+
+                    #We build up the TRAIN datasets for this GW (targets and features datasets of matches before this GW):
+                    X_train_for_this_gw = X_0[train_condition_for_this_gw]
+                    Y_train_for_this_gw = Y_0[train_condition_for_this_gw]
                     
-                    #We apply the formatting and train_test_split on this dataset
-                    X_train_for_this_gw, X_train_info_for_this_gw, Y_train_for_this_gw = preprocessing.formatting_cleaning(formatting_splitting_args_0.H_A_col_to_concat_0, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col_0, train_dataset_for_this_gw )
-                    
-                    X_train_for_this_gw = X_train_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+                    if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
+                        X_train_for_this_gw = X_train_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
                     
                     #We train the pipeline on this formatted dataset
                     pipeline_0_trained = pipeline_0.fit(X_train_for_this_gw, np.ravel(Y_train_for_this_gw))
                     
                     
-                    #We build up the test_dataset for this GW
-                    test_dataset_for_this_gw = dataset_0[combined_conditions]
+                    #We build up the TEST datasets for this GW (targets and features datasets of this GW matches):
+                    X_test_for_this_gw  = X_0[test_condition_for_this_gw]
+                    X_test_info_for_this_gw  = X_info_0[test_condition_for_this_gw]
+                    Y_test_for_this_gw = Y_0[test_condition_for_this_gw]
                     
-                    #We apply the formatting and train_test_split on this dataset
-                    X_test_for_this_gw, X_test_info_for_this_gw, Y_test_for_this_gw = preprocessing.formatting_cleaning(formatting_splitting_args_0.H_A_col_to_concat_0, formatting_splitting_args_0.names_col_concatenated, formatting_splitting_args_0.col_to_remove, formatting_splitting_args_0.contextual_col_0, test_dataset_for_this_gw )
+                    if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
+                        X_test_for_this_gw = X_test_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
                     
-                    X_test_for_this_gw = X_test_for_this_gw[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
-                    
-                    #We predict proba on this gw matches:
-                    poroba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
+                    #We PREDICT proba on this GW matches:
+                    proba_pred_for_this_gw = pipeline_0_trained.predict_proba(X_test_for_this_gw)[:,1]
                     
                     #We add to the general datasets the proba pred, X_test_info, Y_test for this GW
                     #Proba pred
-                    for proba in poroba_pred_for_this_gw:
+                    for proba in proba_pred_for_this_gw:
                         proba_predicted.append(proba)
                         
-                    #Y_test
-                    Y = pd.concat([Y,Y_test_for_this_gw], axis=0, ignore_index = False)
+                    #Y_pred
+                    Y_pred = pd.concat([Y_pred,Y_test_for_this_gw], axis=0, ignore_index = False)
 
                     #X_test_info
-                    if not X_info.empty:
-                        X_info = pd.concat([X_info, X_test_info_for_this_gw], ignore_index=True, axis = 0)
+                    if not X_info_pred.empty:
+                        X_info_pred = pd.concat([X_info_pred, X_test_info_for_this_gw], ignore_index=True, axis = 0)
                     else:
-                        X_info = X_test_info_for_this_gw
+                        X_info_pred = X_test_info_for_this_gw
         else:
             
             #We build up the train_dataset for this season
-            train_conditions = (X_info['date_GMT'] < (season - relativedelta(years=1)))
-            X_train_for_this_seas = X[train_conditions]
-            Y_train_for_this_seas = Y[train_conditions]
+            train_conditions = (X_info_0['Date'] < season)
+            X_train_for_this_seas = X_0[train_conditions]
+            Y_train_for_this_seas = Y_0[train_conditions]
             
-            
-            X_train_for_this_seas = X_train_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
+            if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
+                X_train_for_this_seas = X_train_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
             
             #We train the pipeline on this formatted dataset
             pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
             
             
             #We build up the test_dataset for this season
-            test_conditions = (X_info['date_GMT'] < season) & \
-                              ((season - relativedelta(years=1)) < X_info['date_GMT'])
-            X_test_for_this_seas = X[test_conditions]
-            X_test_info_for_this_seas = X_info[test_conditions]
-            Y_test_for_this_seas = Y[test_conditions]
+            test_conditions = (X_info_0['Date'] < season) & \
+                              (X_info_0['Date'] > (season - relativedelta(years=1)))
+            X_test_for_this_seas = X_0[test_conditions]
+            X_test_info_for_this_seas = X_info_0[test_conditions]
+            Y_test_for_this_seas = Y_0[test_conditions]
             
-            X_test_for_this_seas = X_test_for_this_seas[chosen_features_0] # Features selection linked to the model chosen ( VI)3 )
-            
-            
+            if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
+                X_test_for_this_seas = X_test_for_this_seas[chosen_features_0] # Features selection linked to the model chosen ( VI)3 )
             
             #We predict proba on this season matches:
             proba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:, 1]
