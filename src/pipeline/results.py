@@ -455,9 +455,9 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, week_or
         else:
             
             #We build up the train_dataset for this season
-            train_conditions = (X_info_0['Date'] < season)
-            X_train_for_this_seas = X_0[train_conditions]
-            Y_train_for_this_seas = Y_0[train_conditions]
+            train_condition = (X_info_0['Date'] < season)
+            X_train_for_this_seas = X_0[train_condition]
+            Y_train_for_this_seas = Y_0[train_condition]
             
             if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
                 X_train_for_this_seas = X_train_for_this_seas[chosen_features_0]  # Features selection linked to the model chosen ( VI)3 )
@@ -466,7 +466,7 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, week_or
             pipeline_0_trained = pipeline_0.fit(X_train_for_this_seas, np.ravel(Y_train_for_this_seas))
             
             
-            #We build up the test_dataset for this season
+            #We build up the TEST datasets for this season
             test_conditions = (X_info_0['Date'] < season) & \
                               (X_info_0['Date'] > (season - relativedelta(years=1)))
             X_test_for_this_seas = X_0[test_conditions]
@@ -476,10 +476,10 @@ def proba_prediction_retrained_each_seas(X_0, Y_0, X_info_0, pipeline_0, week_or
             if chosen_features_0 is not None: #We check wether this parameter is defined was imputed in the function
                 X_test_for_this_seas = X_test_for_this_seas[chosen_features_0] # Features selection linked to the model chosen ( VI)3 )
             
-            #We predict proba on this season matches:
+            #We PREDICT proba on this season matches:
             proba_pred_for_this_seas = pipeline_0_trained.predict_proba(X_test_for_this_seas)[:, 1]
 
-            
+    
             #We add to the general datasets the proba_pred, X_test_info, Y_test for this season
             #Proba pred
             proba_predicted.extend(proba_pred_for_this_seas)
