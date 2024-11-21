@@ -216,12 +216,21 @@ def ranking_features_correlation_with_result( liste_features_names_HT, liste_fea
     correlation_ranking_DF = correlation_ranking_DF.sort_values(by='Correlation', ascending=False )
     #Mise en forme du Dataframe:
     styled_correlation_ranking_DF = correlation_ranking_DF.style.set_table_styles([{'selector': 'th',
-                                                                                    'props': [('background-color', 'lightgray'), ('text-align', 'center')]
-                                                                                   }]).format({'Correlation': '{:.6f}',
-                                                                                               'Feature mean for R = 1': '{:.6f}',
-                                                                                               'Feature mean for R = 0': '{:.6f}',
-                                                                                               'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
-                                                                                               'p value': '{:.1e}'})
+                                                                                    'props': [('background-color', '#404040'),  # Fond plus foncé
+                                                                                                ('color', 'white'),  # Texte en blanc
+                                                                                                ('text-align', 'center'),
+                                                                                                ('font-weight', 'bold'),  # Texte en gras pour l'entête
+                                                                                                ('font-size', '14px')]},  # Taille de police légèrement plus grande
+                                                                                    {'selector': 'td',
+                                                                                    'props': [('text-align', 'center'),  # Centrer le texte dans les cellules
+                                                                                                ('font-size', '12px')]}  # Taille de police des données
+                                                                                    ]).format({
+                                                                                    'Correlation': '{:.6f}',
+                                                                                    'Feature mean for R = 1': '{:.6f}',
+                                                                                    'Feature mean for R = 0': '{:.6f}',
+                                                                                    'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
+                                                                                    'p value': '{:.1e}'
+                                                                                    })
     # Affichez le DataFrame trié et formaté
     return styled_correlation_ranking_DF
 
@@ -318,12 +327,18 @@ def ranking_features_f_classif( liste_features_names_HT, liste_features_names_AT
     f_classif_ranking_DF = f_classif_ranking_DF.sort_values(by='f_classif correlation', ascending=False )
     #Mise en forme du Dataframe:
     styled_f_classif_ranking_DF = f_classif_ranking_DF.style.set_table_styles([{'selector': 'th',
-                                                                                    'props': [('background-color', 'lightgray'), ('text-align', 'center')]
-                                                                                }]).format({'f_classif correlation': '{:.6f}',
-                                                                                               'Feature mean for R = 1': '{:.6f}',
-                                                                                               'Feature mean for R = 0': '{:.6f}',
-                                                                                               'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
-                                                                                               'p value': '{:.1e}'})
+                                                                                'props': [('background-color', '#404040'),  # Fond gris clair pour les en-têtes
+                                                                                            ('text-align', 'center')]},  # Centrer le texte dans les en-têtes
+                                                                                {'selector': 'td',
+                                                                                'props': [('text-align', 'center'),  # Centrer le texte dans les cellules
+                                                                                            ('font-size', '12px')]}  # Taille de police des données
+                                                                                ]).format({
+                                                                                'f_classif correlation': '{:.6f}',
+                                                                                'Feature mean for R = 1': '{:.6f}',
+                                                                                'Feature mean for R = 0': '{:.6f}',
+                                                                                'Ecart relatif entre les feature mean for R = 0 ou 1': '{:.6f}',
+                                                                                'p value': '{:.1e}'
+                                                                                })
     # Affichez le DataFrame trié et formaté
     return styled_f_classif_ranking_DF
 
