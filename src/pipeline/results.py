@@ -345,7 +345,6 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     """
     proba_pred_train = pipeline_0.predict_proba(X_train_0)[:,1]
     proba_pred_test = pipeline_0.predict_proba(X_test_0)[:,1]
-    print(proba_pred_test.sum())
     
     proba_train_sum=round(proba_pred_train.sum(), 2)
     sum_true_values_train = Y_train_0.sum()
@@ -357,7 +356,7 @@ def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipel
     proba_test_sum=round(proba_pred_test.sum(), 2)
     sum_true_values_test = Y_test_0.sum()
     ratio_test = proba_test_sum/sum_true_values_test
-    
+
     print(f"\n\nLa somme des proba prédites sur le TEST SET est {proba_test_sum}, la somme des true event est {sum_true_values_test.item()}")
     print(f'Le rapport de la somme des proba prédites sur la somme de true target est {ratio_test.item()}')
 
