@@ -6,11 +6,12 @@ import pandas as pd
 from sklearn.calibration import CalibrationDisplay
 from sklearn.calibration import calibration_curve
 import warnings
-from sklearn.utils import check_matplotlib_support, column_or_1d,  check_consistent_length
+from sklearn.utils import column_or_1d,  check_consistent_length
 from sklearn.calibration import _check_pos_label_consistency
 from dateutil.relativedelta import relativedelta
 from tabulate import tabulate
-import time
+import pickle
+
 
 from configuration import constant_variables
 from data import preprocessing
@@ -632,45 +633,168 @@ def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
     return dataset_concatenated
 
 # Simulate betting on a certain number of seasons
-def betting_simulation(dataset_0, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
-    #We concat proba_pred and contextual col
+def betting_simulation(compa_dataset, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
+    """
+    Simulates a betting strategy on a given dataset based on specific conditions and parameters.
+
+    Args:
+        compa_dataset (pd.DataFrame): The dataset containing features, including predicted probabilities and odds.
+        Y_0 (pd.DataFrame): The target dataset containing match results.
+        proba_interval_0 (tuple): A tuple specifying the range of predicted probabilities for betting (min, max).
+        min_diff_with_odd_proba_0 (float): Minimum difference between predicted probability and implied probability of the odds.
+        GW_interval_0 (tuple): A tuple specifying the range of game weeks for betting (min, max).
+        bet_0 (float): The amount of money to bet on each match.
+
+    Returns:
+        pd.DataFrame: A dataframe containing the matches that met the betting conditions and their corresponding gains.
+
+    Description:
+        1. Concatenates the dataset containing features (`compa_dataset`) and the target dataset (`Y_0`) into one dataframe.
+        2. Filters the matches based on the specified betting conditions:
+            - The predicted probability must fall within the `proba_interval_0` range.
+            - The difference between the predicted probability and the implied probability of the odds must be at least `min_diff_with_odd_proba_0`.
+            - The number of matches played must fall within the `GW_interval_0` range.
+        3. Computes the betting outcomes for the selected matches. For each bet:
+            - A loss of `bet_0` is registered initially.
+            - If the match result indicates a win (`Result == 1`), the gain is calculated as the product of the maximum victory odds and the bet amount.
+        4. Calculates the total gain, the number of bets placed, and the ratio of gain to bet.
+        5. Prints the results, including the final gain, number of bets, total matches, and gain-to-bet ratio.
+
+    Example:
+        betting_simulation(compa_dataset, Y_0, (0.6, 0.8), 0.1, (5, 38), 10)
+    """
+
+    # Concatenate predicted probabilities and contextual columns
     col_names = []
-    col_names.extend(dataset_0.columns.tolist())
+    col_names.extend(compa_dataset.columns.tolist())
     col_names.extend(Y_0.columns.tolist())
-    dataset_concatenated = pd.concat([dataset_0, Y_0] , axis=1, ignore_index=True)
+    dataset_concatenated = pd.concat([compa_dataset, Y_0], axis=1, ignore_index=True)
     dataset_concatenated.columns = col_names
-    
-    #We select only matches that respect the conditions of betting defined by the parameters inputted
-    selected_dataset_1 = dataset_concatenated[(dataset_concatenated['Proba pred'] >= proba_interval_0[0]) & (dataset_concatenated['Proba pred'] <= proba_interval_0[1])].copy()
-    
-    selected_dataset_2 = selected_dataset_1[selected_dataset_1['Diff proba_pred Max_odd proba'] >= min_diff_with_odd_proba_0].copy()
-    
-    selected_dataset_3 = selected_dataset_2[(selected_dataset_2['Played_matchs_nb'] >= GW_interval_0[0]) & (selected_dataset_2['Played_matchs_nb'] <= GW_interval_0[1])].copy()
-   
-    #We compute bets results
-    selected_dataset_3 = selected_dataset_3.assign(Gain = -bet_0)
+
+    # Filter matches based on betting conditions
+    selected_dataset_1 = dataset_concatenated[
+        (dataset_concatenated['Proba pred'] >= proba_interval_0[0]) &
+        (dataset_concatenated['Proba pred'] <= proba_interval_0[1])
+    ].copy()
+
+    selected_dataset_2 = selected_dataset_1[
+        selected_dataset_1['Diff proba_pred Max_odd proba'] >= min_diff_with_odd_proba_0
+    ].copy()
+
+    selected_dataset_3 = selected_dataset_2[
+        (selected_dataset_2['Played_matchs_nb'] >= GW_interval_0[0]) &
+        (selected_dataset_2['Played_matchs_nb'] <= GW_interval_0[1])
+    ].copy()
+
+    # Compute betting results
+    selected_dataset_3 = selected_dataset_3.assign(Gain=-bet_0)
     selected_dataset_3['Gain'] = selected_dataset_3['Gain'].astype(float)
-                                                                   
+
     nb_of_bets = 0
     for index, row in selected_dataset_3.iterrows():
-            nb_of_bets +=1
-            
-            if row['Result'] == 1:
-                selected_dataset_3.at[index, 'Gain'] += row['Max_victory_odd'] * bet_0
-    
+        nb_of_bets += 1
+        if row['Result'] == 1:
+            selected_dataset_3.at[index, 'Gain'] += row['Max_victory_odd'] * bet_0
+
     final_gain = selected_dataset_3['Gain'].sum()
-    nb_of_matches = dataset_0.shape[0]
-    ratio_gain_bet = final_gain/(nb_of_bets*bet_0)
-    
-    print('The final gain is', final_gain,'€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
+    nb_of_matches = compa_dataset.shape[0]
+    ratio_gain_bet = final_gain / (nb_of_bets * bet_0)
+
+    # Print summary of the betting simulation
+    print('The final gain is', final_gain, '€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
     print('This is equivalent to a ratio gain/bet =', ratio_gain_bet)
-    
-    return(selected_dataset_3)
+
+    return selected_dataset_3
     
 
             
-    
-    
+# Save the predicted probabilities predicted with "proba_prediction_retrained_each_seas()",  the corresponding Y and X_info
+
+def save_pred_proba(proba_pred, Y_test, X_info, file_name):
+    """
+    Save the prediction probability, test labels, and contextual information to a specified location.
+
+    Args:
+        proba_pred (np.ndarray): The predicted probabilities.
+        Y_test (pd.DataFrame): The true labels corresponding to the predictions.
+        X_info (pd.DataFrame): Contextual information about the predictions.
+        file_name (str): The name of the file (without extension) to save the datasets.
+
+    Returns:
+        None
+    """
+    # Define the absolute path for the datasets
+    save_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/results/{file_name}.pkl"
+
+    # Prepare the data as a dictionary
+    data_to_save = {
+        "proba_pred": proba_pred,
+        "Y_test": Y_test,
+        "X_info": X_info
+    }
+
+    # Check if an old file exists and compare
+    try:
+        with open(save_path, 'rb') as file:
+            old_data = pickle.load(file)
+            same_data = (
+                (old_data['proba_pred'] == proba_pred).all()
+                and old_data['Y_test'].equals(Y_test)
+                and old_data['X_info'].equals(X_info)
+            )
+            if same_data:
+                print(f"The datasets ARE the same for both old and new {file_name}")
+            else:
+                print(f"The datasets ARE NOT the same for both old and new {file_name}")
+    except FileNotFoundError:
+        print(f"No {file_name} existing file to compare; treating as new datasets.")
+
+    # Delete the old file if it exists
+    try:
+        os.remove(save_path)
+        print(f"Successfully deleted the old file: {file_name}")
+    except FileNotFoundError:
+        print(f"No old file to delete at: {file_name}")
+    except Exception as e:
+        print(f"An error occurred while deleting the old file: {e}")
+
+    # Save the new data
+    try:
+        with open(save_path, 'wb') as file:
+            pickle.dump(data_to_save, file)
+        print(f"Successfully saved the new datasets: {file_name}")
+    except Exception as e:
+        print(f"An error occurred while saving the new datasets: {e}")
+
+    print("\n")
+
+# Function to load the datasets
+def load_pred_proba(file_name):
+    """
+    Load the prediction probability, test labels, and contextual information from a specified location.
+
+    Args:
+        file_name (str): The name of the file (without extension) to load the datasets.
+
+    Returns:
+        tuple: (proba_pred, Y_test, X_info) if the file exists, else None.
+    """
+    # Define the absolute path for the datasets
+    load_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/results/{file_name}.pkl"
+
+    # Load the data
+    try:
+        with open(load_path, 'rb') as file:
+            data_loaded = pickle.load(file)
+            print(f"Successfully loaded the datasets: {file_name}")
+            return data_loaded["proba_pred"], data_loaded["Y_test"], data_loaded["X_info"]
+    except FileNotFoundError:
+        print(f"The file {file_name} does not exist.")
+        return None, None, None
+    except Exception as e:
+        print(f"An error occurred while loading the datasets: {e}")
+        return None, None, None
+
         
         
         
