@@ -7,6 +7,7 @@ from dateutil.parser import parse
 from datetime import date, datetime
 import sys
 import os
+import pickle
 
 #modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
 sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
@@ -180,3 +181,55 @@ def save_dataframe(dataset_0, file_name_0):
     #Put a line break before at the end of the text w've just printed
     print("\n")
 
+
+# --------------------------------------------------------------
+# Save the features names lists
+# --------------------------------------------------------------
+
+
+def save_string_list(string_list, file_name):
+    """
+    This function saves a list of strings to a specified location. It deletes the old file at this location with the same name, if it exists, and compares the old and new lists (returns a string saying whether they are equal or not).
+    We use it to save the lists H_A_col_to_concat, names_col_concatenated, contextual_col, col_to_remove
+    Args:
+        string_list (list): The list of strings to save.
+        file_name (str): The name of the file (without extension) to save the list.
+
+    Returns:
+        None
+    """
+
+    # Define the absolute path for the list destination
+    list_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/processed/split/{file_name}.pkl"
+
+    # Load the old list if it exists to compare
+    try:
+        with open(list_destination_path, 'rb') as file:
+            old_list = pickle.load(file)
+            same_data = old_list == string_list
+            if same_data:
+                print(f"The lists ARE the same for both old and new {file_name}")
+            else:
+                print(f"The lists ARE NOT the same for both old and new {file_name}")
+    except FileNotFoundError:
+        print(f"No {file_name} existing file to compare; treating as a new list.")
+
+    # Delete the old file if it exists
+    try:
+        os.remove(list_destination_path)
+        print(f"Successfully deleted the old file: {file_name}")
+    except FileNotFoundError:
+        print(f"No old file to delete at: {file_name}")
+    except Exception as e:
+        print(f"An error occurred while deleting the old file: {e}")
+
+    # Save the new list
+    try:
+        with open(list_destination_path, 'wb') as file:
+            pickle.dump(string_list, file)
+        print(f"Successfully saved the new list: {file_name}")
+    except Exception as e:
+        print(f"An error occurred while saving the new list: {e}")
+
+    # Put a line break at the end of the text we've just printed
+    print("\n")

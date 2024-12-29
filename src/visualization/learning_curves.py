@@ -65,7 +65,7 @@ def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0):
 # --------------------------------------------------------------
 #That's not real learning curves. Just comparaison of calibration curves for different sizes of train-set
 
-def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, dataset_0, test_seasons_0, train_seasons_0, chosen_features_0):
+def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, test_seasons_0, train_seasons_0):
     """From the last_dataset_xx, returns subdatasets of different sizes. These subsets will be utilized to compare the pipeline's calibration across different training set size.
     The function applys the formatting process of the function preprocessing.formatting_splitting_seasons to the "last_dataset_xx" DataFrame, that's why there are so many arguments.
 
@@ -74,10 +74,8 @@ def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_co
         names_col_concatenated_0 (_type_): _description_
         col_to_remove_0 (_type_): _description_
         contextual_col_0 (_type_): _description_
-        dataset_0 (_type_): _description_
         test_seasons_0 (_type_): _description_
         train_seasons_0 (_type_): _description_
-        chosen_features_0 (_type_): _description_
 
     Returns:
         _type_: _description_
@@ -88,14 +86,11 @@ def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_co
         # Formatting and splitting (following seasons) dataset to get: train and test sets ( V)1) )
         X_train_info, X_train_00, Y_train_00, X_test_info,  X_test_00, Y_test_00 = preprocessing.formatting_splitting_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, dataset_0, test_seasons_0, train_seasons_x)
         
-        #On choisit une pipeline enregistrée dans pipeline.model et la selection de features qui va avec ( VI)3) )
-        X_train_01 = X_train_00.copy()[chosen_features_0]
-        X_test_01 = X_test_00.copy()[chosen_features_0]
 
-        X_train.append(X_train_01)
+        X_train.append(X_train_00)
         Y_train.append(Y_train_00)
     
-    return X_train, Y_train, X_test_01, Y_test_00
+    return X_train, Y_train, X_test_00, Y_test_00
 
 def pipeline_calibration_learning_curve(X_train_0, X_test_0, Y_train_0, Y_test_0, chosen_pipeline_0, nb_bins_0, strategy_0):
     """Plots the learning curves of the pipeline for different size of train_set. It allows to evaluate the impact of trainset size on the performance of the model
