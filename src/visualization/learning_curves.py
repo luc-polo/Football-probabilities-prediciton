@@ -96,8 +96,7 @@ def data_formatting_partitionning_seasonally(
     # For each training period
     for train_seasons_x in train_seasons_0:
         # Splitting
-        X_train_info, X_train_temp, Y_train_temp, \
-            X_test_info, X_test_temp, Y_test_temp = preprocessing.splitting(
+        X_train_info, X_train_temp, Y_train_temp, X_test_info, X_test_temp, Y_test_temp = preprocessing.splitting(
                 X.copy(), 
                 X_info.copy(), 
                 Y.copy(),
@@ -105,6 +104,7 @@ def data_formatting_partitionning_seasonally(
                 [train_seasons_x],
                 270
             )
+        print(X.shape)
 
         # On empile dans des listes
         X_train_list.append(X_train_temp)
