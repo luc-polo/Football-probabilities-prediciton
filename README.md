@@ -1,7 +1,7 @@
 projet_Mbappe
 ==============================
 
-You're desperatly looking for something like 4 Milli to buy a brand new Maybach to turns into a chicks magnet? Moreover you plan to buy gta6 next year? Hmmm, let me think it over a few sec... I belive this project will help you a lot!
+This project is a personnal initiative i am particularly porud of. Based on my professionnal aspiration for data science and my genuine interest for football and statistics I decided dive into this instructive challenge. It consists in building a complex and comprehensive ML model that perform victory/draw/defeat probabilities predictions. The projects goes from data extraction to probabilities calibration and analysis.
  
 Project Description
 -------------------
