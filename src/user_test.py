@@ -3,6 +3,7 @@ from sklearn.pipeline import Pipeline
 from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
+from pipeline import model, results
 
 
 # Create the personnalised pipeline
@@ -45,11 +46,25 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
 
 
 # Plot pipeline perf
-def plot_pipeline_pred_results(plot_with_annual_training):
+def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, plot_with_annual_training):
     if plot_with_annual_training == True:
-        
-Y_test_01 = Y_test_GW_training
-X_test_info_01 = X_info_GW_training
-proba_pred = proba_pred_GW_training
+
+        Y_test_01 = Y_test_GW_training
+        X_test_info_01 = X_info_GW_training
+        proba_pred = proba_pred_GW_training
+
+        #Plot Calibration curve of the pipeline and info about its bins
+        prob_pred_01, prob_true_01 = results.plot_calibration_curve_2(
+                                        Y_test_0 = Y_test_01.copy(),
+                                        X_train_0 = X_test_info_01.copy(),
+                                        proba_pred_0 = proba_pred.copy(),
+                                        n_bins_0 = 20,
+                                        strategy_0 = 'quantile',
+                                        color_0 = 'red',
+                                        GW_training_or_not = True)
+
+        #We display statistics on the pipeline probabilities deviation 
+        results.print_calibration_stats(prob_pred_01.copy(),
+                                        prob_true_01.copy())
 
 test_seasons = [2021,2022,2023,2024]
