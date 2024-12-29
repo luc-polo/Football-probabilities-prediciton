@@ -66,5 +66,5 @@ def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_inf
         #We display statistics on the pipeline probabilities deviation 
         results.print_calibration_stats(prob_pred_01.copy(),
                                         prob_true_01.copy())
+    if plot_with_annual_training == False:
 
-test_seasons = [2021,2022,2023,2024]
