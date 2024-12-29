@@ -4,6 +4,7 @@ from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 
+
 def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l1', C=1):
     """
     Create a pipeline based on the defined parameters.
