@@ -65,7 +65,7 @@ def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0):
 # --------------------------------------------------------------
 #That's not real learning curves. Just comparaison of calibration curves for different sizes of train-set
 
-def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, test_seasons_0, train_seasons_0):
+def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, test_seasons_0, train_seasons_0, dataset_0):
     """From the last_dataset_xx, returns subdatasets of different sizes. These subsets will be utilized to compare the pipeline's calibration across different training set size.
     The function applys the formatting process of the function preprocessing.formatting_splitting_seasons to the "last_dataset_xx" DataFrame, that's why there are so many arguments.
 
@@ -82,13 +82,21 @@ def data_formatting_partitionning_seasonally(names_col_to_concat_0, names_col_co
     """
     X_train = []  # List that will contain the different X train set we will return
     Y_train = []  # List that will contain the different Y train set we will return
+    X_test = []  # List that will contain the different X test set we will return
+    Y_test = []  # List that will contain the different Y test set we will return
     for train_seasons_x in train_seasons_0:
         # Formatting and splitting (following seasons) dataset to get: train and test sets ( V)1) )
-        X_train_info, X_train_00, Y_train_00, X_test_info,  X_test_00, Y_test_00 = preprocessing.formatting_splitting_seasonally(names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, dataset_0, test_seasons_0, train_seasons_x)
-        
+        # Format and clean the feat_engineered_ds
+        X, X_info, Y = preprocessing.formatting_cleaning( names_col_to_concat_0, names_col_concatenated_0, col_to_remove_0, contextual_col_0, dataset_0.copy())
 
+        # Splitting (following seasons) the datasets into train and test datasets
+        X_train_info, X_train_00, Y_train_00, X_test_info,  X_test_00, Y_test_00 = preprocessing.splitting(X.copy(), X_info.copy(), Y.copy(), test_seasons_0, train_seasons_0, 270)
+        
+        
         X_train.append(X_train_00)
         Y_train.append(Y_train_00)
+        X_test.append(Y_test_00)
+        Y_test.append(Y_test_00)
     
     return X_train, Y_train, X_test_00, Y_test_00
 
