@@ -233,3 +233,33 @@ def save_string_list(string_list, file_name):
 
     # Put a line break at the end of the text we've just printed
     print("\n")
+
+
+def load_string_list(file_name):
+    """
+    This function loads a list of strings from a specified location.
+
+    Args:
+        file_name (str): The name of the file (without extension) to load the list.
+
+    Returns:
+        list: The list of strings loaded from the file.
+    """
+
+    # Define the absolute path for the list source
+    list_source_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/processed/split/{file_name}.pkl"
+
+    # Load the list
+    try:
+        with open(list_source_path, 'rb') as file:
+            string_list = pickle.load(file)
+            print(f"Successfully loaded the list: {file_name}")
+            return string_list
+    except FileNotFoundError:
+        print(f"The file {file_name} does not exist.")
+        return None
+    except Exception as e:
+        print(f"An error occurred while loading the list: {e}")
+        return None
+
+
