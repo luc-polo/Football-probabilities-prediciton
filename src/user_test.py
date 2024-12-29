@@ -5,6 +5,7 @@ from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 
 
+# Create the personnalised pipeline
 def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l1', C=1):
     """
     Create a pipeline based on the defined parameters.
@@ -43,5 +44,12 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
 
 
 
+# Plot pipeline perf
+def plot_pipeline_pred_results(plot_with_annual_training):
+    if plot_with_annual_training == True:
+        
+Y_test_01 = Y_test_GW_training
+X_test_info_01 = X_info_GW_training
+proba_pred = proba_pred_GW_training
 
 test_seasons = [2021,2022,2023,2024]
