@@ -298,7 +298,7 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
     # Créer le tableau qui contiendra les ratiaux de deviation ainsi que prob_true
     table_data = {
          'Proba True': np.round(prob_true_0, decimals=3),
-         f'Diff with {calibrated_or_not} pred proba': np.round(differences, decimals=3),
+         f'Diff with pred proba': np.round(differences, decimals=3),
      }
     
     #Convert table_data into a DataFrame
