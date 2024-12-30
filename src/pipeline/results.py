@@ -612,31 +612,38 @@ def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0,
         histo_title = f'Predicted Proba on matches where Played_matches_nb C [{sub_ds["Played_matchs_nb"].min()},{sub_ds["Played_matchs_nb"].max()}]'
         plot_histo_predicted_proba(sub_ds['Proba pred'].copy(), histo_bars_nb_0, 'r', histo_title)
         
-# Compare predicted probabilities and the probabilities of bookmakers
-def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
-    """Returns a dataset that contains the differences between predicted proba and the proba corresponding to avg_odd and max_odd
+def compare_pred_proba_and_odds(proba_pred_0, X_info_0):
+    """
+    Returns a dataset that contains the differences between predicted proba and the proba corresponding to avg_odd and max_odd,
+    with probabilities displayed as percentages (1 decimal).
 
     Args:
-        proba_pred_0 (_type_): The predicted proba column we want to compare
-        X_info_0 (_type_): The contextual features columns corresponding the the proba_pred_0
+        proba_pred_0 (_type_): The predicted proba column we want to compare.
+        X_info_0 (_type_): The contextual features columns corresponding the proba_pred_0.
 
     Returns:
-        _type_: _description_
+        DataFrame: A dataset with the probabilities and differences formatted.
     """
-    
-    #We concatenate the probabilities predicted and contextual features
-    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
+
+    # We concatenate the probabilities predicted and contextual features
+    proba_pred_01 = pd.DataFrame(proba_pred_0, columns=['Proba pred'])
     col_names = []
     col_names.extend(X_info_0.columns.tolist())
     col_names.extend(proba_pred_01.columns.tolist())
-    dataset_concatenated = pd.concat([X_info_0, proba_pred_01] , axis=1, ignore_index=True)
+    dataset_concatenated = pd.concat([X_info_0, proba_pred_01], axis=1, ignore_index=True)
     dataset_concatenated.columns = col_names
-    
-    #We add a column that contains the difference between predicted proba and the proba corresponding to average_victory_odd
-    dataset_concatenated['Diff proba_pred avg_odd proba'] = dataset_concatenated['Proba pred'] - (1/dataset_concatenated['Avg_victory_odd'])
-    #We add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
-    dataset_concatenated['Diff proba_pred Max_odd proba'] = dataset_concatenated['Proba pred'] - (1/dataset_concatenated['Max_victory_odd'])
-    
+
+    # We add a column that contains the difference between predicted proba and the proba corresponding to average_victory_odd
+    dataset_concatenated['Diff proba_pred avg_odd proba'] = dataset_concatenated['Proba pred'] - (1 / dataset_concatenated['Avg_victory_odd'])
+    # We add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
+    dataset_concatenated['Diff proba_pred Max_odd proba'] = dataset_concatenated['Proba pred'] - (1 / dataset_concatenated['Max_victory_odd'])
+
+    # Format probabilities and differences as percentages with 1 decimal
+    percentage_columns = ['Proba pred', 'Diff proba_pred avg_odd proba', 'Diff proba_pred Max_odd proba']
+    for col in percentage_columns:
+        dataset_concatenated[col] = (dataset_concatenated[col] * 100).round(1).astype(str) + '%'
+
+
     # Apply red text color to specific columns
     def apply_text_color(val):
         return 'color: red'
@@ -661,6 +668,9 @@ def compare_pred_proba_and_odds_stats(diff_dataset):
     # Si diff_dataset est un Styler, récupérez le DataFrame d'origine
     if isinstance(diff_dataset, pd.io.formats.style.Styler):
         diff_dataset = diff_dataset.data
+
+    # Convert string columns to numeric
+    diff_dataset['Diff proba_pred avg_odd proba'] = diff_dataset['Diff proba_pred avg_odd proba'].str.rstrip('%').astype(float) / 100
 
     # Calculate statistics on absolute differences
     mean_diff = diff_dataset[['Diff proba_pred avg_odd proba']].abs().mean()
