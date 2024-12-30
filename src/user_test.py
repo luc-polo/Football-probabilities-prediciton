@@ -46,7 +46,7 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
 
 
 # Plot pipeline perf
-def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, plot_with_annual_training):
+def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, plot_with_annual_training, best_model_plot=True):
     if plot_with_annual_training == True:
 
         Y_test_01 = Y_test_GW_training
@@ -61,10 +61,10 @@ def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_inf
                                         n_bins_0 = 20,
                                         strategy_0 = 'quantile',
                                         color_0 = 'red',
-                                        GW_training_or_not = True)
+                                        GW_training_or_not = True,
+                                        best_model_plot = best_model_plot)
 
         #We display statistics on the pipeline probabilities deviation 
         results.print_calibration_stats(prob_pred_01.copy(),
                                         prob_true_01.copy())
     if plot_with_annual_training == False:
-

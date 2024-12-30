@@ -193,74 +193,83 @@ def calibration_curve_bis(
 
 
 # Plot calibration curves of calibrated and not calibrated pipeline/model
-def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strategy_0, color_0, GW_training_or_not):
-    """  
-        Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
-     
-     Args:
-        Y_test_0 (DataFrame): The labels/targets Dataframe used to plot the calibration curve.
-        
-        X_train_0(DataFrame): The X_train used to train the pipeline that predicted proba_pred_0. We use it to display its nb of elements on our graph.
-        
-        proba_pred_0 (list): the one d array containing the probabilities predicted by our pipeline on X_test_0
-        
+def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strategy_0, color_0, GW_training_or_not, best_model_plot=False):
+    """
+    Display the annotated calibration curves either for the non-calibrated pipeline or for the calibrated one.
+
+    Args:
+        Y_test_0 (DataFrame): The labels/targets DataFrame used to plot the calibration curve.
+        X_train_0 (DataFrame): The X_train used to train the pipeline that predicted proba_pred_0.
+        proba_pred_0 (list): The 1D array containing the probabilities predicted by the pipeline on X_test_0.
         n_bins_0 (int): Number of bins to discretize the predicted probabilities.
-        
-        strategy_0 (str): strategy to discretize the probabilities interval to define the bins intervals. Etither 'uniform' or 'quantile'
-        
-        color_0 (str): Color for plotting the calibration curve. Blue for the calibrated model and Red for non calibrated one.
-        
-        GW_training_or_not (Boolean): Wether the pipeline inputed has been retrained every GW or Season before making prediction (used to display the number of sample in trainset)
-    
-     Returns:
-        sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
-     """
-    
-    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0, pos_label = 1)
-    
+        strategy_0 (str): Strategy to discretize the probabilities interval ('uniform' or 'quantile').
+        color_0 (str): Color for plotting the calibration curve.
+        GW_training_or_not (bool): Whether the pipeline has been retrained every GW or Season before making predictions.
+        best_model_plot (bool): If True, plots the calibration curve for the best model in the background.
+
+    Returns:
+        tuple: prob_true, prob_pred.
+    """
+    prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve(
+        Y_test_0, proba_pred_0, n_bins=n_bins_0, strategy=strategy_0, pos_label=1
+    )
+
     # Plot the calibration curve
     plt.figure(figsize=(8, 6))
-    plt.scatter(prob_pred, prob_true, s = samples_nb_per_bin[samples_nb_per_bin != 0]/3, marker='o', linestyle='-', color= color_0, label='Calibrat° curve')
-    plt.plot(prob_pred, prob_true, color= color_0)
+    plt.scatter(prob_pred, prob_true, s=samples_nb_per_bin[samples_nb_per_bin != 0]/3,
+                marker='o', linestyle='-', color=color_0, label='Calibrat° curve')
+    plt.plot(prob_pred, prob_true, color=color_0)
     plt.plot([0, 1], [0, 1], linestyle='--', color='gray', label='Perfectly calibrated')
     plt.xlabel('Mean predicted probabilities')
     plt.ylabel('Fraction of positives')
     plt.title('Calibration curve of the pipeline')
     plt.grid(True)
-    
-    
-    #Increasing nb of graduation a grid lines
+
+    # Increasing number of graduation and grid lines
     plt.minorticks_on()
-    plt.grid( which='major', linewidth=2)
-    plt.grid( which = 'minor', linewidth=1)
-    
-    #plot the vertical
+    plt.grid(which='major', linewidth=2)
+    plt.grid(which='minor', linewidth=1)
+
+    # Plot vertical deviations
     for i in range(len(prob_pred)):
-        plt.plot([prob_pred[i],prob_true[i]], [prob_true[i], prob_true[i]], linestyle='-', color='black')
+        plt.plot([prob_pred[i], prob_true[i]], [prob_true[i], prob_true[i]],
+                 linestyle='-', color='black')
         annotation_text = round(abs(prob_pred[i]-prob_true[i]), 2)
-        plt.annotate(annotation_text, ((prob_pred[i]+prob_true[i]) / 2, (prob_true[i])), textcoords="offset points", xytext=(0, 10), ha='center')
+        plt.annotate(annotation_text, ((prob_pred[i]+prob_true[i]) / 2, (prob_true[i])),
+                     textcoords="offset points", xytext=(0, 10), ha='center')
+
+    # Plot best model calibration curve if requested
+    if best_model_plot:
+        from results import load_pred_proba
+        proba_pred_best, Y_test_best, _ = load_pred_proba("pipeline_pred_proba_and_Y_and_X_info")
+        prob_true_best, prob_pred_best, _, _ = calibration_curve(
+            Y_test_best, proba_pred_best, n_bins=n_bins_0, strategy=strategy_0, pos_label=1
+        )
+        plt.plot(prob_pred_best, prob_true_best, linestyle='-', color='lightgray', alpha=0.5,
+                 label='Best model (background)')
 
     # Display the parameter n_bins_0 value
     plt.text(0.00, 0.9, f'n_bins: {n_bins_0}', ha='left', va='top', fontsize=12)
     # Display the number of samples/predictions used to plot the curve
     plt.text(0.00, 0.84, f'test_set size: {Y_test_0.shape[0]}', ha='left', va='top', fontsize=12)
-    # Display the train-set size used to train the pipeline used to plot the curve
-    if GW_training_or_not == False:
+    # Display the train-set size used to train the pipeline
+    if not GW_training_or_not:
         plt.text(0.00, 0.78, f'train_set size: {X_train_0.shape[0]}', ha='left', va='top', fontsize=12)
-    
+
     plt.legend()
     plt.show()
-    
-    #Display stats on bins
+
+    # Display stats on bins
     print('Above learning curve statistics on bins:\n')
     learning_curve_bins_stats = pd.DataFrame({
-        'Bin interval':[[round(bins[i], 2), round(bins[i+1], 2)]  for i in range(len(bins)-1)],
-        'Predictions nb in the bin': [samples_nb_per_bin[i] for i in range(len(bins)-1)]})
-    
+        'Bin interval': [[round(bins[i], 2), round(bins[i+1], 2)] for i in range(len(bins)-1)],
+        'Predictions nb in the bin': [samples_nb_per_bin[i] for i in range(len(bins)-1)]
+    })
+
     # Improve table design
     fancy_learning_curve_bins_stats = tabulate(learning_curve_bins_stats, headers='keys', tablefmt='fancy_grid')
     print(fancy_learning_curve_bins_stats)
-    
+
     return prob_true, prob_pred
 
 # Print the statistics about pipeline calibration
