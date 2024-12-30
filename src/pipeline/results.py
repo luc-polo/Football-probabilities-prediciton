@@ -776,7 +776,7 @@ def save_pred_proba(proba_pred, Y_test, X_info, file_name):
     print("\n")
 
 # Function to load the datasets
-def load_pred_proba(file_name):
+def load_pred_proba(file_name, print_msg = True):
     """
     Load the prediction probability, test labels, and contextual information from a specified location.
 
@@ -793,7 +793,8 @@ def load_pred_proba(file_name):
     try:
         with open(load_path, 'rb') as file:
             data_loaded = pickle.load(file)
-            print(f"Successfully loaded the datasets: {file_name}")
+            if print_msg == True:
+                print(f"Successfully loaded the datasets: {file_name}")
             return data_loaded["proba_pred"], data_loaded["Y_test"], data_loaded["X_info"]
     except FileNotFoundError:
         print(f"The file {file_name} does not exist.")
