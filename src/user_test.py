@@ -4,7 +4,7 @@ from sklearn.feature_selection import SelectKBest, f_classif
 from sklearn.preprocessing import StandardScaler, RobustScaler, MinMaxScaler
 from sklearn.linear_model import LogisticRegression
 from pipeline import model, results
-
+import numpy as np
 
 # Create the personnalised pipeline
 def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l1', C=1):
@@ -44,27 +44,50 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
     return pipeline
 
 
+from sklearn.metrics import log_loss
+
+# Display the personalised pipeline log-loss
+def pipe_log_loss(Y_test_00, prob_pred, GW_training):
+    Y_test_00 = np.array(Y_test_00).astype(int)  # Conversion en tableau NumPy d'entiers 
+
+    personalised_log_loss = log_loss(Y_test_00, prob_pred)
+    if GW_training == True:
+        print("Your personnalised pipeline log-loss, annualy trained, is:", personalised_log_loss)
+
+    else:
+        print("Your personnalised pipeline log-loss is:                  ", personalised_log_loss)
+
+# Display the best pipeline log-loss
+def best_pipe_log_loss():
+    
+    proba_pred_best, Y_test_best, _ = results.load_pred_proba("pipeline_pred_proba_and_Y_and_X_info")
+    log_loss = log_loss(Y_test_best, proba_pred_best)
+    print("The best pipeline log-loss is:                                ", log_loss)
 
 # Plot pipeline perf
-def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, plot_with_annual_training, best_model_plot=True):
+def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, Y_test, X_test, plot_with_annual_training, best_model_plot=True):
     if plot_with_annual_training == True:
-
         Y_test_01 = Y_test_GW_training
         X_test_info_01 = X_info_GW_training
         proba_pred = proba_pred_GW_training
 
-        #Plot Calibration curve of the pipeline and info about its bins
-        prob_pred_01, prob_true_01 = results.plot_calibration_curve_2(
-                                        Y_test_0 = Y_test_01.copy(),
-                                        X_train_0 = X_test_info_01.copy(),
-                                        proba_pred_0 = proba_pred.copy(),
-                                        n_bins_0 = 20,
-                                        strategy_0 = 'quantile',
-                                        color_0 = 'red',
-                                        GW_training_or_not = True,
-                                        best_model_plot = best_model_plot)
-
-        #We display statistics on the pipeline probabilities deviation 
-        results.print_calibration_stats(prob_pred_01.copy(),
-                                        prob_true_01.copy())
     if plot_with_annual_training == False:
+        Y_test_01 = Y_test
+        X_test_info_01 = X_test
+        proba_pred = normal_proba_pred
+
+    #Plot Calibration curve of the pipeline and info about its bins
+    prob_pred_01, prob_true_01 = results.plot_calibration_curve_2(
+                                    Y_test_0 = Y_test_01.copy(),
+                                    X_train_0 = X_test_info_01.copy(),
+                                    proba_pred_0 = proba_pred.copy(),
+                                    n_bins_0 = 20,
+                                    strategy_0 = 'quantile',
+                                    color_0 = 'red',
+                                    GW_training_or_not = True,
+                                    best_model_plot = best_model_plot)
+
+    #We display statistics on the pipeline probabilities deviation 
+    results.print_calibration_stats(prob_pred_01.copy(),
+                                        prob_true_01.copy(),
+                                        calibrated_or_not = 'non calibrated')
