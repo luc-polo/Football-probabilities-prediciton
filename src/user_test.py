@@ -59,10 +59,10 @@ def pipe_log_loss(Y_test_00, prob_pred, GW_training):
 
 # Display the best pipeline log-loss
 def best_pipe_log_loss():
-    
     proba_pred_best, Y_test_best, _ = results.load_pred_proba("pipeline_pred_proba_and_Y_and_X_info")
-    log_loss = log_loss(Y_test_best, proba_pred_best)
-    print("The best pipeline log-loss is:                                ", log_loss)
+    Y_test_best = Y_test_best.astype(int)
+    log_loss_b = log_loss(Y_test_best.values.ravel(), proba_pred_best)
+    print("The best pipeline log-loss is:                            ", log_loss_b)
 
 # Plot pipeline perf
 def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_info_GW_training, normal_proba_pred, Y_test, X_test, plot_with_annual_training, best_model_plot=True):
