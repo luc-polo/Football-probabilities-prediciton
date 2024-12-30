@@ -315,7 +315,7 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
     # Afficher le tableau 
     print(fancy_table)
 
-    print('\nLa deviation moyenne pour ce paramétrage est de ', round(deviation*100, 2), "%")
+    print('\nThe average deviation for this pipeline is', round(deviation*100, 2), "%")
     
 # Plot histogram of predicted probabilities 
 def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, title ):
@@ -637,7 +637,46 @@ def compare_pred_proba_and_odds(proba_pred_0,X_info_0):
     #We add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
     dataset_concatenated['Diff proba_pred Max_odd proba'] = dataset_concatenated['Proba pred'] - (1/dataset_concatenated['Max_victory_odd'])
     
-    return dataset_concatenated
+    # Apply red text color to specific columns
+    def apply_text_color(val):
+        return 'color: red'
+
+    styled_df = dataset_concatenated.style.applymap(
+        apply_text_color, subset=['Proba pred', 'Diff proba_pred avg_odd proba']
+    )
+
+    return styled_df
+
+# Compute our predicted proba deviation statistics with bookmakers proba
+def compare_pred_proba_and_odds_stats(diff_dataset):
+    """
+    Calculate and present statistics comparing predicted probabilities and bookmaker probabilities based on absolute differences.
+
+    Args:
+        diff_dataset (DataFrame): Dataset containing differences between predicted and bookmaker probabilities.
+
+    Returns:
+        DataFrame: Table with mean and quantile statistics of absolute differences.
+    """
+    # Si diff_dataset est un Styler, récupérez le DataFrame d'origine
+    if isinstance(diff_dataset, pd.io.formats.style.Styler):
+        diff_dataset = diff_dataset.data
+
+    # Calculate statistics on absolute differences
+    mean_diff = diff_dataset[['Diff proba_pred avg_odd proba']].abs().mean()
+    quantiles_diff = diff_dataset[['Diff proba_pred avg_odd proba']].abs().quantile([0.25, 0.5, 0.75])
+
+    # Combine mean and quantiles into a single DataFrame
+    stats_table = pd.DataFrame({
+        'Mean Absolute Difference': mean_diff,
+        '25th Percentile': quantiles_diff.loc[0.25],
+        'Median': quantiles_diff.loc[0.5],
+        '75th Percentile': quantiles_diff.loc[0.75]
+    })
+
+    # Return the table
+    return stats_table
+
 
 # Simulate betting on a certain number of seasons
 def betting_simulation(compa_dataset, Y_0, proba_interval_0, min_diff_with_odd_proba_0, GW_interval_0, bet_0):
