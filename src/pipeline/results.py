@@ -615,14 +615,14 @@ def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0,
 def compare_pred_proba_and_odds(proba_pred_0, X_info_0):
     """
     Returns a dataset that contains the differences between predicted proba and the proba corresponding to avg_odd and max_odd,
-    with probabilities displayed as percentages (1 decimal).
+    with probabilities displayed as percentages (1 decimal). Provides a preview of the table with the option to view the full dataset.
 
     Args:
         proba_pred_0 (_type_): The predicted proba column we want to compare.
         X_info_0 (_type_): The contextual features columns corresponding the proba_pred_0.
 
     Returns:
-        DataFrame: A dataset with the probabilities and differences formatted.
+        tuple: (Styled full dataset, Styled preview dataset, Unstyled dataset for comparison).
     """
 
     # We concatenate the probabilities predicted and contextual features
@@ -633,26 +633,39 @@ def compare_pred_proba_and_odds(proba_pred_0, X_info_0):
     dataset_concatenated = pd.concat([X_info_0, proba_pred_01], axis=1, ignore_index=True)
     dataset_concatenated.columns = col_names
 
-    # We add a column that contains the difference between predicted proba and the proba corresponding to average_victory_odd
+    # Add a column that contains the difference between predicted proba and the proba corresponding to average_victory_odd
     dataset_concatenated['Diff proba_pred avg_odd proba'] = dataset_concatenated['Proba pred'] - (1 / dataset_concatenated['Avg_victory_odd'])
-    # We add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
+    # Add a column that contains the difference between predicted proba and the proba corresponding to Max_victory_odd
     dataset_concatenated['Diff proba_pred Max_odd proba'] = dataset_concatenated['Proba pred'] - (1 / dataset_concatenated['Max_victory_odd'])
+
+    # Keep the dataset for comparison before formatting probabilities
+    comparison_table = dataset_concatenated.copy()
 
     # Format probabilities and differences as percentages with 1 decimal
     percentage_columns = ['Proba pred', 'Diff proba_pred avg_odd proba', 'Diff proba_pred Max_odd proba']
     for col in percentage_columns:
         dataset_concatenated[col] = (dataset_concatenated[col] * 100).round(1).astype(str) + '%'
 
-
     # Apply red text color to specific columns
     def apply_text_color(val):
         return 'color: red'
 
-    styled_df = dataset_concatenated.style.applymap(
+    styled_df = dataset_concatenated.style.map(
         apply_text_color, subset=['Proba pred', 'Diff proba_pred avg_odd proba']
     )
 
-    return styled_df
+    # Display preview functionality
+    preview_df = dataset_concatenated.head(10)  # Limit to first 10 rows for preview
+    preview_styled = preview_df.style.map(
+        apply_text_color, subset=['Proba pred', 'Diff proba_pred avg_odd proba']
+    )
+
+    # Return styled dataset, preview, and unstyled dataset for comparison
+    return styled_df, preview_styled, comparison_table
+
+
+
+
 
 # Compute our predicted proba deviation statistics with bookmakers proba
 def compare_pred_proba_and_odds_stats(diff_dataset):
@@ -663,29 +676,24 @@ def compare_pred_proba_and_odds_stats(diff_dataset):
         diff_dataset (DataFrame): Dataset containing differences between predicted and bookmaker probabilities.
 
     Returns:
-        DataFrame: Table with mean and quantile statistics of absolute differences.
+        DataFrame: Table with mean and quantile statistics of absolute differences in percentage format.
     """
-    # Si diff_dataset est un Styler, récupérez le DataFrame d'origine
-    if isinstance(diff_dataset, pd.io.formats.style.Styler):
-        diff_dataset = diff_dataset.data
-
-    # Convert string columns to numeric
-    diff_dataset['Diff proba_pred avg_odd proba'] = diff_dataset['Diff proba_pred avg_odd proba'].str.rstrip('%').astype(float) / 100
-
     # Calculate statistics on absolute differences
     mean_diff = diff_dataset[['Diff proba_pred avg_odd proba']].abs().mean()
     quantiles_diff = diff_dataset[['Diff proba_pred avg_odd proba']].abs().quantile([0.25, 0.5, 0.75])
 
     # Combine mean and quantiles into a single DataFrame
     stats_table = pd.DataFrame({
-        'Mean Absolute Difference': mean_diff,
-        '25th Percentile': quantiles_diff.loc[0.25],
-        'Median': quantiles_diff.loc[0.5],
-        '75th Percentile': quantiles_diff.loc[0.75]
+        'Mean Absolute Difference (%)': (mean_diff * 100).round(1),
+        '25th Percentile (%)': (quantiles_diff.loc[0.25] * 100).round(1),
+        'Median (%)': (quantiles_diff.loc[0.5] * 100).round(1),
+        '75th Percentile (%)': (quantiles_diff.loc[0.75] * 100).round(1)
     })
 
     # Return the table
-    return stats_table
+    display(stats_table)
+
+
 
 
 # Simulate betting on a certain number of seasons
@@ -719,6 +727,7 @@ def betting_simulation(compa_dataset, Y_0, proba_interval_0, min_diff_with_odd_p
     Example:
         betting_simulation(compa_dataset, Y_0, (0.6, 0.8), 0.1, (5, 38), 10)
     """
+
 
     # Concatenate predicted probabilities and contextual columns
     col_names = []
@@ -757,9 +766,17 @@ def betting_simulation(compa_dataset, Y_0, proba_interval_0, min_diff_with_odd_p
     ratio_gain_bet = final_gain / (nb_of_bets * bet_0)
 
     # Print summary of the betting simulation
-    print('The final gain is', final_gain, '€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
-    print('This is equivalent to a ratio gain/bet =', ratio_gain_bet)
 
+    
+    if ratio_gain_bet > 0:
+        print("Congratulation, you beat the bookmakers!")
+        print('The final gain is', round(final_gain,2), '€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
+        print('This is equivalent to a net gain-to-bet ratio =', round(ratio_gain_bet * 100, 2), '%')
+    else:
+        print("Unfortunatly your model and your stategy are not performant enough to beat the bookmakers...")
+        print('The final loss is', round(final_gain,2), '€ , betting on', nb_of_bets, 'matches, out of', nb_of_matches)
+        print('This is equivalent to a net loss-to-bet ratio =', round(ratio_gain_bet * 100, 2), '%')
+        
     return selected_dataset_3
     
 
