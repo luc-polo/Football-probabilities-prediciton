@@ -24,31 +24,30 @@ from data import preprocessing
 
 # Displaying the results of the GridSearchCV() function that optimised pipeline parameters
 def GridSearchCV_results(grid_search_0, X_train_0):
-    """  
-        Present the results of GridSearchCV() on our pipeline. Display the optimal parameters, score, and features selected by GridSearchCV() on our pipeline.
-    
-    Args:
-        grid_search_0 (object): Name of the GridSearchCV() object ran before and that we want to display the results of.
-        
-        X_train_0 (DataFrame): The trainset on which we ran grid_search_0 before.
-    
-    Returns:
-        None
     """
-    # Display the best parameters and score
+    Displays the best parameters, score, and selected features from a GridSearchCV result.
+
+    Args:
+        grid_search (GridSearchCV): The fitted GridSearchCV object after hyperparameter tuning.
+        X_train (DataFrame): The training dataset used in the GridSearchCV process.
+
+    Returns:
+        None: Prints the best parameters, score, and selected features directly.
+    """
+    # Extract best parameters and score
     best_params = grid_search_0.best_params_
     best_score = grid_search_0.best_score_
-    print("Best Parameters:", best_params, "\n\nBest score with these hyper parameters:", best_score)
 
-    #Display features selected
-    # Obtenir le sélecteur de caractéristiques à partir du meilleur estimateur
+    # Print best parameters and score
+    print("Best Parameters:", best_params)
+    print("\nBest score with these hyperparameters:", best_score)
+
+    # Extract selected features
     best_selector = grid_search_0.best_estimator_['features_selector']
-    # Obtenir les indices des features sélectionnées
-    selected_feature_indices = best_selector.get_support(indices=True)
-    # Obtenir les noms des caractéristiques à partir des indices
-    selected_feature_names = X_train_0.columns[selected_feature_indices]
+    selected_indices = best_selector.get_support(indices=True)
+    selected_features = X_train_0.columns[selected_indices]
 
-    print("\n\nFeatures selected:",selected_feature_names)
+    print("\nSelected Features:", list(selected_features))
 
 
 # --------------------------------------------------------------
@@ -183,28 +182,22 @@ def calibration_curve_bis(
 
 
 def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strategy_0, color_0, GW_training_or_not, best_model_plot=True):
-    """  
-        Display the annotated calibration curves either for the non calibrated pipeline or for the calibrated one.
-     
-     Args:
-        Y_test_0 (DataFrame): The labels/targets Dataframe used to plot the calibration curve.
-        
-        X_train_0(DataFrame): The X_train used to train the pipeline that predicted proba_pred_0. We use it to display its nb of elements on our graph.
-        
-        proba_pred_0 (list): the one d array containing the probabilities predicted by our pipeline on X_test_0
-        
-        n_bins_0 (int): Number of bins to discretize the predicted probabilities.
-        
-        strategy_0 (str): strategy to discretize the probabilities interval to define the bins intervals. Etither 'uniform' or 'quantile'
-        
-        color_0 (str): Color for plotting the calibration curve. Blue for the calibrated model and Red for non calibrated one.
-        
-        GW_training_or_not (Boolean): Wether the pipeline inputed has been retrained every GW or Season before making prediction (used to display the number of sample in trainset)
-    
-     Returns:
-        sklearn.calibration.CalibrationDisplay : The figure of calibration curve of pipeline_0
-     """
-    
+    """
+    Plots the calibration curve for predicted probabilities and annotates deviations.
+
+    Args:
+        y_true (DataFrame): True labels for the test set.
+        X_train (DataFrame): Training set used for the predictions.
+        y_prob (array-like): Predicted probabilities for the positive class.
+        n_bins (int): Number of bins for the calibration curve.
+        strategy (str): Strategy for binning; either "uniform" or "quantile".
+        color (str): Color for the curve.
+        retrained (bool): Indicates if the model was retrained per Game Week or Season.
+        include_best_model (bool): Whether to include the best model's calibration curve for comparison.
+
+    Returns:
+        None: Displays the calibration plot.
+    """
     prob_true, prob_pred, samples_nb_per_bin, bins = calibration_curve_bis(Y_test_0, proba_pred_0, n_bins= n_bins_0, strategy=strategy_0, pos_label = 1)
     
     # Plot the calibration curve
@@ -342,14 +335,21 @@ def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, title ):
 
 # Ratio probabilities pred/sum of true target
 def ratio_proba__sum_true_target(X_train_0, Y_train_0, X_test_0, Y_test_0, pipeline_0):
-    """Prints the ratio of the sum of predicted probabilities by the pipeline on the train set to the sum of true labels on the train set, as well as the same ratios for the test set. This function serves as a diagnostic tool to assess the coherence of the model training. In a well-trained model, the ratio for the train set must be equal to 1t (according to info on internet). The function also provides valuable insights into the precision of predicted probabilities by calculating the ratio on the test set.
+    """
+    Computes the ratio of predicted probabilities to true target sums for train and test sets.
+
+    This diagnostic function assesses the coherence of the model's predictions
+    by comparing the sum of predicted probabilities to the sum of true targets.
 
     Args:
-        X_train_0 (_type_): Feature data for the train set
-        Y_train_0 (_type_): True labels for the train set.
-        X_test_0 (_type_): Feature data for the test set.
-        Y_test_0 (_type_): True labels for the test set.
-        pipeline_0 (_type_): The trained machine learning pipeline.
+        X_train (DataFrame): Training feature data.
+        y_train (DataFrame): Training target labels.
+        X_test (DataFrame): Test feature data.
+        y_test (DataFrame): Test target labels.
+        pipeline (Pipeline): Trained machine learning pipeline.
+
+    Returns:
+        None: Prints ratios for train and test sets.
     """
     proba_pred_train = pipeline_0.predict_proba(X_train_0)[:,1]
     proba_pred_test = pipeline_0.predict_proba(X_test_0)[:,1]
@@ -539,42 +539,7 @@ def features_coeff_report(chosen_pipeline_trained_0, X_train_0):
     print(fancy_model_coeff_table)
 
 
-#Calibration performances displaying depending on the nb of matches statistics are computed on (the nb of GW already played)
-def calibration_over_season_advancement(season_divisions_nb, X_info_0, proba_pred_0, Y_0):
-    """Returns a subset of datasets that are divisions of the original test_set obtained grouping it by played_matches_nb values. For instance the first dataset returned is all the matches of the test_set where played_matches_nb is in [6,21], the second one all the matches where played_matches_nb is in [22, 37]. These dataset will be used to compare calibration of pred_proba through the advencement of the season.
 
-    Args:
-        season_divisions_nb (_type_): The number of subdatasets we want to return. It's 2, 3  or maximum 4. If more there wont't be anough data to plot representative calibration curves.
-        X_info_0 (_type_): The dataset containing contextual features of test_dataset
-        proba_pred_0 (_type_): The predicted probabilities for the test_dataset
-        Y_0 (_type_): The results of the matches of the test_dataset
-
-    Returns:
-        _type_: _description_
-    """
-    # Compute the limits of played matchs nb for each dataframe division
-    max_nb_of_gw = X_info_0['Played_matchs_nb'].max() 
-    split_points = np.linspace(constant_variables.min_played_matchs_nb, max_nb_of_gw, num=season_divisions_nb+1, dtype=int)[:]
-
-    # Concat probabilities predicted, contextual features and matchs result
-    proba_pred_01 = pd.DataFrame(proba_pred_0, columns = ['Proba pred'])
-    col_names = []
-    col_names.extend(X_info_0.columns.tolist())
-    col_names.extend(proba_pred_01.columns.tolist())
-    col_names.extend(Y_0.columns.tolist())
-    
-    dataset_concatenated = pd.concat([X_info_0, proba_pred_01, Y_0] , axis=1, ignore_index=True)
-    dataset_concatenated.columns = col_names
-    
-    #Divide the dataframe
-    subsets = []  #List that will contain the divisions of dataframe
-    for i in range(season_divisions_nb):
-        subsets.append(dataset_concatenated[
-            (dataset_concatenated['Played_matchs_nb']>split_points[i])
-            &
-            (dataset_concatenated['Played_matchs_nb']<=split_points[i+1])])
-    
-    return subsets
         
 #Plot learning curves for several subdataframes
 def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0, GW_training_or_not_0):
