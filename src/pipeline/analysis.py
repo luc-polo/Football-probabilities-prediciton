@@ -1,5 +1,6 @@
-
-
+import numpy as np
+from configuration import constant_variables
+import pandas as pd
 
 #Calibration performances displaying depending on the nb of matches statistics are computed on (the nb of GW already played)
 def calibration_over_season_advancement(season_divisions_nb, X_info_0, proba_pred_0, Y_0):
