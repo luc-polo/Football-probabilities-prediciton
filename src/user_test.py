@@ -8,7 +8,7 @@ import numpy as np
 from IPython.display import display, HTML
 
 # Create the personnalised pipeline
-def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l1', C=1):
+def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l1', C=1, l1_ratio = 0.5):
     """
     Create a pipeline based on the defined parameters.
 
@@ -30,10 +30,16 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
         "RobustScaler": RobustScaler(),
         "MinMaxScaler": MinMaxScaler()
     }
-    scaler = scalers.get(Scaler, StandardScaler())
+    scaler = scalers.get(Scaler)
 
     # Logistic Regression
-    model = LogisticRegression(penalty=penalty, C=C, solver='saga', max_iter=3000, random_state=999)
+    if penalty == 'None':
+        model = LogisticRegression(penalty=None, C=C, solver='saga', max_iter=3000, random_state=999)
+    elif penalty == 'elasticnet':
+        model = LogisticRegression(penalty=penalty, C=C, l1_ratio=l1_ratio, solver='saga', max_iter=3000, random_state=999)
+    else:
+        model = LogisticRegression(penalty=penalty, C=C, solver='saga', max_iter=3000, random_state=999)
+
 
     # Create pipeline
     pipeline = Pipeline([
