@@ -48,11 +48,11 @@ def create_pipeline(nb_of_feat_to_select=15, Scaler="StandardScaler", penalty='l
 from sklearn.metrics import log_loss
 
 # Display the personalised pipeline log-loss
-def pipe_log_loss(Y_test_00, prob_pred, GW_training):
+def pipe_log_loss(Y_test_00, prob_pred, annual_training):
     Y_test_00 = np.array(Y_test_00).astype(int)  # Conversion en tableau NumPy d'entiers 
 
     personalised_log_loss = log_loss(Y_test_00, prob_pred)
-    if GW_training == True:
+    if annual_training == True:
         print("Your personnalised pipeline log-loss, annualy trained, is:", personalised_log_loss)
 
     else:
