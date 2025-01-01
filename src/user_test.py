@@ -97,7 +97,7 @@ def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_inf
 
 # build the table containing the statistics of deviation between BEST proba predicted and bookmakers proba 
 def compare_best_pred_proba_and_odds_stats():
-    display(HTML('<span style="font-size:24px; font-weight:bold;">Best Pipeline Statistics:</span>'))
+    display(HTML('<span style="font-size:24px; font-weight:bold;">Best Pipeline’s Statistics:</span>'))
     proba_pred_best, Y_test_best, X_info_best = results.load_pred_proba("pipeline_pred_proba_and_Y_and_X_info", print_msg =False)
     Y_test_best = Y_test_best.astype(int)
     _, _, odd_proba_pred_proba_compa_dataset_df  = results.compare_pred_proba_and_odds(proba_pred_best.copy() ,X_info_best.copy())
