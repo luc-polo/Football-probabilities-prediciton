@@ -74,6 +74,8 @@ On the other hand, the user test version is compiled into a single notebook: use
     ├── docs               <- Projects relative documentation
     │
     ├── models             <- Trained and serialized models
+    │   ├── results
+    │   │   └── best_pipeline_results.plk
     │   ├── chosen_pipeline.pkl
     │   ├── chosen_pipeline_trained.pkl
     │   └── .gitkeep       
@@ -118,7 +120,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     │   │
     │   ├── data           <- Scripts to download or generate data
     │   │   ├── data_combination.py
-        │   │   ├── make_dataset.py
+    │   │   ├── make_dataset.py
     │   │   └── preprocessing.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
@@ -143,7 +145,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     │   ├── useful_functions.py <- Utility functions for the project
     │   └── user_test.py   <- Scripts for user testing and validation
     │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+    
 
 
 
