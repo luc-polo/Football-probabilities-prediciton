@@ -24,7 +24,7 @@ from pipeline import results
 # Learning curve for Pipeline performances (logloss)
 # --------------------------------------------------------------
 
-def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0):
+def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0, ylim =[-0.61, -0.54]):
     """
         This function plots learning curves of our pipeline, using the combination of train and valid sets as its base data.
 
@@ -51,9 +51,9 @@ def pipeline_learning_curve(X_train_0, Y_train_0, pipeline_0, scoring_0):
     plt.xlabel('training_set size')
     plt.ylabel('neg log loss')
     plt.title('Learning curve of the pipeline')
-    plt.legend() 
+    plt.legend()
     # setting graduations
-    plt.ylim(-0.61, -0.54)  # Adjust the y axis limits
+    plt.ylim(ylim[0], ylim[1])  # Adjust the y axis limits
     #increasing nb of graduation a grid lines
     plt.minorticks_on()
     plt.grid( which='major', linewidth=2)

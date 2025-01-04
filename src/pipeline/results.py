@@ -763,7 +763,7 @@ def save_pred_proba(proba_pred, Y_test, X_info, file_name):
         None
     """
     # Define the absolute path for the datasets
-    save_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/medels/{file_name}.pkl"
+    save_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/models/results/{file_name}.pkl"
 
     # Prepare the data as a dictionary
     data_to_save = {
