@@ -24,7 +24,7 @@ To do so the program tries to predict football matches outcomes (Win / Lose only
 The model chosen to do predictions is Logistic Regression. 
 
 
-- Why you used the technologies you used?
+- Why I used the technologies I used?
 
 Logistic Regression prooved to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
 
