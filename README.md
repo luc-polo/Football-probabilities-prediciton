@@ -31,25 +31,6 @@ Logistic Regression prooved to be the best model as it’s a model that computes
 
  
 
-What problems I faced?
-----------------------
-
-The hardest steps in my project were (in increasing order of difficulty):
-
-1- Data cleaning/verification and construction.
-
-First of all I had to check that the data supplied by footystats were accurate. I did it manually and was very long. It turned out that a lot was not. So it was a hard decisions to decide which feature keeping or dropping (XG for ex).
-
-Then came features creation. I had to compute almost all the features I used to feed my model, based on basic stats of footystats. And after each new feature creation, I had to check that my calculation was accurate. As I had no automated test, I had to manually check… This whole process took me a lot of time too.
-
-2- Computing models performances.
-
-There are no True labels for probabilities, we must bin/discretise the predictions to evaluate their calibration. That’s not extremely precise.
-
-
-3-Another difficulty, quite personal as a beginner data scientist, was the organization of the project. Indeed, I struggled to find the right structure and to understand how this structure worked. I had no knowledge on python modules, VS Code, Code splitting in several files… When I started the project, I put all my code on a Jupiter Notebook. I had to run everything almost every time I changed a line. However, I had created a quite clear and rigorous structure with a lot of commentaries. That allowed me to have a quite clear vision on my project.
-
-At the end of November 2023, I decided to switch to VS Code, to adopt the Cookiecutter project structure and the Sphinx documentation. That was a major change for me that required me around one month of adaptation.
 
  
 
@@ -59,11 +40,6 @@ I have not solid knowledge on code’s surrounding tools and executors, so I do 
 
 I only use VS Code and the modules/packages listed in my ‘requirements’ file. However, I plan to set authentication or protection on my project.
 
- 
-
-Licence:
---------
-Thise project is striclty confidential. Its use is only reserved to his author.
 
 
 
