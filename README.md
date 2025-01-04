@@ -1,10 +1,16 @@
 projet_Mbappe
 ==============================
 
-This project is a personal initiative that I am particularly proud of. Inspired by my professional aspirations in data science and my genuine interest in football and statistics, I decided to take on this instructive challenge. The project involves building a complex and comprehensive machine learning model to predict the probabilities of victory in football matches and identify value bets. It encompasses the entire process, from data extraction to betting strategy building.
- 
-Project Description
+Purpose and Scope:
 -------------------
+This project is a personal initiative that I am particularly proud of. Inspired by my professional aspirations in data science and my genuine interest in football and statistics, I decided to take on this instructive challenge. The project involves building a complex and comprehensive machine learning model to predict the probabilities of victory in football matches and identify value bets. It encompasses the entire process, from data extraction to betting strategy building.
+
+```diff
+- For a quick and clear overview of this project, open and follow the little tutorial in the user_test.ipynb file,
+- located in the notebooks directory 
+```
+ 
+#### Project Description
 
 - What my application does?
 
@@ -30,26 +36,24 @@ Logistic Regression prooved to be the best model as it’s a model that computes
 
 
  
+Repository Structure:
+-----------------------
+
+#### Brief explanation of project organisation:
+In this project, we have a comprehensive model development component and a “user test” version. The comprehensive model development covers a range of tasks and analyses, whereas the “user test” is a concise version that lets new users quickly explore my work and results.
+
+The comprehensive model development is split across several notebooks (all except user_test.ipynb). In these notebooks, we perform our analyses and model building, calling functions defined in the .py modules located in the src folder. I split the comprehensive model development across multiple notebooks to make the project easier to follow.
+
+On the other hand, the user test version is compiled into a single notebook: user_test.ipynb. There, you can explore and interact with the key steps of my model development, tune a model, and even implement a small betting strategy.
+
+#### Global structure:
 
 
- 
 
-How to install and run the project
-----------------------------------
-I have not solid knowledge on code’s surrounding tools and executors, so I do not know it there are specific software or others required for my project…
-
-I only use VS Code and the modules/packages listed in my ‘requirements’ file. However, I plan to set authentication or protection on my project.
-
-
-
-
-Project Organization
-------------
-
-
+#### Detailed repository structure:
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- This file
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
@@ -59,12 +63,12 @@ Project Organization
     │
     ├── docs               <- Projects relative documentation
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
+    ├── models             <- Trained and serialized models
     │   ├── chosen_pipeline.pkl
     │   ├── chosen_pipeline_trained.pkl
     │   └── .gitkeep       
     │
-    ├── notebooks          <- Jupyter notebooks
+    ├── notebooks          <- The different Jupyter notebooks used to execute my code
     │   ├── data_preparation.ipynb
     │   ├── features_exploration.ipynb
     │   ├── pipeline_dev.ipynb
@@ -135,4 +139,8 @@ Project Organization
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+How to install and run the project
+----------------------------------
+I have not solid knowledge on code’s surrounding tools and executors, so I do not know it there are specific software or others required for my project…
+
+I only use VS Code and the modules/packages listed in my ‘requirements’ file. However, I plan to set authentication or protection on my project.
