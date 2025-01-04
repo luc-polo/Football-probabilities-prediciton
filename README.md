@@ -106,7 +106,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     │                         generated with `pip freeze > requirements.txt`
     ├── environment and requirements
     │   ├── environment_projet_mbappe.yml
-    │   ├── requirements_proj_mbappe.txt
+    │   ├── requirements.txt
     │   ├── test_environment.py
     │   └── tox.ini
     │
