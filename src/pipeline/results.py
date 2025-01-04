@@ -213,7 +213,7 @@ def plot_calibration_curve_2(Y_test_0, X_train_0, proba_pred_0, n_bins_0, strate
     # Plot best model calibration curve if requested
     if best_model_plot:
        
-       proba_pred_best, Y_test_best, _ = load_pred_proba("pipeline_pred_proba_and_Y_and_X_info")
+       proba_pred_best, Y_test_best, _ = load_pred_proba("best_pipeline_results")
        prob_true_best, prob_pred_best, _ , _ = calibration_curve_bis(
            Y_test_best, proba_pred_best, n_bins=n_bins_0, strategy=strategy_0, pos_label=1
        )
@@ -564,7 +564,8 @@ def calibration_curves_subdataframes(subdatasets_0, nb_bins_01, histo_bars_nb_0,
                                         n_bins_0 = nb_bins_01,
                                         strategy_0 = 'quantile',
                                         color_0 = 'red',
-                                        GW_training_or_not = GW_training_or_not_0)
+                                        GW_training_or_not = GW_training_or_not_0,
+                                        best_model_plot = False)
         #We display statistics on the pipeline probabilities deviation 
         print_calibration_stats(prob_pred_01.copy(),
                                 prob_true_01.copy(),
@@ -762,7 +763,7 @@ def save_pred_proba(proba_pred, Y_test, X_info, file_name):
         None
     """
     # Define the absolute path for the datasets
-    save_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/results/{file_name}.pkl"
+    save_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/medels/{file_name}.pkl"
 
     # Prepare the data as a dictionary
     data_to_save = {
@@ -818,7 +819,7 @@ def load_pred_proba(file_name, print_msg = True):
         tuple: (proba_pred, Y_test, X_info) if the file exists, else None.
     """
     # Define the absolute path for the datasets
-    load_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/results/{file_name}.pkl"
+    load_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/models/results/{file_name}.pkl"
 
     # Load the data
     try:

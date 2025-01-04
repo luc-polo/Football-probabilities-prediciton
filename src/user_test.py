@@ -66,7 +66,7 @@ def pipe_log_loss(Y_test_00, prob_pred, annual_training):
 
 # Display the best pipeline log-loss
 def best_pipe_log_loss():
-    proba_pred_best, Y_test_best, _ = results.load_pred_proba("pipeline_pred_proba_and_Y_and_X_info", print_msg =False)
+    proba_pred_best, Y_test_best, _ = results.load_pred_proba("best_pipeline_results", print_msg =False)
     Y_test_best = Y_test_best.astype(int)
     log_loss_b = log_loss(Y_test_best.values.ravel(), proba_pred_best)
     print("The best pipeline log-loss is:                            ", log_loss_b)
@@ -104,7 +104,7 @@ def plot_pipeline_pred_results(proba_pred_GW_training, Y_test_GW_training, X_inf
 # build the table containing the statistics of deviation between BEST proba predicted and bookmakers proba 
 def compare_best_pred_proba_and_odds_stats():
     display(HTML('<span style="font-size:24px; font-weight:bold;">Best Pipeline’s Statistics:</span>'))
-    proba_pred_best, Y_test_best, X_info_best = results.load_pred_proba("pipeline_pred_proba_and_Y_and_X_info", print_msg =False)
+    proba_pred_best, Y_test_best, X_info_best = results.load_pred_proba("best_pipeline_results", print_msg =False)
     Y_test_best = Y_test_best.astype(int)
     _, _, odd_proba_pred_proba_compa_dataset_df  = results.compare_pred_proba_and_odds(proba_pred_best.copy() ,X_info_best.copy())
     results.compare_pred_proba_and_odds_stats(odd_proba_pred_proba_compa_dataset_df)
