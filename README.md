@@ -1,31 +1,32 @@
 projet_Mbappe
 ==============================
 
-This project is a personnal initiative i am particularly porud of. Based on my professionnal aspiration for data science and my genuine interest for football and statistics I decided dive into this instructive challenge. It consists in building a complex and comprehensive ML model that perform victory/draw/defeat probabilities predictions. The projects goes from data extraction to probabilities calibration and analysis.
+This project is a personal initiative that I am particularly proud of. Inspired by my professional aspirations in data science and my genuine interest in football and statistics, I decided to take on this instructive challenge. The project involves building a complex and comprehensive machine learning model to predict the probabilities of victory in football matches and identify value bets. It encompasses the entire process, from data extraction to betting strategy building.
  
 Project Description
 -------------------
 
 What my application does?
 
-This project aims at identifying value bet of bookmakers on football matches.
+This project focuses on identifying value bets offered by bookmakers on football matches. A value bet occurs when bookmakers propose odds that underestimate a team's probability of winning, resulting in odds that are higher than they should be based on the actual probability
 
 The program inputs teams stats since the beginning of the season. And outputs victories probabilities and Boolean value of whether the bet proposed by bookmaker is a value bet.
 
+    Where this bookmakers flaw comes from?
+
+    This discrepancy between bookmakers' probabilities and the actual probabilities often arises because bookmakers factor in bettors' behaviors when calculating their odds. They do this to encourage balanced betting on both sides, minimizing their risk and ensuring a consistent profit margin regardless of the match outcome.
  
 
 How does it do it?
 
 To do so the program tries to predict football matches outcomes (Win / Lose only for now)  probabilities and compare it to bookmakers one. The proba of bookmakers are the inverse of their odds.
 
-The model chosen to do predictions is Logistic Regression, combined with a Calibrator.
+The model chosen to do predictions is Logistic Regression. 
 
 
 Why you used the technologies you used?
 
-Logistic Regression appeared to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
-
-Regarding Calibrator, it was indispensable to optimize our model probabilities distribution (making it the closer from reality), and calibrator are designed for this. It was evidence.
+Logistic Regression prooved to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
 
  
 
