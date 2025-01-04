@@ -1,10 +1,16 @@
 projet_Mbappe
 ==============================
 
-This project is a personal initiative that I am particularly proud of. Inspired by my professional aspirations in data science and my genuine interest in football and statistics, I decided to take on this instructive challenge. The project involves building a complex and comprehensive machine learning model to predict the probabilities of victory in football matches and identify value bets. It encompasses the entire process, from data extraction to betting strategy building.
- 
-Project Description
+Purpose and Scope:
 -------------------
+This project is a personal initiative that I am particularly proud of. Inspired by my professional aspirations in data science and my genuine interest in football and statistics, I decided to take on this instructive challenge. The project involves building a complex and comprehensive machine learning model to predict the probabilities of victory in football matches and identify value bets. It encompasses the entire process, from data extraction to betting strategy building.
+
+```diff
+- For a quick and clear overview of this project, open and follow the little tutorial in the user_test.ipynb file,
+- located in the notebooks directory 
+```
+ 
+#### Project Description
 
 - What my application does?
 
@@ -19,61 +25,36 @@ This discrepancy between bookmakers' probabilities and the actual probabilities 
 
 - How does it do it?
 
-To do so the program tries to predict football matches outcomes (Win / Lose only for now)  probabilities and compare it to bookmakers one. The proba of bookmakers are the inverse of their odds.
+To achieve this, the program predicts the probabilities of football match outcomes and compares them to those provided by bookmakers. The bookmakers' probabilities are calculated as the inverse of their odds.
 
-The model chosen to do predictions is Logistic Regression. 
+The models chosen for these predictions are Logistic Regression and Neural Networks.
 
 
 - Why I used the technologies I used?
 
-Logistic Regression prooved to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
+Logistic Regression proved to be an excellent model for this task as it computes probabilities for classification using a model function (the logistic function) that is particularly well-suited for predicting probabilities. Moreover, the scoring function is directly based on the predicted probabilities, penalizing deviations from accurate probability predictions
 
-
- 
-
-What problems I faced?
-----------------------
-
-The hardest steps in my project were (in increasing order of difficulty):
-
-1- Data cleaning/verification and construction.
-
-First of all I had to check that the data supplied by footystats were accurate. I did it manually and was very long. It turned out that a lot was not. So it was a hard decisions to decide which feature keeping or dropping (XG for ex).
-
-Then came features creation. I had to compute almost all the features I used to feed my model, based on basic stats of footystats. And after each new feature creation, I had to check that my calculation was accurate. As I had no automated test, I had to manually check… This whole process took me a lot of time too.
-
-2- Computing models performances.
-
-There are no True labels for probabilities, we must bin/discretise the predictions to evaluate their calibration. That’s not extremely precise.
-
-
-3-Another difficulty, quite personal as a beginner data scientist, was the organization of the project. Indeed, I struggled to find the right structure and to understand how this structure worked. I had no knowledge on python modules, VS Code, Code splitting in several files… When I started the project, I put all my code on a Jupiter Notebook. I had to run everything almost every time I changed a line. However, I had created a quite clear and rigorous structure with a lot of commentaries. That allowed me to have a quite clear vision on my project.
-
-At the end of November 2023, I decided to switch to VS Code, to adopt the Cookiecutter project structure and the Sphinx documentation. That was a major change for me that required me around one month of adaptation.
+Neural Networks were also chosen for their ability to model complex, non-linear relationships in the data and their adaptability in probability prediction, supported by the wide range of activation functions available.
 
  
+Repository Structure:
+-----------------------
 
-How to install and run the project
-----------------------------------
-I have not solid knowledge on code’s surrounding tools and executors, so I do not know it there are specific software or others required for my project…
+#### Brief explanation of project organisation:
+In this project, we have a comprehensive model development component and a “user test” version. The comprehensive model development covers a range of tasks and analyses, whereas the “user test” is a concise version that lets new users quickly explore my work and results.
 
-I only use VS Code and the modules/packages listed in my ‘requirements’ file. However, I plan to set authentication or protection on my project.
+The comprehensive model development is split across several notebooks (all except user_test.ipynb). In these notebooks, we perform our analyses and model building, calling functions defined in the .py modules located in the src folder. I split the comprehensive model development across multiple notebooks to make the project easier to follow.
 
- 
+On the other hand, the user test version is compiled into a single notebook: user_test.ipynb. There, you can explore and interact with the key steps of my model development, tune a model, and even implement a small betting strategy.
 
-Licence:
---------
-Thise project is striclty confidential. Its use is only reserved to his author.
-
+#### Global structure:
 
 
-Project Organization
-------------
 
-
+#### Detailed repository structure:
     ├── LICENSE
     ├── Makefile           <- Makefile with commands like `make data` or `make train`
-    ├── README.md          <- The top-level README for developers using this project.
+    ├── README.md          <- This file
     ├── data
     │   ├── external       <- Data from third party sources.
     │   ├── interim        <- Intermediate data that has been transformed.
@@ -83,12 +64,12 @@ Project Organization
     │
     ├── docs               <- Projects relative documentation
     │
-    ├── models             <- Trained and serialized models, model predictions, or model summaries
+    ├── models             <- Trained and serialized models
     │   ├── chosen_pipeline.pkl
     │   ├── chosen_pipeline_trained.pkl
     │   └── .gitkeep       
     │
-    ├── notebooks          <- Jupyter notebooks
+    ├── notebooks          <- The different Jupyter notebooks used to execute my code
     │   ├── data_preparation.ipynb
     │   ├── features_exploration.ipynb
     │   ├── pipeline_dev.ipynb
@@ -159,4 +140,8 @@ Project Organization
 
 --------
 
-<p><small>Project based on the <a target="_blank" href="https://drivendata.github.io/cookiecutter-data-science/">cookiecutter data science project template</a>. #cookiecutterdatascience</small></p>
+How to install and run the project
+----------------------------------
+I have not solid knowledge on code’s surrounding tools and executors, so I do not know it there are specific software or others required for my project…
+
+I only use VS Code and the modules/packages listed in my ‘requirements’ file. However, I plan to set authentication or protection on my project.
