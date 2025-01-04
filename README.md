@@ -25,15 +25,16 @@ This discrepancy between bookmakers' probabilities and the actual probabilities 
 
 - How does it do it?
 
-To do so the program tries to predict football matches outcomes (Win / Lose only for now)  probabilities and compare it to bookmakers one. The proba of bookmakers are the inverse of their odds.
+To achieve this, the program predicts the probabilities of football match outcomes and compares them to those provided by bookmakers. The bookmakers' probabilities are calculated as the inverse of their odds.
 
-The model chosen to do predictions is Logistic Regression. 
+The models chosen for these predictions are Logistic Regression and Neural Networks.
 
 
 - Why I used the technologies I used?
 
-Logistic Regression prooved to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
+Logistic Regression proved to be an excellent model for this task as it computes probabilities for classification using a model function (the logistic function) that is particularly well-suited for predicting probabilities. Moreover, the scoring function is directly based on the predicted probabilities, penalizing deviations from accurate probability predictions
 
+Neural Networks were also chosen for their ability to model complex, non-linear relationships in the data and their adaptability in probability prediction, supported by the wide range of activation functions available.
 
  
 Repository Structure:
