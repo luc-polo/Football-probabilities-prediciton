@@ -6,25 +6,25 @@ This project is a personal initiative that I am particularly proud of. Inspired 
 Project Description
 -------------------
 
-What my application does?
+- What my application does?
 
 This project focuses on identifying value bets offered by bookmakers on football matches. A value bet occurs when bookmakers propose odds that underestimate a team's probability of winning, resulting in odds that are higher than they should be based on the actual probability
 
 The program inputs teams stats since the beginning of the season. And outputs victories probabilities and Boolean value of whether the bet proposed by bookmaker is a value bet.
 
-    Where this bookmakers flaw comes from?
+Where this bookmakers flaw comes from?
 
-    This discrepancy between bookmakers' probabilities and the actual probabilities often arises because bookmakers factor in bettors' behaviors when calculating their odds. They do this to encourage balanced betting on both sides, minimizing their risk and ensuring a consistent profit margin regardless of the match outcome.
+This discrepancy between bookmakers' probabilities and the actual probabilities often arises because bookmakers factor in bettors' behaviors when calculating their odds. They do this to encourage balanced betting on both sides, minimizing their risk and ensuring a consistent profit margin regardless of the match outcome.
  
 
-How does it do it?
+- How does it do it?
 
 To do so the program tries to predict football matches outcomes (Win / Lose only for now)  probabilities and compare it to bookmakers one. The proba of bookmakers are the inverse of their odds.
 
 The model chosen to do predictions is Logistic Regression. 
 
 
-Why you used the technologies you used?
+- Why you used the technologies you used?
 
 Logistic Regression prooved to be the best model as it’s a model that computes probabilities to do classification. And the output needed for our model is probabilities. Moreover, the scoring function is directly based on the the proba predicted. Indeed, the more the predicted proba is far from the real outcome, the more the scoring function penalizes.
 
