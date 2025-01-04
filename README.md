@@ -54,10 +54,10 @@ On the other hand, the user test version is compiled into a single notebook: use
 - **env**: My virtual environment.
 - **environment and requirements**: Includes `.yml` and `.txt` files listing the required dependencies to replicate my virtual environment.
 - **models**: Stores the pipelines that performed well, along with their results. Primarily used for storage.
-- **notebooks**: The most important part of the project. That's from the notebooks inside this folder we can executethe comprehensive model development as well as the user test.
+- **notebooks**: The most crucial part of the project. This folder contains the Jupyter notebooks where you can execute the comprehensive model development as well as the user test.
 - **references**: Contains an excel file explaining what every feature represents
 - **reports**: Contains my graphs. Only made for storage.
-- **src**: Contains all the .py modules called in the notebooks. They contain functions stored there to make the notebooks easier to read.
+- **src**: Contains all the .py modules called in the notebooks. We stored functions there to make the notebooks shorter and easier to read.
 - **setup.py**: Nothing intersting, just in the case I want to publish the project as a package.
 
 #### Detailed repository structure:
