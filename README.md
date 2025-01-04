@@ -12,7 +12,7 @@ This project focuses on identifying value bets offered by bookmakers on football
 
 The program inputs teams stats since the beginning of the season. And outputs victories probabilities and Boolean value of whether the bet proposed by bookmaker is a value bet.
 
-Where this bookmakers flaw comes from?
+Where this bookmakers' flaw comes from?
 
 This discrepancy between bookmakers' probabilities and the actual probabilities often arises because bookmakers factor in bettors' behaviors when calculating their odds. They do this to encourage balanced betting on both sides, minimizing their risk and ensuring a consistent profit margin regardless of the match outcome.
  
