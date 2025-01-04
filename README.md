@@ -52,7 +52,7 @@ On the other hand, the user test version is compiled into a single notebook: use
 - **data**: Folder containing the datasets at different stages of transformation. Only used for storage.
 - **docs**: Contains files related to the Sphinx documentation generation process. Not interesting for those exploring the project.
 - **env**: My virtual environment.
-- **environment and requirements**: Includes `.yml` and `.txt` files listing the required dependencies to replicate my virtual environment.
+- **environment and requirements**: Includes `.txt` file listing the required dependencies to replicate my virtual environment.
 - **models**: Stores the pipelines that performed well, along with their results. Primarily used for storage.
 - **notebooks**: The most crucial part of the project. This folder contains the Jupyter notebooks where you can execute the comprehensive model development as well as the user test.
 - **references**: Contains an excel file explaining what every feature represents
@@ -74,6 +74,8 @@ On the other hand, the user test version is compiled into a single notebook: use
     ├── docs               <- Projects relative documentation
     │
     ├── models             <- Trained and serialized models
+    │   ├── results
+    │   │   └── best_pipeline_results.plk
     │   ├── chosen_pipeline.pkl
     │   ├── chosen_pipeline_trained.pkl
     │   └── .gitkeep       
@@ -103,8 +105,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
     ├── environment and requirements
-    │   ├── environment_projet_mbappe.yml
-    │   ├── requirements_proj_mbappe.txt
+    │   ├── requirements.txt
     │   ├── test_environment.py
     │   └── tox.ini
     │
@@ -118,7 +119,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     │   │
     │   ├── data           <- Scripts to download or generate data
     │   │   ├── data_combination.py
-        │   │   ├── make_dataset.py
+    │   │   ├── make_dataset.py
     │   │   └── preprocessing.py
     │   │
     │   ├── features       <- Scripts to turn raw data into features for modeling
@@ -143,7 +144,7 @@ On the other hand, the user test version is compiled into a single notebook: use
     │   ├── useful_functions.py <- Utility functions for the project
     │   └── user_test.py   <- Scripts for user testing and validation
     │
-    └── tox.ini            <- tox file with settings for running tox; see tox.readthedocs.io
+    
 
 
 
