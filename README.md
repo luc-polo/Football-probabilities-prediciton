@@ -104,10 +104,6 @@ On the other hand, the user test version is compiled into a single notebook: use
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
-    ├── environment and requirements
-    │   ├── requirements.txt
-    │   ├── test_environment.py
-    │   └── tox.ini
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     ├── src                <- Source code for use in this project.
