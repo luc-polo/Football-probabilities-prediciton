@@ -7,8 +7,10 @@ This project is a personal initiative that I am particularly proud of. Inspired 
 
 ```diff
 - For a quick and clear overview of this project, open and follow the little tutorial in the user_test.ipynb file,
-- located in the notebooks directory 
+- located in the notebooks directory
 ```
+
+ Link towwards project Bonder:     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/luc-polo/Football-probabilities-prediciton.git/HEAD)
  
 #### Project Description
 
@@ -52,7 +54,7 @@ On the other hand, the user test version is compiled into a single notebook: use
 - **data**: Folder containing the datasets at different stages of transformation. Only used for storage.
 - **docs**: Contains files related to the Sphinx documentation generation process. Not interesting for those exploring the project.
 - **env**: My virtual environment.
-- **environment and requirements**: Includes `.txt` file listing the required dependencies to replicate my virtual environment.
+- **requirements**: `.txt` file listing the required dependencies to replicate my virtual environment.
 - **models**: Stores the pipelines that performed well, along with their results. Primarily used for storage.
 - **notebooks**: The most crucial part of the project. This folder contains the Jupyter notebooks where you can execute the comprehensive model development as well as the user test.
 - **references**: Contains an excel file explaining what every feature represents
@@ -104,10 +106,6 @@ On the other hand, the user test version is compiled into a single notebook: use
     │
     ├── requirements.txt   <- The requirements file for reproducing the analysis environment, e.g.
     │                         generated with `pip freeze > requirements.txt`
-    ├── environment and requirements
-    │   ├── requirements.txt
-    │   ├── test_environment.py
-    │   └── tox.ini
     │
     ├── setup.py           <- makes project pip installable (pip install -e .) so src can be imported
     ├── src                <- Source code for use in this project.
