@@ -10,7 +10,7 @@ This project is a personal initiative that I am particularly proud of. Inspired 
 - located in the notebooks directory
 ```
 
- Link towwards user_test.ipynb:     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/luc-polo/Football-probabilities-prediciton.git/HEAD)
+ Link towwards project Bonder:     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/luc-polo/Football-probabilities-prediciton.git/HEAD)
  
 #### Project Description
 
