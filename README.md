@@ -9,7 +9,8 @@ This project is a personal initiative that I am particularly proud of. Inspired 
 - For a quick and clear overview of this project, open and follow the little tutorial in the user_test.ipynb file,
 - located in the notebooks directory
 ```
- Link towwards user_test.ipynb: [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/luc-polo/Football-probabilities-prediciton.git/HEAD)
+
+ Link towwards user_test.ipynb:     [![Binder](https://mybinder.org/badge_logo.svg)](https://mybinder.org/v2/gh/luc-polo/Football-probabilities-prediciton.git/HEAD)
  
 #### Project Description
 
