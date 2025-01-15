@@ -11,7 +11,7 @@ from data import data_combination
 
 
 # modify the sys.path list to include the path to the data directory that contains the modules that we need to import
-sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
+sys.path.append('../')
 
 #Import my modules
 from configuration import constant_variables

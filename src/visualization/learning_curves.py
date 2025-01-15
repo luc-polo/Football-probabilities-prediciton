@@ -13,7 +13,7 @@ from tabulate import tabulate
 
 
 # Modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
-sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
+sys.path.append('../')
 
 #Import my modules
 from configuration import constant_variables

@@ -15,12 +15,6 @@ import numpy as np
 import sys
 import os
 
-# modify the sys.path list to include the path to the data directory that contains the constant_variables module that we need to import
-sys.path.append('C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/src')
-
-#Import my modules
-from configuration import constant_variables
-
 
 # --------------------------------------------------------------
 # Plot single feature histogram (used in 'I)1)')

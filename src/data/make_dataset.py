@@ -20,28 +20,28 @@ import useful_functions
 # --------------------------------------------------------------
 # Define CSV files paths
 # --------------------------------------------------------------
-footy_2015_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2014-to-2015-stats.csv"
-footy_2016_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2015-to-2016-stats.csv"
-footy_2017_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2016-to-2017-stats.csv"
-footy_2018_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2017-to-2018-stats.csv"
-footy_2019_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2018-to-2019-stats.csv"
-footy_2020_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2019-to-2020-stats.csv"
-footy_2021_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2020-to-2021-stats.csv"
-footy_2022_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2021-to-2022-stats.csv"
-footy_2023_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2022-to-2023-stats.csv"
-footy_2024_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Footy/france-ligue-1-matches-2023-to-2024-stats.csv"
+footy_2015_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2014-to-2015-stats.csv"
+footy_2016_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2015-to-2016-stats.csv"
+footy_2017_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2016-to-2017-stats.csv"
+footy_2018_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2017-to-2018-stats.csv"
+footy_2019_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2018-to-2019-stats.csv"
+footy_2020_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2019-to-2020-stats.csv"
+footy_2021_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2020-to-2021-stats.csv"
+footy_2022_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2021-to-2022-stats.csv"
+footy_2023_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2022-to-2023-stats.csv"
+footy_2024_adr = "../data/raw/ligue1/matches/Footy/france-ligue-1-matches-2023-to-2024-stats.csv"
 
+football_data_2015_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2014-2015_ligue1.csv"
+football_data_2016_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2015-2016_ligue1.csv"
+football_data_2017_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2016-2017_ligue1.csv"
+football_data_2018_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2017-2018_ligue1.csv"
+football_data_2019_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2018-2019_ligue1.csv"
+football_data_2020_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2019-2020_ligue1.csv"
+football_data_2021_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2020-2021_ligue1.csv"
+football_data_2022_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2021-2022_ligue1.csv"
+football_data_2023_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2022-2023_ligue1.csv"
+football_data_2024_adr = "../data/raw/ligue1/matches/Football_data/Football-data.co.uk_2023-2024_ligue1.csv"
 
-football_data_2015_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2014-2015_ligue1.csv"
-football_data_2016_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2015-2016_ligue1.csv"
-football_data_2017_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2016-2017_ligue1.csv"
-football_data_2018_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2017-2018_ligue1.csv"
-football_data_2019_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2018-2019_ligue1.csv"
-football_data_2020_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2019-2020_ligue1.csv"
-football_data_2021_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2020-2021_ligue1.csv"
-football_data_2022_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2021-2022_ligue1.csv"
-football_data_2023_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2022-2023_ligue1.csv"
-football_data_2024_adr="C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/raw/ligue1/matches/Football_data/Football-data.co.uk_2023-2024_ligue1.csv"
 
 # --------------------------------------------------------------
 # Convert CSV into DataFrame
@@ -107,7 +107,7 @@ def load_data(seasons_present_in_df_info, file_name_0):
             pd.DataFrame: The loaded dataset.
     """
     
-    dataset_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/{file_name_0}.pkl'
+    dataset_location_path = f'../data/{file_name_0}.pkl'
  
     # Importation of dataset
     dataset = pd.read_pickle(dataset_location_path)
@@ -148,7 +148,7 @@ def save_dataframe(dataset_0, file_name_0):
     """
 
     # Define the absolute path for the dataset destination
-    dataset_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/{file_name_0}.pkl"
+    dataset_destination_path = f"../data/{file_name_0}.pkl"
         
     
     # Load the old dataframe if it exists to compare

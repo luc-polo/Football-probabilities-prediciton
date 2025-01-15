@@ -15,7 +15,7 @@ def test_changes_on_dataset(dataset_0, dataset_0_name):
     """
     
     # Define the absolute path where we will save the dataset, which is also the location of the old one we will delete
-    dataset_destination_path = "C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/data/interim/feat_engineered_ds_test.pkl"
+    dataset_destination_path = "../data/interim/feat_engineered_ds_test.pkl"
     
     #We compare if the old dataset and the new one are exactly the same
     

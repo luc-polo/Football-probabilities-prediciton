@@ -104,7 +104,7 @@ def save_pipeline(pipeline_0, pipeline_name_0):
        """
        
        # defining the destination path of the pipeline
-       pipeline_destination_path = f"C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/models/{pipeline_name_0}.pkl"
+       pipeline_destination_path = f"../models/{pipeline_name_0}.pkl"
        
        # Delete the old pipeline if it exists
        try:
@@ -136,7 +136,7 @@ def load_pipeline(pipeline_name_0):
        Args:
            pipeline_name_0 (str): The name of the .pkl file (located in models/ direcctory) that contains the saved pipeline we want to load
        """
-       pipeline_location_path = f'C:/Users/polol/OneDrive/Documents/ML/Projet Mbappe (11.23- )/Projet Mbappe Cookiestructure/models/{pipeline_name_0}.pkl'
+       pipeline_location_path = f'../models/{pipeline_name_0}.pkl'
  
        # Load the pipeline
        try:
