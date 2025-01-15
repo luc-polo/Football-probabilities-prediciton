@@ -2,8 +2,7 @@
 This module is made to define variables that keep constant value from the beginning to the end of the programm execution. See below the variables to understand what we talk about.
 """
 #Import classic Python modules
-from sklearn.model_selection import  StratifiedKFold
-import sys
+from sklearn.model_selection import StratifiedKFold
 import pandas as pd
 
 
