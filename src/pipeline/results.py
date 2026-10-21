@@ -6,6 +6,7 @@ import pandas as pd
 import warnings
 from sklearn.utils import column_or_1d,  check_consistent_length
 from sklearn.calibration import _check_pos_label_consistency
+from sklearn.metrics import roc_auc_score
 from dateutil.relativedelta import relativedelta
 from tabulate import tabulate
 import pickle
@@ -307,6 +308,30 @@ def print_calibration_stats(prob_pred_0, prob_true_0, calibrated_or_not, *X_vali
 
     print('\nThe average deviation for this pipeline is', round(deviation*100, 2), "%")
     
+# Plot probability distributions for matches won and not won
+def plot_proba_distribution(Y_test_0, proba_pred_0, bins_0=40):
+    """Plot the density of predicted probabilities for each match result.
+
+    Args:
+        Y_test_0 (DataFrame): True match results, 1 for a win and 0 otherwise.
+        proba_pred_0 (np.ndarray): Predicted probabilities of winning.
+        bins_0 (int): The number of bins for the distributions.
+    """
+    Y_test_0 = np.asarray(Y_test_0).astype(int).ravel()
+    proba_pred_0 = np.asarray(proba_pred_0).ravel()
+
+    plt.figure(figsize=(9, 4))
+    for result, label in [(1, 'Match won'), (0, 'Match not won')]:
+        plt.hist(proba_pred_0[Y_test_0 == result], bins=bins_0, range=(0, 1),
+                 density=True, histtype='step', linewidth=2, label=label)
+    plt.title(f'Probability distributions — ROC-AUC = {roc_auc_score(Y_test_0, proba_pred_0):.2f}')
+    plt.xlabel('Predicted probability of winning')
+    plt.ylabel('Density')
+    plt.xlim(0, 1)
+    plt.grid(alpha=0.2)
+    plt.legend()
+    plt.show()
+
 # Plot histogram of predicted probabilities 
 def plot_histo_predicted_proba( proba_pred_0, bins_0, color_0, title ):
     """Plot the histogram of the proba predicted by the pipeline inputted on the features dataset inputted.
